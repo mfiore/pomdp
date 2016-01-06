@@ -345,6 +345,7 @@ void Hmmdp::createPomdp(string name, bool rewrite, bool first) {
         vecStateEnum.push_back(v);
     }
 
+    cout<<vecStateEnum.size()<<"\n";
     ifstream inputFile(fileName);
     if (inputFile.good() && !rewrite) {
         for (int i = 0; i < vecStateEnum.size(); i++) {

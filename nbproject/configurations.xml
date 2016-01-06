@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="f1" displayName="Models" projectFiles="true">
+        <itemPath>GetLaundry.cpp</itemPath>
+        <itemPath>GetLaundry.h</itemPath>
+        <itemPath>StartWashingMachine.cpp</itemPath>
+        <itemPath>StartWashingMachine.h</itemPath>
+        <itemPath>WashLaundry.cpp</itemPath>
+        <itemPath>WashLaundry.h</itemPath>
+        <itemPath>WashLaundryFull.cpp</itemPath>
+        <itemPath>WashLaundryFull.h</itemPath>
+      </logicalFolder>
+      <itemPath>AlphaVector.cpp</itemPath>
+      <itemPath>AlphaVector.h</itemPath>
+      <itemPath>Hmmdp.cpp</itemPath>
+      <itemPath>Hmmdp.h</itemPath>
+      <itemPath>NestedLoop.cpp</itemPath>
+      <itemPath>NestedLoop.h</itemPath>
+      <itemPath>ObservationInput.cpp</itemPath>
+      <itemPath>ObservationInput.h</itemPath>
+      <itemPath>Pomdp.cpp</itemPath>
+      <itemPath>Pomdp.h</itemPath>
+      <itemPath>PriorityQueue.cpp</itemPath>
+      <itemPath>PriorityQueue.h</itemPath>
+      <itemPath>RewardInput.cpp</itemPath>
+      <itemPath>RewardInput.h</itemPath>
+      <itemPath>TransitionInput.cpp</itemPath>
+      <itemPath>TransitionInput.h</itemPath>
+      <itemPath>TransitionOutput.cpp</itemPath>
+      <itemPath>TransitionOutput.h</itemPath>
+      <itemPath>VariableSet.cpp</itemPath>
+      <itemPath>VariableSet.h</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>tinyxml2.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../devel/src/eigen-eigen-b30b87236a1b</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="3">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../../devel/src/eigen-eigen-b30b87236a1b/Eigen</pElem>
+            <pElem>../../devel/src/eigen-eigen-b30b87236a1b</pElem>
+          </incDir>
+          <commandLine>-std=c++11</commandLine>
+        </ccTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+      <item path="AlphaVector.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AlphaVector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hmmdp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hmmdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="NestedLoop.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="NestedLoop.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ObservationInput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ObservationInput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Pomdp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Pomdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PriorityQueue.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PriorityQueue.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="RewardInput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RewardInput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="StartWashingMachine.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="StartWashingMachine.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TransitionInput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TransitionInput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TransitionOutput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TransitionOutput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="VariableSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="WashLaundry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WashLaundry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="WashLaundryFull.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WashLaundryFull.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tinyxml2.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="3">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+      <item path="AlphaVector.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AlphaVector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hmmdp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hmmdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="NestedLoop.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="NestedLoop.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ObservationInput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ObservationInput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Pomdp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Pomdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PriorityQueue.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PriorityQueue.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="RewardInput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RewardInput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="StartWashingMachine.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="StartWashingMachine.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TransitionInput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TransitionInput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TransitionOutput.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TransitionOutput.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="VariableSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="WashLaundry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WashLaundry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="WashLaundryFull.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WashLaundryFull.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tinyxml2.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
