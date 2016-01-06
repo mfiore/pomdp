@@ -53,9 +53,9 @@ public:
 
     virtual void simulate(int n, VariableSet s);
 
-private:
+//private:
 
-protected:
+//protected:
     //mdp specification
     std::vector<string> variables; //lists all variables;
     std::vector<string> actions;

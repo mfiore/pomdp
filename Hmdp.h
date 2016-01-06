@@ -35,6 +35,8 @@ public:
     double getHierarcicReward(VariableSet state);
     map<int, double> getHierarcicTransition(int s);
     map<VariableSet, double> getHierarcicTransition(VariableSet s);
+    map<VariableSet, double> getHierarcicTransition(VariableSet set, string action);
+
 
     string chooseHierarchicAction(VariableSet state);
     string chooseHierarchicAction(int s);
@@ -45,7 +47,7 @@ public:
 
     void create(string name, bool rewrite, bool first);
 
-private:
+//private:
     virtual bool isStartingState(VariableSet state) = 0;
     virtual bool isGoalState(VariableSet state) = 0;
 
@@ -65,7 +67,7 @@ private:
     std::map<int, double> hierarchic_reward_;
     string active_module;
 
-protected:
+//protected:
     vector<int> starting_states_;
     vector<int> goal_states_;
 
