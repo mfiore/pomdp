@@ -1,5 +1,5 @@
 /* 
- * File:   Hmmdp.cpp
+ * File:   Hmdp.cpp
  * Author: mfiore
  * 
  * Created on December 14, 2015, 4:49 PM
@@ -8,123 +8,68 @@
 #include <map>
 #include <vector>
 
-#include "Hmmdp.h"
+#include "Hmdp.h"
+#include "Mdp.h"
 
-Hmmdp::Hmmdp() {
+Hmdp::Hmdp() {
     active_module = "this";
 }
 
-Hmmdp::Hmmdp(const Hmmdp& orig) {
+Hmdp::Hmdp(const Hmdp& orig) {
 }
 
-Hmmdp::~Hmmdp() {
+Hmdp::~Hmdp() {
 }
 
-//gaussian elimination, used to compute T and R for macro actions
+///*
+// Executes a bellman backup on state i that is max a [R(i,a) + L * sum T(i,a,s) vhi(s)]
+// * returns the new v values and updates the q values
+// */
+//int Hmdp::bellmanBackup(int i, std::vector<double> vhi) {
+//    double maxValue = 0;
+//    for (string action : actions) { //for every action
+//
+//        int currentReward;
+//        std::map<int, double> futureBeliefs;
+//        PairStateAction rInput{i, action}; //calculate the reward of this state with this action
+//
+//        //we have to do this because the std::map increments of one element if we just use [] with a non existing member and the reward function
+//        //contains only transition with non zero rewards.
+//        if (reward.find(rInput) != reward.end()) {
+//            currentReward = reward[rInput];
+//        } else {
+//            currentReward = 0;
+//        }
+//
+//        PairStateAction transitionInput{i, action};
+//        futureBeliefs = transition[transitionInput];
+//        //        }
+//
+//        double sum = 0;
+//        for (auto aBelief : futureBeliefs) {
+//            sum = sum + aBelief.second * vhi[aBelief.first]; //sum on the probabilities of the future states * the value of reaching that state
+//        }
+//        PairStateAction qInput{i, action};
+//        double havNew = currentReward + 0.8 * sum; //0.3 weights the future rewards
+//        qValue[qInput] = havNew; //update the human action value
+//        if (qValue[qInput] > maxValue) {
+//            maxValue = qValue[qInput];
+//        }
+//
+//    }
+//    return maxValue;
+//}
 
-vector<double> Hmmdp::gauss(vector< vector<double> > A) {
-    int n = A.size();
-
-    for (int i = 0; i < n; i++) {
-        // Search for maximum in this column
-        double maxEl = abs(A[i][i]);
-        int maxRow = i;
-        for (int k = i + 1; k < n; k++) {
-            if (abs(A[k][i]) > maxEl) {
-                maxEl = abs(A[k][i]);
-                maxRow = k;
-            }
-        }
-
-        // Swap maximum row with current row (column by column)
-        for (int k = i; k < n + 1; k++) {
-            double tmp = A[maxRow][k];
-            A[maxRow][k] = A[i][k];
-            A[i][k] = tmp;
-        }
-
-        // Make all rows below this one 0 in current column
-        for (int k = i + 1; k < n; k++) {
-            double c = -A[k][i] / A[i][i];
-            for (int j = i; j < n + 1; j++) {
-                if (i == j) {
-                    A[k][j] = 0;
-                } else {
-                    A[k][j] += c * A[i][j];
-                }
-            }
-        }
-    }
-
-    // Solve equation Ax=b for an upper triangular matrix A
-    vector<double> x(n);
-    for (int i = n - 1; i >= 0; i--) {
-        x[i] = A[i][n] / A[i][i];
-        for (int k = i - 1; k >= 0; k--) {
-            A[k][n] -= A[k][i] * x[i];
-        }
-    }
-    return x;
-}
-
-/*
- Executes a bellman backup on state i that is max a [R(i,a) + L * sum T(i,a,s) vhi(s)]
- * returns the new v values and updates the q values
- */
-int Hmmdp::bellmanBackup(int i, std::vector<double> vhi) {
-    double maxValue = 0;
-    for (string action : actions) { //for every action
-
-        int currentReward;
-        std::map<int, double> futureBeliefs;
-        //        if (hierarchy_map_.find(action) != hierarchy_map_.end()) {
-        //            Hmmdp* sub_mdp = hierarchy_map_[action];
-        //            currentReward = sub_mdp->getHierarcicReward(i);
-        //            futureBeliefs = sub_mdp->getHierarcicTransition(i);
-        //        } else {
-        pair<int, string> rInput{i, action}; //calculate the reward of this state with this action
-
-        //we have to do this because the std::map increments of one element if we just use [] with a non existing member and the reward function
-        //contains only transition with non zero rewards.
-        if (reward.find(rInput) != reward.end()) {
-            currentReward = reward[rInput];
-        } else {
-            currentReward = 0;
-        }
-
-        pair<int, string> transitionInput{i, action};
-        futureBeliefs = transition[transitionInput];
-        //        }
-
-        double sum = 0;
-        for (auto aBelief : futureBeliefs) {
-            sum = sum + aBelief.second * vhi[aBelief.first]; //sum on the probabilities of the future states * the value of reaching that state
-        }
-        pair<int, string> qInput{i, action};
-        double havNew = currentReward + 0.8 * sum; //0.3 weights the future rewards
-        qValue[qInput] = havNew; //update the human action value
-        if (qValue[qInput] > maxValue) {
-            maxValue = qValue[qInput];
-        }
-
-    }
-    return maxValue;
-}
-
-void Hmmdp::solveHierarchical(bool first, bool rewrite) {
-
-}
-
-double Hmmdp::getHierarcicReward(int i) {
+double Hmdp::getHierarcicReward(int i) {
     return hierarchic_reward_[i];
 }
 
-double Hmmdp::getHierarcicReward(VariableSet set) {
+double Hmdp::getHierarcicReward(VariableSet set) {
     int i = convertHierarchicState(set);
     return hierarchic_reward_[i];
 }
 
-map<int, double> Hmmdp::getHierarcicTransition(int i) {
+map<int, double> Hmdp::getHierarcicTransition(int i) {
     map<int, double> result;
 
     for (int g : goal_states_) {
@@ -138,7 +83,7 @@ map<int, double> Hmmdp::getHierarcicTransition(int i) {
 
 }
 
-int Hmmdp::convertHierarchicState(VariableSet set) {
+int Hmdp::convertHierarchicState(VariableSet set) {
     VariableSet this_set;
     for (string v : variables) {
         this_set.set[v] = set.set[v];
@@ -147,7 +92,7 @@ int Hmmdp::convertHierarchicState(VariableSet set) {
 
 }
 
-map<VariableSet, double> Hmmdp::getHierarcicTransition(VariableSet set) {
+map<VariableSet, double> Hmdp::getHierarcicTransition(VariableSet set) {
     map<VariableSet, double> temp_result;
     map<VariableSet, double> result;
 
@@ -166,59 +111,47 @@ map<VariableSet, double> Hmmdp::getHierarcicTransition(VariableSet set) {
     }
     if (higher_variables != variables) {
         for (auto b : temp_result) {
-            VariableSet new_vs=b.first;
+            VariableSet new_vs = b.first;
             for (string s : higher_variables) {
                 if (b.first.set.find(s) == b.first.set.end()) {
-                   new_vs.set[s] = set.set[s];
-                }
-                else {
-                    string a=s;
-                   new_vs.set[s] = b.first.set.at(s);
+                    new_vs.set[s] = set.set[s];
+                } else {
+                    string a = s;
+                    new_vs.set[s] = b.first.set.at(s);
                 }
             }
-            result[new_vs]=b.second;
+            result[new_vs] = b.second;
         }
-    }
-    else {
-        result=temp_result;
+    } else {
+        result = temp_result;
     }
     return result;
 
 }
 
-void Hmmdp::calculateHierarcicReward() {
+void Hmdp::calculateHierarcicReward() {
     cout << "Calculating hierarchic reward\n";
     if (hierarchic_reward_.size() == 0) {
         std::map<int, double> temp_hierarchic_reward;
         using Eigen::VectorXd;
         Eigen::SparseMatrix<double> a(vecStateEnum.size(), vecStateEnum.size());
         VectorXd b(vecStateEnum.size());
-        //        vector<vector<double> > gaussian_input;
         double beta = 0.3;
         int i = -1;
         for (int s = 0; s < vecStateEnum.size(); s++) {
-            //            i++;
-            //            vector<double> gaussian_row(vecStateEnum.size());
-            //            gaussian_row[s] = 1;
             a.insert(s, s) = 1;
             string action = chooseAction(s);
-            map<VariableSet, double> future_states = transitionFunction(vecStateEnum[s], action);
+            PairStateAction transition_input{s, action};
+            StateProb future_states = transition[transition_input];
             for (auto future_state : future_states) {
-                int sp = mapStateEnum[future_state.first];
-                if (!isGoalState(future_state.first) && sp != s) {
-                    //                    gaussian_row[sp] = future_state.second;
+                int sp = future_state.first;
+                if (!isGoalState(vecStateEnum[sp]) && sp != s) {
                     a.insert(s, sp) = -beta * future_state.second;
                 }
             }
-            //            for (int sp = 0; sp < vecStateEnum.size(); sp++) {
-            //                double transition_prob = getTransitionProb(s, action, sp);
-            //                gaussian_row.push_back(-beta * transition_prob);
-            //            }
-            b(s) = rewardFunction(vecStateEnum[s], action);
-            //            gaussian_row.push_back(rewardFunction(vecStateEnum[s], action));
-            //            gaussian_input.push_back(gaussian_row);
+            PairStateAction reward_input{s, action};
+            b(s) = reward[reward_input];
         }
-        //        vector<double> gaussian_result = gauss(gaussian_input);
         Eigen::BiCGSTAB<Eigen::SparseMatrix<double> > solver;
         a.makeCompressed();
         solver.compute(a);
@@ -242,7 +175,7 @@ void Hmmdp::calculateHierarcicReward() {
     }
 }
 
-void Hmmdp::calculateHierarcicTransition() {
+void Hmdp::calculateHierarcicTransition() {
     cout << "Calculating hierarchic transition\n";
 
     if (hierarchic_transition_.size() == 0) {
@@ -251,8 +184,6 @@ void Hmmdp::calculateHierarcicTransition() {
         double beta = 0.3;
 
         for (int g : goal_states_) {
-            //            vector<vector<double> > gaussian_input;
-
             using Eigen::VectorXd;
             Eigen::SparseMatrix<double> a(vecStateEnum.size(), vecStateEnum.size());
             VectorXd b(vecStateEnum.size());
@@ -260,29 +191,18 @@ void Hmmdp::calculateHierarcicTransition() {
 
             for (int s = 0; s < vecStateEnum.size(); s++) {
                 string action = chooseAction(s);
-                map<VariableSet, double> future_states = transitionFunction(vecStateEnum[s], action);
-                //                vector<double> gaussian_row(0, vecStateEnum.size());
-                //                gaussian_row[0]=1;
-                //                gaussian_row[s] = 1;
+                PairStateAction t_input{s, action};
+                StateProb future_states = transition[t_input];
                 a.insert(s, s) = 1;
                 for (auto future_state : future_states) {
-                    int sp = mapStateEnum[future_state.first];
-                    if (sp != s && !isGoalState(future_state.first)) {
-                        //                        gaussian_row[sp] = future_state.second;
+                    int sp = future_state.first;
+                    if (sp != s && !isGoalState(vecStateEnum[sp])) {
                         a.insert(s, sp) = -beta * future_state.second;
                     }
 
                 }
-                //                for (int sp = 0; s < vecStateEnum.size(); sp++) {
-                //                    if (!isGoalState(vecStateEnum[sp])) {
-                //                        double transition_prob = getTransitionProb(s, action, sp);
-                //                        gaussian_row.push_back(-beta * transition_prob);
-                //                    }
-                //                }
                 double b_transition_prob = getTransitionProb(s, action, g);
                 b[s] = b_transition_prob;
-                //                gaussian_row.push_back(b_transition_prob);
-                //                gaussian_input.push_back(gaussian_row);
             }
             Eigen::SparseLU<Eigen::SparseMatrix<double> > solver;
             a.makeCompressed();
@@ -296,11 +216,9 @@ void Hmmdp::calculateHierarcicTransition() {
                 // solving failed
                 return;
             }
-            //            vector<double> gaussian_result = gauss(gaussian_input);
             int i = 0;
             for (int s : starting_states_) {
                 pair<int, int> hierarchic_input{s, g};
-                //                temp_hierarcic_transition[hierarchic_input] = gaussian_result[i];
                 temp_hierarcic_transition[hierarchic_input] = x(s);
                 i++;
             }
@@ -310,16 +228,16 @@ void Hmmdp::calculateHierarcicTransition() {
     }
 }
 
-void Hmmdp::createPomdp(string name, bool rewrite, bool first) {
+void Hmdp::create(string name, bool rewrite, bool first) {
     this->name = name;
 
-    for (HmmdpMap::iterator i = hierarchy_map_.begin(); i != hierarchy_map_.end(); i++) {
-        i->second->createPomdp(i->first, rewrite, false);
+    for (HmdpMap::iterator i = hierarchy_map_.begin(); i != hierarchy_map_.end(); i++) {
+        i->second->create(i->first, rewrite, false);
     }
 
     cout << "Creating " << name << "\n";
 
-    string fileName = name + ".pomdp";
+    string fileName = name + ".mdp";
 
     std::vector<std::vector<int>> enumInput;
     for (string variable : variables) {
@@ -349,7 +267,7 @@ void Hmmdp::createPomdp(string name, bool rewrite, bool first) {
     if (inputFile.good() && !rewrite) {
         for (int i = 0; i < vecStateEnum.size(); i++) {
             for (string action : actions) {
-                pair<int, string> transitionInput{i, action};
+                PairStateAction transitionInput{i, action};
                 std::map<int, double> transitionOutput;
 
                 string line;
@@ -357,7 +275,7 @@ void Hmmdp::createPomdp(string name, bool rewrite, bool first) {
                 vector<string> transition_v = StringOperations::stringSplit(line, ' ');
                 int i = 0;
 
-                pair<int, string> bTransitionInput{i, action};
+                PairStateAction bTransitionInput{i, action};
 
                 while (i < transition_v.size()) {
                     transitionOutput[stoi(transition_v[i])] = stod(transition_v[i + 1]);
@@ -371,7 +289,7 @@ void Hmmdp::createPomdp(string name, bool rewrite, bool first) {
                 transition[transitionInput] = transitionOutput;
 
                 getline(inputFile, line);
-                pair<int, string> rewardInput = {i, action};
+                PairStateAction rewardInput = {i, action};
                 reward[rewardInput] = stoi(line);
             }
         }
@@ -384,9 +302,10 @@ void Hmmdp::createPomdp(string name, bool rewrite, bool first) {
                 double r;
                 map<int, double> future_beliefs;
                 if (hierarchy_map_.find(action) == hierarchy_map_.end()) {
-                    std::map<VariableSet, double> future_beliefs_var = transitionFunction(vecStateEnum[i], action);
+                    VarStateProb future_beliefs_var = transitionFunction(vecStateEnum[i], action);
                     for (auto b : future_beliefs_var) {
-                        future_beliefs[mapStateEnum[b.first]] = b.second;
+                        int s = mapStateEnum[b.first];
+                        future_beliefs[s] = b.second;
                     }
                     r = rewardFunction(vecStateEnum[i], action);
                 } else {
@@ -395,10 +314,14 @@ void Hmmdp::createPomdp(string name, bool rewrite, bool first) {
                     r = hierarchy_map_[action]->getHierarcicReward(vecStateEnum[i]);
                 }
 
-                pair<int, string> transitionInput{i, action};
+                PairStateAction transitionInput{i, action};
                 for (auto belief : future_beliefs) {
                     int s = belief.first;
-                    pair<int, string> bTransitionInput{s, action};
+
+                    file << s << " " << belief.second << " ";
+
+
+                    PairStateAction bTransitionInput{s, action};
                     std::vector<int> previousBeliefs = predecessors[bTransitionInput];
                     previousBeliefs.push_back(i);
                     predecessors[bTransitionInput] = previousBeliefs;
@@ -406,7 +329,7 @@ void Hmmdp::createPomdp(string name, bool rewrite, bool first) {
                 file << "\n";
                 transition[transitionInput] = future_beliefs;
 
-                pair<int, string> rewardInput{i, action};
+                PairStateAction rewardInput{i, action};
                 reward[rewardInput] = r;
                 file << r << "\n";
             }
@@ -441,7 +364,7 @@ void Hmmdp::createPomdp(string name, bool rewrite, bool first) {
 
 }
 
-map<int, double> Hmmdp::getMatchingStates(map<VariableSet, double> beliefs) {
+map<int, double> Hmdp::getMatchingStates(map<VariableSet, double> beliefs) {
     map<int, double> result;
     map<VariableSet, double> variable_set_result;
     for (auto b : beliefs) {
@@ -468,7 +391,7 @@ map<int, double> Hmmdp::getMatchingStates(map<VariableSet, double> beliefs) {
     return result;
 }
 
-void Hmmdp::readHierarchical() {
+void Hmdp::readHierarchical() {
     ifstream i_file(name + ".hmdp");
     if (i_file.good()) {
         string reward_line;
@@ -494,7 +417,7 @@ void Hmmdp::readHierarchical() {
     i_file.close();
 }
 
-void Hmmdp::writeHierarchical() {
+void Hmdp::writeHierarchical() {
     ofstream o_file(name + ".hmdp");
     for (int s : starting_states_) {
         o_file << hierarchic_reward_[s] << " ";
@@ -510,7 +433,7 @@ void Hmmdp::writeHierarchical() {
     o_file.close();
 }
 
-string Hmmdp::chooseHierarchicAction(VariableSet state) {
+string Hmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state;
     for (string var : variables) {
         this_state.set[var] = state.set[var];
@@ -536,20 +459,34 @@ string Hmmdp::chooseHierarchicAction(VariableSet state) {
     }
 }
 
-string Hmmdp::chooseHierarchicAction(map<int, double> a_belief) {
-    for (auto b : a_belief) {
-        return chooseHierarchicAction(vecStateEnum[b.first]);
-    }
+string Hmdp::chooseHierarchicAction(int b) {
+    return chooseHierarchicAction(vecStateEnum[b]);
 }
 //
-//void Hmmdp::simulate(int n) {
-//    cout << "initial belief\n";
-//    printBelief();
-//    for (int i = 0; i < n; i++) {
-////        string action = chooseHierarchicAction(this->belief);
-//        
-//        cout << "Executing " << action << "\n";
-//        updateBelief(action, map<string, string>(), map<string, string>());
-//        printBelief();
-//    }
-//}
+
+void Hmdp::simulate(int n, VariableSet initial_state) {
+    int int_initial_state = mapStateEnum[initial_state];
+    StateProb b;
+    b[int_initial_state] = 1.0;
+    cout<<"Transition in sim"<<transition.size()<<"\n";
+    for (int i = 0; i < n; i++) {
+        cout << "Step " << i << "\n";
+        StateProb temp_b;
+        for (auto s : b) {
+            cout << "State: \n";
+            cout << vecStateEnum[s.first].toString();
+            string action = chooseHierarchicAction(s.first);
+            cout << "Executing " << action << "\n";
+            PairStateAction p{s.first, action};
+            StateProb output = transition[p];
+            for (auto o : output) {
+                if (temp_b.find(o.first) != temp_b.end()) {
+                    temp_b[o.first] = temp_b.at(o.first) + o.second;
+                } else {
+                    temp_b[o.first] = o.second;
+                }
+            }
+        }
+        b = temp_b;
+    }
+}

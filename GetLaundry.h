@@ -8,14 +8,14 @@
 #ifndef GETLAUNDRY_H
 #define	GETLAUNDRY_H
 
-#include "Hmmdp.h"
+#include "Hmdp.h"
 
 #include <string>
 #include <vector>
 
 using namespace std;
 
-class GetLaundry: public Hmmdp {
+class GetLaundry: public Hmdp {
 public:
     GetLaundry();
     GetLaundry(const GetLaundry& orig);

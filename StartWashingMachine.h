@@ -8,14 +8,14 @@
 #ifndef STARTWASHINGMACHINE_H
 #define	STARTWASHINGMACHINE_H
 
-#include "Hmmdp.h"
+#include "Hmdp.h"
 
 #include <string>
 #include <vector>
 
 using namespace std;
 
-class StartWashingMachine: public Hmmdp {
+class StartWashingMachine: public Hmdp {
 public:
     StartWashingMachine();
     StartWashingMachine(const StartWashingMachine& orig);
