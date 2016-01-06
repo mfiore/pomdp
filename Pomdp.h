@@ -16,6 +16,8 @@
 #include "PriorityQueue.h"
 
 #include "NestedLoop.h"
+#include "StringOperations.h"
+
 using namespace std;
 
 class Pomdp {
@@ -35,7 +37,7 @@ public:
     virtual int rewardFunction(VariableSet state, string action) = 0;
     virtual bool isGoalState(VariableSet state) = 0;
 
-    void updateBelief(string action, std::map<string, string> obsStates, std::map<string, string> observations);
+    void updateBelief(string action);
     void filterBelief(std::map<string, string> observedVariables);
     //not implemented yet
     std::map<VariableSet, double> applyObservationFunction(std::map<string, string> observations, string action, std::map<VariableSet, double> updatedBelief);
@@ -64,8 +66,8 @@ public:
     void printRewardFunction();
     void printStates();
     void printActualQValues();
-    std::vector<double> getV_vector() const;
 
+    virtual void simulate(int n);
 
 
     //Variables
@@ -74,7 +76,6 @@ public:
     std::map<pair<int, string>, std::map<int, double>> transition;
     std::map<pair<int, string>, std::vector<int>> predecessors; //enumeration of the transition function
     std::map<pair<int, string>, int> reward; //reward function
-    std::vector<int> goalStates;
 
 
     //podmp specification
@@ -90,7 +91,6 @@ public:
 
 
     std::map<pair<int, string>, double> qValue; //human action values
-    std::vector<double> v_vector; //v_vector mantains the predicted reward in a state following the optimal policy
 
     std::map<int, double> belief; //std::maps a variable std::mapping into a belief
 

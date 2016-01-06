@@ -52,8 +52,8 @@ int WashLaundry::rewardFunction(VariableSet state, string action) {
     string washing_machine_state = state.set["washing_machine_state"];
 
     if (human_isAt == box_isAt) {
-        if (laundry1_isAt == "washing_machine" && laundry2_isAt == "washing_machine" && laundry3_isAt == "washing_machine" &&
-                washing_machine_state == "running") {
+        if (action=="start_washing_machine" && laundry1_isAt == "washing_machine" && laundry2_isAt == "washing_machine" && laundry3_isAt == "washing_machine" &&
+                washing_machine_state == "stopped") {
             return 100;
         }
     }

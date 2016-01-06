@@ -16,18 +16,6 @@
 #include <c++/4.6/bits/stl_queue.h>
 
 Pomdp::Pomdp() {
-
-    //    this->varValues=varValues;
-    //    for (auto var:varValues) {
-    //        variables.push_back(var.first);
-    //    }
-    //    this->hiddenVariables=hiddenVariables;
-    //    this->observedVariables=observedVariables;
-    //    for (auto var:observationValues) {
-    //        observationVariables.push_back(var.first);
-    //    }
-    //    this->observationValues=observationValues;
-    //    this->actions=actions;
 }
 
 Pomdp::Pomdp(const Pomdp& orig) {
@@ -120,7 +108,7 @@ void Pomdp::filterBelief(std::map<string, string> obsStates) {
  * obsStates: set of observed variables
  * observations: set of observations
  */
-void Pomdp::updateBelief(string action, std::map<string, string> obsStates, std::map<string, string> observations) {
+void Pomdp::updateBelief(string action) {
     std::map<int, double> finalBelief;
 
     //for each current belief
@@ -188,25 +176,20 @@ int Pomdp::bellmanBackup(int i, std::vector<double> vhi) {
 void Pomdp::valueIteration(bool rewrite) {
     string fileName = name + ".policy";
     ifstream inputFile(fileName);
-    
+
     std::vector<double> vhi(vecStateEnum.size(), 0); //vhi mantains the predicted reward in a state following the optimal policy
     std::vector<double> vhiOld(vecStateEnum.size(), 0);
 
     if (inputFile.good() && !rewrite) {
         string line;
         for (int i = 0; i < vecStateEnum.size(); i++) {
-            int i1 = 0;
             getline(inputFile, line);
-            int i2 = line.find(" ", i1);
-            string vs = line.substr(i1, i2 - i1);
-            v_vector[i] = stod(vs);
-            i1 = i2 + 1;        
+            vector<double> q_line = StringOperations::split(line, ' ');
+            int j = 0;
             for (string action : actions) {
-                int i2 = line.find(" ", i1);
-                string qv = line.substr(i1, i2 - i1);
                 pair<int, string> qInput{i, action};
-                qValue[qInput] = stod(qv);
-                i1 = i2 + 1;
+                qValue[qInput] = q_line[j];
+                j++;
             }
         }
         inputFile.close();
@@ -223,7 +206,7 @@ void Pomdp::valueIteration(bool rewrite) {
                 vhi[s] = bellmanBackup(s, vhi);
             }
             maxDiff = 0;
-            for (int i = 0; i < vhi.size(); i++) {  //calculate the maximum difference on the vhi (stopping parameter)
+            for (int i = 0; i < vhi.size(); i++) { //calculate the maximum difference on the vhi (stopping parameter)
                 double d = abs(vhi[i] - vhiOld[i]);
                 if (d > maxDiff) {
                     maxDiff = d;
@@ -231,10 +214,8 @@ void Pomdp::valueIteration(bool rewrite) {
             }
 
         } while (maxDiff > epsilon);
-        v_vector=vhi;
         ofstream file(fileName);
         for (int i = 0; i < vecStateEnum.size(); i++) {
-            file<<vhi[i]<<" ";
             for (string action : actions) {
                 pair<int, string> qInput{i, action};
                 file << qValue[qInput] << " ";
@@ -317,21 +298,24 @@ void Pomdp::printTransitionFunction() {
             pair<int, string> tInput{i, action};
             std::map<int, double> tOutput = transition[tInput];
 
+
             VariableSet vs = vecStateEnum[i];
-            for (auto s : vs.set) {
-                cout << s.first << " " << s.second << " ";
-            }
-            cout << "\n";
-            cout << action << "\n";
-            for (auto out : tOutput) {
-                VariableSet vo = vecStateEnum[out.first];
-                for (auto s : vo.set) {
+            if (vs.set["human_isAt"] == vs.set["box_isAt"]) {
+                for (auto s : vs.set) {
                     cout << s.first << " " << s.second << " ";
                 }
                 cout << "\n";
-                cout << out.first << "\n";
+                cout << action << "\n";
+                for (auto out : tOutput) {
+                    VariableSet vo = vecStateEnum[out.first];
+                    for (auto s : vo.set) {
+                        cout << s.first << " " << s.second << " ";
+                    }
+                    cout << "\n";
+                    cout << out.first << "\n";
+                }
+                cout << "\n";
             }
-            cout << "\n";
         }
     }
 }
@@ -401,13 +385,7 @@ void Pomdp::createPomdp(string name, bool rewrite) {
         }
 
         mapStateEnum[v] = i;
-        //        if (v.set["cup_capacity"] == "0" && v.set["cup_containsWater"] == "0" && v.set["cup_isAt"] == "table" && v.set["cup_isHot"] == "0"
-        //                && v.set["glass_capacity"] == "1" && v.set["glass_containsWater"] == "1" && v.set["glass_isAt"] == "table" && v.set["glass_isHot"] == "0"
-        //                && v.set["human_isAt"] == "table" && v.set["waterBottle_capacity"] == "0" && v.set["waterBottle_isAt"] == "human") {
-        //            cout << "ah" << "\n";
-        //            int k = mapStateEnum[v];
-        //            cout << k << "\n";
-        //        }
+
         vecStateEnum.push_back(v);
     }
 
@@ -418,30 +396,21 @@ void Pomdp::createPomdp(string name, bool rewrite) {
                 pair<int, string> transitionInput{i, action};
                 std::map<int, double> transitionOutput;
 
-
                 string line;
                 getline(inputFile, line);
-                int i1, i2;
-                i1 = 0;
+                vector<string> transition_v = StringOperations::stringSplit(line, ' ');
+                int i = 0;
 
                 pair<int, string> bTransitionInput{i, action};
 
-                i1 = i2 + 1;
-                while ((i2 = line.find(" ", i1)) != string::npos) {
-                    string s = line.substr(i1, i2 - i1);
-                    i1 = i2 + 1;
-                    i2 = line.find(" ", i1);
-                    string b = line.substr(i1, i2 - 1);
-                    i1 = i2 + 1;
-                    transitionOutput[stoi(s)] = stod(b);
-
+                while (i < transition_v.size()) {
+                    transitionOutput[stoi(transition_v[i])]=stod(transition_v[i+1]);
                     std::vector<int> previousBeliefs = predecessors[bTransitionInput];
-                    previousBeliefs.push_back(stoi(s));
+                    previousBeliefs.push_back(stoi(transition_v[i]));
                     predecessors[bTransitionInput] = previousBeliefs;
 
+                    i = i + 2;
                 }
-                //                string b = line.substr(i1);
-                //                transitionOutput[stoi(s)] = stod(b);
 
                 transition[transitionInput] = transitionOutput;
 
@@ -453,33 +422,14 @@ void Pomdp::createPomdp(string name, bool rewrite) {
         inputFile.close();
     } else {
         ofstream file(fileName);
-
-
         cout << "Starting Enumeration\n";
         for (int i = 0; i < vecStateEnum.size(); i++) {
-            if (isGoalState(vecStateEnum[i])) {
-                goalStates.push_back(i);
-            }
-
-            for (string action : actions) {
+              for (string action : actions) {
                 std::map<VariableSet, double>futureBeliefs = transitionFunction(vecStateEnum[i], action);
                 std::map<int, double> transitionOutput;
 
                 pair<int, string> transitionInput{i, action};
                 for (auto belief : futureBeliefs) {
-
-                    //                    if (i == 528 && action == "human_fill_glass_waterBottle") {
-                    //                        for (auto s : belief.first.set) {
-                    //                            cout << s.first << " " << s.second << "\n";
-                    //                        }
-                    //                        
-                    //                        VariableSet tv=vecStateEnum[578];
-                    //                        for (auto s:tv.set) {
-                    //                            cout<<s.first<<" "<<s.second<<"\n";
-                    //                        }
-                    //                    }
-
-
                     int s = mapStateEnum[belief.first];
 
                     transitionOutput[s] = belief.second;
@@ -494,18 +444,12 @@ void Pomdp::createPomdp(string name, bool rewrite) {
                 file << "\n";
                 transition[transitionInput] = transitionOutput;
 
-
-
                 pair<int, string> rewardInput{i, action};
                 reward[rewardInput] = rewardFunction(vecStateEnum[i], action);
-                if (reward[rewardInput]>1000) {
-                    cout<<"wtf!\n";
-                }
                 file << reward[rewardInput] << "\n";
             }
         }
         file.close();
-        //        cout << predecessors.size() << "\n";
     }
 }
 
@@ -514,13 +458,12 @@ string Pomdp::chooseAction() {
 }
 
 string Pomdp::chooseAction(int s) {
-    map<int,double> a_belief;
-    a_belief[s]=1.0;
+    map<int, double> a_belief;
+    a_belief[s] = 1.0;
     return chooseAction(a_belief);
 }
 
-
-string Pomdp::chooseAction(map<int,double> belief) {
+string Pomdp::chooseAction(map<int, double> belief) {
     string bestAction;
     double maxValue = -1;
     std::map<string, int> actionValues;
@@ -541,7 +484,6 @@ string Pomdp::chooseAction(map<int,double> belief) {
 
     return bestAction;
 }
-
 
 void Pomdp::setInitialState(std::vector<pair<VariableSet, double>> initialBelief) {
     for (auto aBelief : initialBelief) {
@@ -577,10 +519,6 @@ void Pomdp::printActualQValues() {
 
 }
 
-std::vector<double> Pomdp::getV_vector() const {
-    return v_vector;
-}
-
 std::map<string, double> Pomdp::getNormQValue() {
     std::map<string, double> result, result2;
 
@@ -603,28 +541,40 @@ std::map<string, double> Pomdp::getNormQValue() {
 }
 
 double Pomdp::getQValue(string action) {
-    double result=0;
+    double result = 0;
     for (auto aBelief : belief) {
         int s = aBelief.first;
         double prob = aBelief.second;
         pair<int, string> qInput{s, action};
         result = result + qValue[qInput] * prob;
     }
-    if (result<0) {
-        result=0;
+    if (result < 0) {
+        result = 0;
     }
     return result;
 }
 
 double Pomdp::getTransitionProb(int s, string a, int s_new) {
-    pair<int,string> transition_input {s,a};
-    std::map<VariableSet,double> output_states=transitionFunction(vecStateEnum[s],a);
+    pair<int, string> transition_input{s, a};
+    std::map<VariableSet, double> output_states = transitionFunction(vecStateEnum[s], a);
 
-    for (auto so:output_states) {
-        if (mapStateEnum[so.first]==s_new) {
+    for (auto so : output_states) {
+        if (mapStateEnum[so.first] == s_new) {
             return so.second;
         }
     }
     return 0;
 }
+
+void Pomdp::simulate(int n) {
+    cout << "initial belief\n";
+    printBelief();
+    for (int i = 0; i < n; i++) {
+        string action = chooseAction();
+        cout << "Executing " << action << "\n";
+        updateBelief(action);
+        printBelief();
+    }
+}
+
 
