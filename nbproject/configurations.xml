@@ -32,6 +32,7 @@
       <itemPath>Pomdp.h</itemPath>
       <itemPath>PriorityQueue.cpp</itemPath>
       <itemPath>PriorityQueue.h</itemPath>
+      <itemPath>StringOperations.h</itemPath>
       <itemPath>VariableSet.cpp</itemPath>
       <itemPath>VariableSet.h</itemPath>
       <itemPath>main.cpp</itemPath>
@@ -99,6 +100,8 @@
       </item>
       <item path="StartWashingMachine.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="VariableSet.h" ex="false" tool="3" flavor2="0">
@@ -165,6 +168,8 @@
       <item path="StartWashingMachine.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="StartWashingMachine.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
