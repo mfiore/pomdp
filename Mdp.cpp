@@ -186,22 +186,20 @@ void Mdp::printTransitionFunction() {
 
 
             VariableSet vs = vecStateEnum[i];
-            if (vs.set["human_isAt"] == vs.set["box_isAt"]) {
-                for (auto s : vs.set) {
+            for (auto s : vs.set) {
+                cout << s.first << " " << s.second << " ";
+            }
+            cout << "\n";
+            cout << action << "\n";
+            for (auto out : tOutput) {
+                VariableSet vo = vecStateEnum[out.first];
+                for (auto s : vo.set) {
                     cout << s.first << " " << s.second << " ";
                 }
                 cout << "\n";
-                cout << action << "\n";
-                for (auto out : tOutput) {
-                    VariableSet vo = vecStateEnum[out.first];
-                    for (auto s : vo.set) {
-                        cout << s.first << " " << s.second << " ";
-                    }
-                    cout << "\n";
-                    cout << out.first << "\n";
-                }
-                cout << "\n";
+                cout << out.first << "\n";
             }
+            cout << "\n";
         }
     }
 }
@@ -353,7 +351,7 @@ VariableSet Mdp::assignParameters(VariableSet s) {
             actual_value = parametrized_to_original[el.second];
         }
         if (!found) { //not a paramater. Then it must be a variable, if not it's not relevant to this mdp
-            if (std::find(variables.begin(), variables.end(), actual_key)!=variables.end()) {
+            if (std::find(variables.begin(), variables.end(), actual_key) != variables.end()) {
                 found = true;
             }
         }
@@ -436,9 +434,9 @@ void Mdp::setParameters(std::map<string, string> instance) {
             string new_var_name = linked_var;
             new_var_name.replace(new_var_name.find(p), p.length(), this_instance);
             parametrized_to_original[new_var_name] = linked_var;
-            original_to_parametrized[linked_var]=new_var_name;
+            original_to_parametrized[linked_var] = new_var_name;
         }
         parametrized_to_original[this_instance] = p;
-        original_to_parametrized[p]=this_instance;
+        original_to_parametrized[p] = this_instance;
     }
 }

@@ -42,10 +42,10 @@ OBJECTFILES= \
 	${OBJECTDIR}/Pomdp.o \
 	${OBJECTDIR}/PriorityQueue.o \
 	${OBJECTDIR}/StartWashingMachine.o \
+	${OBJECTDIR}/TakeObject.o \
 	${OBJECTDIR}/VariableSet.o \
 	${OBJECTDIR}/WashLaundry.o \
-	${OBJECTDIR}/WashLaundryFull.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/WashLaundryFull.o
 
 
 # C Compiler Flags
@@ -109,6 +109,11 @@ ${OBJECTDIR}/StartWashingMachine.o: StartWashingMachine.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/StartWashingMachine.o StartWashingMachine.cpp
 
+${OBJECTDIR}/TakeObject.o: TakeObject.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TakeObject.o TakeObject.cpp
+
 ${OBJECTDIR}/VariableSet.o: VariableSet.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -123,11 +128,6 @@ ${OBJECTDIR}/WashLaundryFull.o: WashLaundryFull.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundryFull.o WashLaundryFull.cpp
-
-${OBJECTDIR}/main.o: main.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:

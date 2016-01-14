@@ -17,6 +17,8 @@
         <itemPath>GetLaundry.h</itemPath>
         <itemPath>StartWashingMachine.cpp</itemPath>
         <itemPath>StartWashingMachine.h</itemPath>
+        <itemPath>TakeObject.cpp</itemPath>
+        <itemPath>TakeObject.h</itemPath>
         <itemPath>WashLaundry.cpp</itemPath>
         <itemPath>WashLaundry.h</itemPath>
         <itemPath>WashLaundryFull.cpp</itemPath>
@@ -35,7 +37,6 @@
       <itemPath>StringOperations.h</itemPath>
       <itemPath>VariableSet.cpp</itemPath>
       <itemPath>VariableSet.h</itemPath>
-      <itemPath>main.cpp</itemPath>
       <itemPath>tinyxml2.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -102,6 +103,10 @@
       </item>
       <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="TakeObject.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TakeObject.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="VariableSet.h" ex="false" tool="3" flavor2="0">
@@ -113,8 +118,6 @@
       <item path="WashLaundryFull.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="WashLaundryFull.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tinyxml2.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -171,6 +174,10 @@
       </item>
       <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="TakeObject.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TakeObject.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="VariableSet.h" ex="false" tool="3" flavor2="0">
@@ -182,8 +189,6 @@
       <item path="WashLaundryFull.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="WashLaundryFull.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tinyxml2.h" ex="false" tool="3" flavor2="0">
       </item>
