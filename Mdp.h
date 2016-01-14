@@ -52,6 +52,8 @@ public:
     void printQValues(VariableSet s);
 
     virtual void simulate(int n, VariableSet s);
+    
+    void setParameters(std::map<string,string> instance);
 
 //private:
 
@@ -60,7 +62,13 @@ public:
     std::vector<string> variables; //lists all variables;
     std::vector<string> actions;
     std::map<string, std::vector<string> > varValues;
-
+    std::vector<string> parameters;
+    std::map<string,string> parameter_instances;
+    std::map<string, std::vector<string> > parameter_variables;
+    std::map<string,string> parametrized_to_original;
+    std::map<string,string> original_to_parametrized;
+    
+    
     //Variables
 
     //the system state enumeration is kept both way (from enumeration number to system state and other way)
@@ -77,6 +85,7 @@ public:
 
     double getTransitionProb(int s, string a, int s_new);
 
+    VariableSet assignParameters(VariableSet state);
     
     //two functions to override in the derived classes
     virtual VarStateProb transitionFunction(VariableSet state, string action) = 0;

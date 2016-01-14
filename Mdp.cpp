@@ -338,18 +338,47 @@ string Mdp::chooseAction(int s) {
     return max_action;
 }
 
+VariableSet Mdp::assignParameters(VariableSet s) {
+    VariableSet vs_new;
+    for (auto el : s.set) {
+        bool found = false;
+
+        string actual_key = el.first;
+        string actual_value = el.second;
+        if (parametrized_to_original.find(el.first) != parametrized_to_original.end()) {
+            actual_key = parametrized_to_original[el.first];
+            found = true;
+        }
+        if (parametrized_to_original.find(el.second) != parametrized_to_original.end()) {
+            actual_value = parametrized_to_original[el.second];
+        }
+        if (!found) { //not a paramater. Then it must be a variable, if not it's not relevant to this mdp
+            if (std::find(variables.begin(), variables.end(), actual_key)!=variables.end()) {
+                found = true;
+            }
+        }
+        if (found) { //true if the variable in the set was either a parameter instance or a variable in the mdp.
+            vs_new.set[actual_key] = actual_value;
+        }
+    }
+    return vs_new;
+}
+
 string Mdp::chooseAction(VariableSet s) {
-    return chooseAction(mapStateEnum[s]);
+    VariableSet param_s = assignParameters(s);
+    return chooseAction(mapStateEnum[param_s]);
 }
 
 void Mdp::printQValues(VariableSet s) {
+    VariableSet param_s = assignParameters(s);
     for (string action : actions) {
-        cout << action << " - " << getQValue(s, action) << "\n";
+        cout << action << " - " << getQValue(param_s, action) << "\n";
     }
 }
 
 double Mdp::getQValue(VariableSet s, string action) {
-    int i = mapStateEnum[s];
+    VariableSet param_s = assignParameters(s);
+    int i = mapStateEnum[param_s];
     PairStateAction p{i, action};
     return qValue[p];
 }
@@ -358,7 +387,6 @@ double Mdp::getQValue(int s, string action) {
     PairStateAction p{s, action};
     return qValue[p];
 }
-
 
 double Mdp::getTransitionProb(int s, string a, int s_new) {
     PairStateAction transition_input{s, a};
@@ -399,4 +427,18 @@ void Mdp::simulate(int n, VariableSet initial_state) {
     }
 }
 
-
+void Mdp::setParameters(std::map<string, string> instance) {
+    parameter_instances = instance;
+    parametrized_to_original.clear();
+    for (string p : parameters) {
+        string this_instance = instance[p];
+        for (string linked_var : parameter_variables[p]) {
+            string new_var_name = linked_var;
+            new_var_name.replace(new_var_name.find(p), p.length(), this_instance);
+            parametrized_to_original[new_var_name] = linked_var;
+            original_to_parametrized[linked_var]=new_var_name;
+        }
+        parametrized_to_original[this_instance] = p;
+        original_to_parametrized[p]=this_instance;
+    }
+}

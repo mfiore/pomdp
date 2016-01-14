@@ -9,10 +9,10 @@
         <group>
             <file>file:/home/mfiore/NetBeansProjects/pomdp/Hmdp.cpp</file>
             <file>file:/home/mfiore/NetBeansProjects/pomdp/Mdp.h</file>
+            <file>file:/home/mfiore/NetBeansProjects/pomdp/PriorityQueue.cpp</file>
             <file>file:/home/mfiore/NetBeansProjects/pomdp/Hmdp.h</file>
             <file>file:/home/mfiore/NetBeansProjects/pomdp/Mdp.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/WashLaundry.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/GetLaundry.cpp</file>
+            <file>file:/home/mfiore/NetBeansProjects/pomdp/NestedLoop.cpp</file>
         </group>
     </open-files>
 </project-private>

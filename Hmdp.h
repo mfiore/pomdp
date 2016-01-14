@@ -36,6 +36,7 @@ public:
     map<int, double> getHierarcicTransition(int s);
     map<VariableSet, double> getHierarcicTransition(VariableSet s);
     map<VariableSet, double> getHierarcicTransition(VariableSet set, string action);
+    map<VariableSet,double> convertToHigherState(VariableSet original_set, map<VariableSet, double> temp_result);
 
 
     string chooseHierarchicAction(VariableSet state);
