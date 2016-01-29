@@ -8,24 +8,38 @@
 #include "TakeObject.h"
 
 TakeObject::TakeObject() {
-    std::vector<string> locations{"table", "counter", "shelf", "bed", "washing_machine"};
-    std::vector<string> extendedLocations = locations;
-    extendedLocations.push_back("human");
-    std::map<string, std::vector < string>> variables;
+    agent_loc_var_="agent_isAt";
+    object_loc_var_="object_isAt";
+    variables.push_back(agent_loc_var_);
+    variables.push_back(object_loc_var_);
+    
+    std::vector<string> locations {"bed","counter","shelf"};
+    agent_name_ = "agent";
+    object_name_="object";
+  
+    std::map<string,std::vector<string> > var_values;
+    var_values[agent_loc_var_] = locations;
+    var_values[object_loc_var_] = locations;
+    var_values[object_loc_var_].push_back(agent_name_);
 
-    variables["human_isAt"] = locations;
-    variables["object_isAt"] = extendedLocations;
-
-    this->varValues = variables;
-    std::vector<string> actions{"human_move_bed", "human_move_washing_machine", "human_move_box_table", "human_move_box_counter", 
-            "human_move_box_shelf", "human_take_object"};
+    this->varValues = var_values;
+    
+    std::vector<string> actions;
+    for (string l:locations) {
+        actions.push_back(agent_name_+"_move_"+l);
+    }
+    actions.push_back(agent_name_"_take_"+object_name_);
 
     this->actions = actions;
-    this->variables = {"human_isAt", "object_isAt"};
-    parameters.push_back("object");
+    parameters.push_back(object_name_);
     vector<string> par_var;
-    par_var.push_back(("object_isAt"));
-    parameter_variables["object"] = par_var;
+    par_var.push_back(object_loc_var_);
+    parameter_variables[object_name_] = par_var;
+    
+    parameters.push_back(agent_name_);
+    par_var.clear();
+    par_var.push_back(agent_loc_var_);
+    parameter_variables[agent_name_]=par_var;
 }
 
 TakeObject::TakeObject(const TakeObject& orig) {
@@ -34,39 +48,29 @@ TakeObject::TakeObject(const TakeObject& orig) {
 TakeObject::~TakeObject() {
 }
 
-std::map<VariableSet, double> TakeObject::transitionFunction(VariableSet state, string action) {
+void TakeObject::setParameters(string action_name) {
+    vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
+    parametrized_to_original.clear();
+    map<string,string> instance;
+    instance[agent_name_]=action_parameters[0];
+    instance[object_name_]=action_parameters[2]; 
+}
+
+VarStateProb TakeObject::transitionFunction(VariableSet state, string action) {
     string human_isAt = state.set["human_isAt"];
     string object_isAt = state.set["object_isAt"];
 
-    string future_human_isAt;
-    if (action == "human_move_table") {
-        future_human_isAt = "table";
-    } else if (action == "human_move_counter") {
-        future_human_isAt = "counter";
-    } else if (action == "human_move_shelf") {
-        future_human_isAt = "shelf";
-    } else if (action == "human_move_bed") {
-        future_human_isAt = "bed";
-    } else if (action == "human_move_washing_machine") {
-        future_human_isAt = "washing_machine";
-    } else {
-        future_human_isAt = human_isAt;
+    vector<string> action_parameters=MdpBasicActions::getActionParameters(action);
+    VarStateProb future_beliefs;
+    string action_name=action_parameters[1];
+    if (action_name=="take") {
+        future_beliefs=MdpBasicActions::applyTake(human_isAt,object_isAt,agent_name_,object_loc_var_,state);
+    }
+    else if (action_name=="move") {
+        future_beliefs=MdpBasicActions::applyMove(agent_loc_var_,action_parameters[2],state);
     }
 
-    string future_object_isAt = object_isAt;
-    if (action == "human_take_object" && object_isAt == human_isAt) {
-        object_isAt = "human";
-    }
-
-    VariableSet vs1;
-    std::map<string, string> newState;
-    newState["human_isAt"] = future_human_isAt;
-    newState["object_isAt"] = future_object_isAt;
-
-    vs1.set = newState;
-    std::map<VariableSet, double> futureBeliefs;
-    futureBeliefs[vs1] = 1;
-    return futureBeliefs;
+    return future_beliefs;
 }
 
 int TakeObject::rewardFunction(VariableSet state, string action) {

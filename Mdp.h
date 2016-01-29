@@ -53,7 +53,7 @@ public:
 
     virtual void simulate(int n, VariableSet s);
     
-    void setParameters(std::map<string,string> instance);
+    void fillParametersData(map<string,string> instance);
 
 //private:
 

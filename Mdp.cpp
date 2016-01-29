@@ -425,7 +425,7 @@ void Mdp::simulate(int n, VariableSet initial_state) {
     }
 }
 
-void Mdp::setParameters(std::map<string, string> instance) {
+void Mdp::fillParametersData(map<string, string> instance) {
     parameter_instances = instance;
     parametrized_to_original.clear();
     for (string p : parameters) {

@@ -1,41 +1,39 @@
 /* 
- * File:   TakeObject.h
+ * File:   PlaceObject.h
  * Author: mfiore
  *
- * Created on January 14, 2016, 12:40 PM
+ * Created on January 14, 2016, 3:53 PM
  */
 
-#ifndef TAKEOBJECT_H
-#define	TAKEOBJECT_H
+#ifndef PLACEOBJECT_H
+#define	PLACEOBJECT_H
 
 #include "Hmdp.h"
-
 #include <string>
 #include <vector>
-#include "MdpBasicActions.h.h"
 
 using namespace std;
-class TakeObject: public Hmdp {
+class PlaceObject:public Hmdp {
 public:
-    TakeObject();
-    TakeObject(const TakeObject& orig);
-    virtual ~TakeObject();
-    
-    void setParameters(string action_name);
-
+    PlaceObject();
+    PlaceObject(const PlaceObject& orig);
+    virtual ~PlaceObject();
 private:
 
     std::map<VariableSet, double> transitionFunction(VariableSet state, string action);
     int rewardFunction(VariableSet state, string action);
     bool isGoalState(VariableSet state);
     bool isStartingState(VariableSet state);
-    
+
     string agent_loc_var_;
     string object_loc_var_;
+    string goal_loc_var_;
     string agent_name_;
     string object_name_;
+    string goal_location_;
     
+
 };
 
-#endif	/* TAKEOBJECT_H */
+#endif	/* PLACEOBJECT_H */
 

@@ -350,14 +350,13 @@ void Hmdp::create(string name, bool rewrite, bool first) {
                     }
                     r = rewardFunction(vecStateEnum[i], action);
                 } else {
-                    VarStateProb temp_future_beliefs = hierarchy_map_[action]->getHierarcicTransition(vecStateEnum[i]);
-//                    future_beliefs = hierarchy_map_[action]->getHierarcicTransition(vecStateEnum[i]);
-                   //                    future_beliefs = getMatchingStates(temp_future_beliefs);
+                    Hmdp* h = hierarchy_map_[action];
+                    h->setParameters(action);
+                    VarStateProb temp_future_beliefs = h->getHierarcicTransition(vecStateEnum[i]);
                     for (auto temp_b:temp_future_beliefs) {
                         future_beliefs[mapStateEnum[temp_b.first]]=temp_b.second;
                     }
                     VariableSet vstry=vecStateEnum[i];
-                    Hmdp* h=hierarchy_map_[action];
                    
                     r = h->getHierarcicReward(vstry);
                 }
@@ -493,7 +492,9 @@ string Hmdp::chooseHierarchicAction(VariableSet state) {
 
         string action = chooseAction(mapStateEnum[this_state]);
         if (hierarchy_map_.find(action) != hierarchy_map_.end()) {
+            Hmdp * h=hierarchy_map_[action];
             active_module = action;
+            h->setParameters(action);
             return hierarchy_map_[action]->chooseHierarchicAction(state);
         } else {
             return action;

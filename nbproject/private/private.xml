@@ -7,12 +7,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/Hmdp.h</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/Mdp.cpp</file>
+            <file>file:/home/mfiore/devel/src/eigen-eigen-b30b87236a1b/PlaceObject.cpp</file>
             <file>file:/home/mfiore/NetBeansProjects/pomdp/TakeObject.h</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/GetLaundry.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/TakeObject.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/GetLaundry.h</file>
+            <file>file:/home/mfiore/NetBeansProjects/pomdp/PlaceObject.h</file>
         </group>
     </open-files>
 </project-private>

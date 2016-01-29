@@ -35,10 +35,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/452217695/PlaceObject.o \
 	${OBJECTDIR}/GetLaundry.o \
 	${OBJECTDIR}/Hmdp.o \
 	${OBJECTDIR}/Mdp.o \
 	${OBJECTDIR}/NestedLoop.o \
+	${OBJECTDIR}/PlaceObject.o \
 	${OBJECTDIR}/Pomdp.o \
 	${OBJECTDIR}/PriorityQueue.o \
 	${OBJECTDIR}/StartWashingMachine.o \
@@ -74,6 +76,11 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a: ${OBJECTFILES}
 	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a ${OBJECTFILES} 
 	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a
 
+${OBJECTDIR}/_ext/452217695/PlaceObject.o: ../../devel/src/eigen-eigen-b30b87236a1b/PlaceObject.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/452217695
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/452217695/PlaceObject.o ../../devel/src/eigen-eigen-b30b87236a1b/PlaceObject.cpp
+
 ${OBJECTDIR}/GetLaundry.o: GetLaundry.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -93,6 +100,11 @@ ${OBJECTDIR}/NestedLoop.o: NestedLoop.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
+
+${OBJECTDIR}/PlaceObject.o: PlaceObject.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PlaceObject.o PlaceObject.cpp
 
 ${OBJECTDIR}/Pomdp.o: Pomdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
