@@ -20,6 +20,7 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <string>
 #include "StringOperations.h"
+#include <unordered_set>
 
 using namespace std;
 
@@ -39,6 +40,8 @@ public:
     map<VariableSet,double> convertToHigherState(VariableSet original_set, map<VariableSet, double> temp_result);
 
     virtual void setParameters(string action_name)=0;
+    virtual string parametrizeAction(string action_name) = 0;
+
 
     string chooseHierarchicAction(VariableSet state);
     string chooseHierarchicAction(int s);
@@ -59,7 +62,6 @@ public:
     void calculateHierarcicTransition();
 
     int convertHierarchicState(VariableSet state);
-    map<int, double> getMatchingStates(map<VariableSet, double> states);
 
 
     void readHierarchical();

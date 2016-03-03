@@ -35,7 +35,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/452217695/PlaceObject.o \
 	${OBJECTDIR}/GetLaundry.o \
 	${OBJECTDIR}/Hmdp.o \
 	${OBJECTDIR}/Mdp.o \
@@ -43,6 +42,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/PlaceObject.o \
 	${OBJECTDIR}/Pomdp.o \
 	${OBJECTDIR}/PriorityQueue.o \
+	${OBJECTDIR}/ReorderTable.o \
 	${OBJECTDIR}/StartWashingMachine.o \
 	${OBJECTDIR}/TakeObject.o \
 	${OBJECTDIR}/VariableSet.o \
@@ -75,11 +75,6 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a: ${OBJECTFILES}
 	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a
 	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a ${OBJECTFILES} 
 	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a
-
-${OBJECTDIR}/_ext/452217695/PlaceObject.o: ../../devel/src/eigen-eigen-b30b87236a1b/PlaceObject.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/452217695
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/452217695/PlaceObject.o ../../devel/src/eigen-eigen-b30b87236a1b/PlaceObject.cpp
 
 ${OBJECTDIR}/GetLaundry.o: GetLaundry.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -115,6 +110,11 @@ ${OBJECTDIR}/PriorityQueue.o: PriorityQueue.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
+
+${OBJECTDIR}/ReorderTable.o: ReorderTable.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReorderTable.o ReorderTable.cpp
 
 ${OBJECTDIR}/StartWashingMachine.o: StartWashingMachine.cpp 
 	${MKDIR} -p ${OBJECTDIR}

@@ -1,4 +1,4 @@
-/* 
+             /*
  * File:   Mdp.h
  * Author: mfiore
  *
@@ -16,6 +16,7 @@
  */
 
 #ifndef MDP_H
+
 #define	MDP_H
 
 #include <vector>
@@ -54,6 +55,8 @@ public:
     virtual void simulate(int n, VariableSet s);
     
     void fillParametersData(map<string,string> instance);
+
+        virtual string parametrizeAction(string action_name) = 0;
 
 //private:
 
@@ -100,6 +103,10 @@ public:
     double getQValue(int s, string action);
 
     string chooseAction(int s);
+
+
+    VariableSet removeParameters(VariableSet parameter_set);
+
 
 };
 

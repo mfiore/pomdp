@@ -13,7 +13,7 @@ TakeObject::TakeObject() {
     variables.push_back(agent_loc_var_);
     variables.push_back(object_loc_var_);
     
-    std::vector<string> locations {"bed","counter","shelf"};
+    std::vector<string> locations {"table","bed","counter","shelf"};
     agent_name_ = "agent";
     object_name_="object";
   
@@ -28,7 +28,7 @@ TakeObject::TakeObject() {
     for (string l:locations) {
         actions.push_back(agent_name_+"_move_"+l);
     }
-    actions.push_back(agent_name_"_take_"+object_name_);
+    actions.push_back(agent_name_+"_take_"+object_name_);
 
     this->actions = actions;
     parameters.push_back(object_name_);
@@ -50,15 +50,25 @@ TakeObject::~TakeObject() {
 
 void TakeObject::setParameters(string action_name) {
     vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
-    parametrized_to_original.clear();
     map<string,string> instance;
+ 
     instance[agent_name_]=action_parameters[0];
     instance[object_name_]=action_parameters[2]; 
+    fillParametersData(instance);
+}
+
+string TakeObject::parametrizeAction(string action_name) {
+     vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
+     string parametrized_action=parameter_instances[agent_name_]+"_"+action_parameters[1];
+     if (action_parameters[1]=="take") {
+        parametrized_action=parametrized_action+"_"+parameter_instances[object_name_];
+     }
+     return parametrized_action;
 }
 
 VarStateProb TakeObject::transitionFunction(VariableSet state, string action) {
-    string human_isAt = state.set["human_isAt"];
-    string object_isAt = state.set["object_isAt"];
+    string human_isAt = state.set[agent_loc_var_];
+    string object_isAt = state.set[object_loc_var_];
 
     vector<string> action_parameters=MdpBasicActions::getActionParameters(action);
     VarStateProb future_beliefs;
@@ -74,23 +84,23 @@ VarStateProb TakeObject::transitionFunction(VariableSet state, string action) {
 }
 
 int TakeObject::rewardFunction(VariableSet state, string action) {
-    string human_isAt = state.set["human_isAt"];
-    string object_isAt = state.set["object_isAt"];
+    string human_isAt = state.set[agent_loc_var_];
+    string object_isAt = state.set[object_loc_var_];
 
-    if (human_isAt == object_isAt && action == "human_take_object") return 100;
+    if (human_isAt == object_isAt && action == "agent_take_object") return 100;
     else return 0;
 }
 
 bool TakeObject::isGoalState(VariableSet state) {
-    string human_isAt = state.set["human_isAt"];
-    string object_isAt = state.set["object_isAt"];
+    string human_isAt = state.set[agent_loc_var_];
+    string object_isAt = state.set[object_loc_var_];
 
-    return object_isAt == "human";
+    return object_isAt == agent_name_;
 }
 
 bool TakeObject::isStartingState(VariableSet state) {
-    string human_isAt = state.set["human_isAt"];
-    string object_isAt = state.set["object_isAt"];
+    string human_isAt = state.set[agent_loc_var_];
+    string object_isAt = state.set[object_loc_var_];
 
-    return object_isAt != "human";
+    return object_isAt != agent_name_;
 }

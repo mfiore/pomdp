@@ -12,7 +12,7 @@
 
 #include <string>
 #include <vector>
-#include "MdpBasicActions.h.h"
+#include "MdpBasicActions.h"
 
 using namespace std;
 class TakeObject: public Hmdp {
@@ -22,6 +22,7 @@ public:
     virtual ~TakeObject();
     
     void setParameters(string action_name);
+    string parametrizeAction(string action_name);
 
 private:
 

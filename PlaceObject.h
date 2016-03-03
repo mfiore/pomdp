@@ -11,6 +11,7 @@
 #include "Hmdp.h"
 #include <string>
 #include <vector>
+#include "MdpBasicActions.h"
 
 using namespace std;
 class PlaceObject:public Hmdp {
@@ -18,6 +19,10 @@ public:
     PlaceObject();
     PlaceObject(const PlaceObject& orig);
     virtual ~PlaceObject();
+    virtual void setParameters(string action_name);
+    virtual string parametrizeAction(string action_name);
+
+
 private:
 
     std::map<VariableSet, double> transitionFunction(VariableSet state, string action);

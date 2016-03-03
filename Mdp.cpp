@@ -180,22 +180,20 @@ void Mdp::prioritizedSweeping() {
 void Mdp::printTransitionFunction() {
     cout << "Transition Function\n";
     for (int i = 0; i < vecStateEnum.size(); i++) {
+        VariableSet vs = vecStateEnum[i];
+        cout << "In state:\n";
+        cout << vs.toString() << "\n";
+        cout << "\n";
         for (string action : actions) {
             PairStateAction tInput{i, action};
             StateProb tOutput = transition[tInput];
 
 
-            VariableSet vs = vecStateEnum[i];
-            for (auto s : vs.set) {
-                cout << s.first << " " << s.second << " ";
-            }
-            cout << "\n";
-            cout << action << "\n";
+
+            cout <<"Executing "<< action << "\n"<<"Output is:\n";
             for (auto out : tOutput) {
                 VariableSet vo = vecStateEnum[out.first];
-                for (auto s : vo.set) {
-                    cout << s.first << " " << s.second << " ";
-                }
+                cout<<vo.toString()<<"\n";
                 cout << "\n";
                 cout << out.first << "\n";
             }
@@ -227,6 +225,11 @@ void Mdp::printStates() {
             cout << i->second[j] << " ";
         }
         cout << "\n";
+    }
+    cout<<"\n\nPrint combinations\n";
+    for (int i=0;i<vecStateEnum.size();i++) {
+        cout<<"State "<<i<<"\n";
+        cout<<vecStateEnum[i].toString()<<"\n";
     }
 }
 
@@ -343,6 +346,7 @@ VariableSet Mdp::assignParameters(VariableSet s) {
 
         string actual_key = el.first;
         string actual_value = el.second;
+      
         if (parametrized_to_original.find(el.first) != parametrized_to_original.end()) {
             actual_key = parametrized_to_original[el.first];
             found = true;
@@ -362,9 +366,11 @@ VariableSet Mdp::assignParameters(VariableSet s) {
     return vs_new;
 }
 
+
 string Mdp::chooseAction(VariableSet s) {
     VariableSet param_s = assignParameters(s);
-    return chooseAction(mapStateEnum[param_s]);
+    string action=chooseAction(mapStateEnum[param_s]);
+    return parametrizeAction(action);
 }
 
 void Mdp::printQValues(VariableSet s) {
@@ -399,8 +405,8 @@ double Mdp::getTransitionProb(int s, string a, int s_new) {
 
 void Mdp::simulate(int n, VariableSet initial_state) {
 
-
-    int int_initial_state = mapStateEnum[initial_state];
+    VariableSet parametrized_vs=assignParameters(initial_state);
+    int int_initial_state = mapStateEnum[parametrized_vs];
     StateProb b;
     b[int_initial_state] = 1.0;
     for (int i = 0; i < n; i++) {
@@ -439,4 +445,21 @@ void Mdp::fillParametersData(map<string, string> instance) {
         parametrized_to_original[this_instance] = p;
         original_to_parametrized[p] = this_instance;
     }
+}
+
+VariableSet Mdp::removeParameters(VariableSet parameter_set) {
+    VariableSet set;
+    
+    for (auto s:parameter_set.set) {
+        string actual_key=s.first;
+        string actual_value=s.second;
+        if (original_to_parametrized.find(s.first)!=original_to_parametrized.end()) {
+            actual_key=original_to_parametrized[s.first];
+        }
+        if (original_to_parametrized.find(s.second)!=original_to_parametrized.end()) {
+            actual_value=original_to_parametrized[s.second];
+        }
+        set.set[actual_key]=actual_value;
+    }
+    return set;
 }
