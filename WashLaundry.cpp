@@ -24,9 +24,8 @@ WashLaundry::WashLaundry() {
     std::vector<string> actions{"get_laundry", "start_washing_machine"};
 
     this->actions = actions;
-    this->observedVariables = {"human_isAt", "laundry1_isAt", "laundry2_isAt", "laundry3_isAt", "box_isAt",
+    this->variables = {"human_isAt", "laundry1_isAt", "laundry2_isAt", "laundry3_isAt", "box_isAt",
         "washing_machine_state"};
-    this->variables = this->observedVariables;
 }
 
 WashLaundry::WashLaundry(const WashLaundry& orig) {

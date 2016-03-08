@@ -29,8 +29,7 @@ GetLaundry::GetLaundry() {
         "human_move_box_bed", "human_move_box_washing_machine"};
 
     this->actions = actions;
-    this->observedVariables = {"human_isAt", "laundry1_isAt", "laundry2_isAt", "laundry3_isAt", "box_isAt"};
-    this->variables = this->observedVariables;
+    this->variables = {"human_isAt", "laundry1_isAt", "laundry2_isAt", "laundry3_isAt", "box_isAt"};
 
 
 }

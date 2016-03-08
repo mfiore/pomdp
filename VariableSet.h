@@ -3,35 +3,37 @@
  * Author: mfiore
  *
  * Created on August 19, 2014, 1:04 PM
+ * 
+ * Implements an assignement of variables, with their specific comparisons 
  */
 
-#ifndef WORLDSTATE_H
-#define	WORLDSTATE_H
+#ifndef VARIABLESET_H
+#define	VARIABLESET_H
 
 #include <vector>
 #include <map>
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 class VariableSet {
 public:
+    VariableSet(map<string, string> set);
     VariableSet();
     VariableSet(const VariableSet& orig);
     virtual ~VariableSet();
 
-    std::map<string, string> set;
+    //comparison operator
 
     inline bool operator<(const VariableSet& b) const {
-
         std::map<string, string>::const_iterator i;
         i = set.begin();
+        map<string, string> other_set = b.set;
         while (i != set.end()) {
-            if (b.set.find(i->first) != b.set.end()) {
-                string v1=b.set.at(i->first);
-                string v2=i->second;
-                if (v1 == "*" || v2 == "*") {
-                    i++;
-                } else if (v1 < v2) {
+            if (other_set.find(i->first) != other_set.end()) {
+                string v1 = other_set.at(i->first);
+                string v2 = i->second;
+                if (v1 < v2) {
                     return true;
                 } else if (v1 > v2) {
                     return false;
@@ -46,25 +48,14 @@ public:
 
     }
 
-    inline bool contained(const VariableSet &b) const {
-        std::map<string, string>::const_iterator i;
-        i = set.begin();
-        while (i != set.end()) {
-            if (b.set.find(i->first) != b.set.end()) {
-                if (i->second != b.set.at(i->first) && i->second != "*" && b.set.at(i->first) != "*") return false;
-                i++;
-            } else return false;
-        }
-        return true;
-    }
-
     inline bool operator==(const VariableSet& b) const {
-        if (set.size() != b.set.size()) return false;
+        map<string, string> other_set= b.set;
+        if (set.size() != other_set.size()) return false;
         std::map<string, string>::const_iterator i;
         i = set.begin();
         while (i != set.end()) {
-            if (b.set.find(i->first) != b.set.end()) {
-                if (i->second != b.set.at(i->first) && i->second != "*" && b.set.at(i->first) != "*") return false;
+            if (other_set.find(i->first) != other_set.end()) {
+                if (i->second != other_set.at(i->first)) return false;
                 i++;
             } else return false;
         }
@@ -77,11 +68,14 @@ public:
         }
     }
 
-    void print() {
+    inline string toString() {
+        stringstream ss;
         for (auto s : set) {
-            cout << s.first << " " << s.second << "\n";
+            ss << s.first << " " << s.second << "\n";
         }
+        return ss.str();
     }
+    std::map<string, string> set;
 
 private:
 

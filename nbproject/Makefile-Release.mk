@@ -35,21 +35,19 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/AlphaVector.o \
 	${OBJECTDIR}/GetLaundry.o \
-	${OBJECTDIR}/Hmmdp.o \
+	${OBJECTDIR}/Hmdp.o \
+	${OBJECTDIR}/Mdp.o \
 	${OBJECTDIR}/NestedLoop.o \
-	${OBJECTDIR}/ObservationInput.o \
+	${OBJECTDIR}/PlaceObject.o \
 	${OBJECTDIR}/Pomdp.o \
 	${OBJECTDIR}/PriorityQueue.o \
-	${OBJECTDIR}/RewardInput.o \
+	${OBJECTDIR}/ReorderTable.o \
 	${OBJECTDIR}/StartWashingMachine.o \
-	${OBJECTDIR}/TransitionInput.o \
-	${OBJECTDIR}/TransitionOutput.o \
+	${OBJECTDIR}/TakeObject.o \
 	${OBJECTDIR}/VariableSet.o \
 	${OBJECTDIR}/WashLaundry.o \
-	${OBJECTDIR}/WashLaundryFull.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/WashLaundryFull.o
 
 
 # C Compiler Flags
@@ -78,30 +76,30 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a: ${OBJECTFILES}
 	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a ${OBJECTFILES} 
 	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a
 
-${OBJECTDIR}/AlphaVector.o: AlphaVector.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AlphaVector.o AlphaVector.cpp
-
 ${OBJECTDIR}/GetLaundry.o: GetLaundry.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetLaundry.o GetLaundry.cpp
 
-${OBJECTDIR}/Hmmdp.o: Hmmdp.cpp 
+${OBJECTDIR}/Hmdp.o: Hmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmmdp.o Hmmdp.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmdp.o Hmdp.cpp
+
+${OBJECTDIR}/Mdp.o: Mdp.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
 
 ${OBJECTDIR}/NestedLoop.o: NestedLoop.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
 
-${OBJECTDIR}/ObservationInput.o: ObservationInput.cpp 
+${OBJECTDIR}/PlaceObject.o: PlaceObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ObservationInput.o ObservationInput.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PlaceObject.o PlaceObject.cpp
 
 ${OBJECTDIR}/Pomdp.o: Pomdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -113,25 +111,20 @@ ${OBJECTDIR}/PriorityQueue.o: PriorityQueue.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
 
-${OBJECTDIR}/RewardInput.o: RewardInput.cpp 
+${OBJECTDIR}/ReorderTable.o: ReorderTable.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RewardInput.o RewardInput.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReorderTable.o ReorderTable.cpp
 
 ${OBJECTDIR}/StartWashingMachine.o: StartWashingMachine.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/StartWashingMachine.o StartWashingMachine.cpp
 
-${OBJECTDIR}/TransitionInput.o: TransitionInput.cpp 
+${OBJECTDIR}/TakeObject.o: TakeObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TransitionInput.o TransitionInput.cpp
-
-${OBJECTDIR}/TransitionOutput.o: TransitionOutput.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TransitionOutput.o TransitionOutput.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TakeObject.o TakeObject.cpp
 
 ${OBJECTDIR}/VariableSet.o: VariableSet.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -147,11 +140,6 @@ ${OBJECTDIR}/WashLaundryFull.o: WashLaundryFull.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundryFull.o WashLaundryFull.cpp
-
-${OBJECTDIR}/main.o: main.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:

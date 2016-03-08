@@ -29,9 +29,8 @@ StartWashingMachine::StartWashingMachine() {
         "human_move_table", "human_move_counter", "human_move_shelf", "human_move_bed", "human_move_washing_machine"};
 
     this->actions = actions;
-    this->observedVariables = {"human_isAt", "laundry1_isAt", "laundry2_isAt", "laundry3_isAt", "box_isAt",
+    this->variables = {"human_isAt", "laundry1_isAt", "laundry2_isAt", "laundry3_isAt", "box_isAt",
         "washing_machine_state"};
-    this->variables = this->observedVariables;
 
 
 }

@@ -13,36 +13,37 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="Models" projectFiles="true">
+        <logicalFolder name="f1" displayName="Actions" projectFiles="true">
+          <itemPath>MdpBasicActions.h</itemPath>
+        </logicalFolder>
         <itemPath>GetLaundry.cpp</itemPath>
         <itemPath>GetLaundry.h</itemPath>
+        <itemPath>PlaceObject.cpp</itemPath>
+        <itemPath>PlaceObject.h</itemPath>
+        <itemPath>ReorderTable.cpp</itemPath>
+        <itemPath>ReorderTable.h</itemPath>
         <itemPath>StartWashingMachine.cpp</itemPath>
         <itemPath>StartWashingMachine.h</itemPath>
+        <itemPath>TakeObject.cpp</itemPath>
+        <itemPath>TakeObject.h</itemPath>
         <itemPath>WashLaundry.cpp</itemPath>
         <itemPath>WashLaundry.h</itemPath>
         <itemPath>WashLaundryFull.cpp</itemPath>
         <itemPath>WashLaundryFull.h</itemPath>
       </logicalFolder>
-      <itemPath>AlphaVector.cpp</itemPath>
-      <itemPath>AlphaVector.h</itemPath>
-      <itemPath>Hmmdp.cpp</itemPath>
-      <itemPath>Hmmdp.h</itemPath>
+      <itemPath>Hmdp.cpp</itemPath>
+      <itemPath>Hmdp.h</itemPath>
+      <itemPath>Mdp.cpp</itemPath>
+      <itemPath>Mdp.h</itemPath>
       <itemPath>NestedLoop.cpp</itemPath>
       <itemPath>NestedLoop.h</itemPath>
-      <itemPath>ObservationInput.cpp</itemPath>
-      <itemPath>ObservationInput.h</itemPath>
       <itemPath>Pomdp.cpp</itemPath>
       <itemPath>Pomdp.h</itemPath>
       <itemPath>PriorityQueue.cpp</itemPath>
       <itemPath>PriorityQueue.h</itemPath>
-      <itemPath>RewardInput.cpp</itemPath>
-      <itemPath>RewardInput.h</itemPath>
-      <itemPath>TransitionInput.cpp</itemPath>
-      <itemPath>TransitionInput.h</itemPath>
-      <itemPath>TransitionOutput.cpp</itemPath>
-      <itemPath>TransitionOutput.h</itemPath>
+      <itemPath>StringOperations.h</itemPath>
       <itemPath>VariableSet.cpp</itemPath>
       <itemPath>VariableSet.h</itemPath>
-      <itemPath>main.cpp</itemPath>
       <itemPath>tinyxml2.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -79,25 +80,27 @@
         <archiverTool>
         </archiverTool>
       </compileType>
-      <item path="AlphaVector.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="AlphaVector.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Hmmdp.cpp" ex="false" tool="1" flavor2="0">
+      <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="Hmmdp.h" ex="false" tool="3" flavor2="0">
+      <item path="Hmdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Mdp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Mdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MdpBasicActions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="NestedLoop.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="NestedLoop.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="ObservationInput.cpp" ex="false" tool="1" flavor2="0">
+      <item path="PlaceObject.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="ObservationInput.h" ex="false" tool="3" flavor2="0">
+      <item path="PlaceObject.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Pomdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -107,21 +110,19 @@
       </item>
       <item path="PriorityQueue.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="RewardInput.cpp" ex="false" tool="1" flavor2="0">
+      <item path="ReorderTable.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="RewardInput.h" ex="false" tool="3" flavor2="0">
+      <item path="ReorderTable.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="StartWashingMachine.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="StartWashingMachine.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="TransitionInput.cpp" ex="false" tool="1" flavor2="0">
+      <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="TransitionInput.h" ex="false" tool="3" flavor2="0">
+      <item path="TakeObject.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="TransitionOutput.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="TransitionOutput.h" ex="false" tool="3" flavor2="0">
+      <item path="TakeObject.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -134,8 +135,6 @@
       <item path="WashLaundryFull.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="WashLaundryFull.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tinyxml2.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -162,25 +161,27 @@
         <archiverTool>
         </archiverTool>
       </compileType>
-      <item path="AlphaVector.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="AlphaVector.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Hmmdp.cpp" ex="false" tool="1" flavor2="0">
+      <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="Hmmdp.h" ex="false" tool="3" flavor2="0">
+      <item path="Hmdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Mdp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Mdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MdpBasicActions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="NestedLoop.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="NestedLoop.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="ObservationInput.cpp" ex="false" tool="1" flavor2="0">
+      <item path="PlaceObject.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="ObservationInput.h" ex="false" tool="3" flavor2="0">
+      <item path="PlaceObject.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Pomdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -190,21 +191,19 @@
       </item>
       <item path="PriorityQueue.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="RewardInput.cpp" ex="false" tool="1" flavor2="0">
+      <item path="ReorderTable.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="RewardInput.h" ex="false" tool="3" flavor2="0">
+      <item path="ReorderTable.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="StartWashingMachine.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="StartWashingMachine.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="TransitionInput.cpp" ex="false" tool="1" flavor2="0">
+      <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="TransitionInput.h" ex="false" tool="3" flavor2="0">
+      <item path="TakeObject.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="TransitionOutput.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="TransitionOutput.h" ex="false" tool="3" flavor2="0">
+      <item path="TakeObject.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -217,8 +216,6 @@
       <item path="WashLaundryFull.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="WashLaundryFull.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tinyxml2.h" ex="false" tool="3" flavor2="0">
       </item>

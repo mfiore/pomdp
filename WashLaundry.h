@@ -8,13 +8,13 @@
 #ifndef WASHLAUNDRY_H
 #define	WASHLAUNDRY_H
 
-#include "Hmmdp.h"
+#include "Hmdp.h"
 #include <vector>
 #include <string>
 #include "GetLaundry.h"
 #include "StartWashingMachine.h"
 
-class WashLaundry : public Hmmdp {
+class WashLaundry : public Hmdp {
 public:
     WashLaundry();
     WashLaundry(const WashLaundry& orig);

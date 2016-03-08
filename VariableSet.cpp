@@ -7,8 +7,14 @@
 
 #include "VariableSet.h"
 
-VariableSet::VariableSet() {
+VariableSet::VariableSet(map<string,string> set) {
+    set=set;
 }
+
+VariableSet::VariableSet() {
+    
+}
+
 
 VariableSet::VariableSet(const VariableSet& orig) {
     set=orig.set;
