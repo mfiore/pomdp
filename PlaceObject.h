@@ -19,8 +19,8 @@ public:
     PlaceObject();
     PlaceObject(const PlaceObject& orig);
     virtual ~PlaceObject();
-    virtual void setParameters(string action_name);
-    virtual string parametrizeAction(string action_name);
+    virtual void assignParametersFromActionName(string action_name);
+    virtual string getDeparametrizedAction(string action_name);
 
 
 private:

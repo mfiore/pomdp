@@ -48,16 +48,16 @@ TakeObject::TakeObject(const TakeObject& orig) {
 TakeObject::~TakeObject() {
 }
 
-void TakeObject::setParameters(string action_name) {
+void TakeObject::assignParametersFromActionName(string action_name) {
     vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
     map<string,string> instance;
  
     instance[agent_name_]=action_parameters[0];
     instance[object_name_]=action_parameters[2]; 
-    fillParametersData(instance);
+    assignParameters(instance);
 }
 
-string TakeObject::parametrizeAction(string action_name) {
+string TakeObject::getDeparametrizedAction(string action_name) {
      vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
      string parametrized_action=parameter_instances[agent_name_]+"_"+action_parameters[1];
      if (action_parameters[1]=="take") {

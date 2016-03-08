@@ -21,8 +21,8 @@ public:
     TakeObject(const TakeObject& orig);
     virtual ~TakeObject();
     
-    void setParameters(string action_name);
-    string parametrizeAction(string action_name);
+    void assignParametersFromActionName(string action_name);
+    string getDeparametrizedAction(string action_name);
 
 private:
 

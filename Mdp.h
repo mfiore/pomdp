@@ -54,9 +54,9 @@ public:
 
     virtual void simulate(int n, VariableSet s);
     
-    void fillParametersData(map<string,string> instance);
+    void assignParameters(map<string,string> instance);
 
-        virtual string parametrizeAction(string action_name) = 0;
+    virtual string getDeparametrizedAction(string action_name);
 
 //private:
 
@@ -65,11 +65,12 @@ public:
     std::vector<string> variables; //lists all variables;
     std::vector<string> actions;
     std::map<string, std::vector<string> > varValues;
-    std::vector<string> parameters;
-    std::map<string,string> parameter_instances;
-    std::map<string, std::vector<string> > parameter_variables;
-    std::map<string,string> parametrized_to_original;
-    std::map<string,string> original_to_parametrized;
+    
+    std::vector<string> parameters; //list of parameters of the mdp (ex. object_name agent_name)
+    std::map<string,string> parameter_instances; //current set up of parameters (ex. object_name=grey_tape)
+    std::map<string, std::vector<string> > parameter_variables; //each parameter can be link to variables (ex. object_name is linked to object_isAt)
+    std::map<string,string> original_to_parametrized; //map that converts a var to it's parametrized version (e.g. greyTape_isAt -> object_isAt)
+   std::map<string,string> parametrized_to_original; //opposite of the one upper
     
     
     //Variables
@@ -88,7 +89,6 @@ public:
 
     double getTransitionProb(int s, string a, int s_new);
 
-    VariableSet assignParameters(VariableSet state);
     
     //two functions to override in the derived classes
     virtual VarStateProb transitionFunction(VariableSet state, string action) = 0;
@@ -105,8 +105,8 @@ public:
     string chooseAction(int s);
 
 
-    VariableSet removeParameters(VariableSet parameter_set);
-
+    VariableSet convertToParametrizedState(VariableSet parameter_set); //converts a state space to it's parametrized version
+    VariableSet convertToDeparametrizedState(VariableSet parameter_set); //opposite
 
 };
 

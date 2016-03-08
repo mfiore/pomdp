@@ -13,6 +13,7 @@
 #include <utility>
 #include <algorithm>
 #include <c++/4.6/bits/stl_queue.h>
+#include <c++/4.6/iosfwd>
 
 Mdp::Mdp() {
 }
@@ -339,49 +340,25 @@ string Mdp::chooseAction(int s) {
     return max_action;
 }
 
-VariableSet Mdp::assignParameters(VariableSet s) {
-    VariableSet vs_new;
-    for (auto el : s.set) {
-        bool found = false;
 
-        string actual_key = el.first;
-        string actual_value = el.second;
-      
-        if (parametrized_to_original.find(el.first) != parametrized_to_original.end()) {
-            actual_key = parametrized_to_original[el.first];
-            found = true;
-        }
-        if (parametrized_to_original.find(el.second) != parametrized_to_original.end()) {
-            actual_value = parametrized_to_original[el.second];
-        }
-        if (!found) { //not a paramater. Then it must be a variable, if not it's not relevant to this mdp
-            if (std::find(variables.begin(), variables.end(), actual_key) != variables.end()) {
-                found = true;
-            }
-        }
-        if (found) { //true if the variable in the set was either a parameter instance or a variable in the mdp.
-            vs_new.set[actual_key] = actual_value;
-        }
-    }
-    return vs_new;
-}
+
 
 
 string Mdp::chooseAction(VariableSet s) {
-    VariableSet param_s = assignParameters(s);
+    VariableSet param_s = convertToParametrizedState(s);
     string action=chooseAction(mapStateEnum[param_s]);
-    return parametrizeAction(action);
+    return getDeparametrizedAction(action);
 }
 
 void Mdp::printQValues(VariableSet s) {
-    VariableSet param_s = assignParameters(s);
+    VariableSet param_s = convertToParametrizedState(s);
     for (string action : actions) {
         cout << action << " - " << getQValue(param_s, action) << "\n";
     }
 }
 
 double Mdp::getQValue(VariableSet s, string action) {
-    VariableSet param_s = assignParameters(s);
+    VariableSet param_s = convertToParametrizedState(s);
     int i = mapStateEnum[param_s];
     PairStateAction p{i, action};
     return qValue[p];
@@ -405,7 +382,7 @@ double Mdp::getTransitionProb(int s, string a, int s_new) {
 
 void Mdp::simulate(int n, VariableSet initial_state) {
 
-    VariableSet parametrized_vs=assignParameters(initial_state);
+    VariableSet parametrized_vs=convertToParametrizedState(initial_state);
     int int_initial_state = mapStateEnum[parametrized_vs];
     StateProb b;
     b[int_initial_state] = 1.0;
@@ -431,35 +408,78 @@ void Mdp::simulate(int n, VariableSet initial_state) {
     }
 }
 
-void Mdp::fillParametersData(map<string, string> instance) {
+void Mdp::assignParameters(map<string, string> instance) {
     parameter_instances = instance;
-    parametrized_to_original.clear();
+    original_to_parametrized.clear();
     for (string p : parameters) {
         string this_instance = instance[p];
         for (string linked_var : parameter_variables[p]) {
             string new_var_name = linked_var;
             new_var_name.replace(new_var_name.find(p), p.length(), this_instance);
-            parametrized_to_original[new_var_name] = linked_var;
-            original_to_parametrized[linked_var] = new_var_name;
+            original_to_parametrized[new_var_name] = linked_var;
+            parametrized_to_original[linked_var] = new_var_name;
         }
-        parametrized_to_original[this_instance] = p;
-        original_to_parametrized[p] = this_instance;
+        original_to_parametrized[this_instance] = p;
+        parametrized_to_original[p] = this_instance;
     }
 }
 
-VariableSet Mdp::removeParameters(VariableSet parameter_set) {
+
+VariableSet Mdp::convertToParametrizedState(VariableSet s) {
+    VariableSet vs_new;
+    for (auto el : s.set) {
+        bool found = false;
+
+        string actual_key = el.first;
+        string actual_value = el.second;
+      
+        if (original_to_parametrized.find(el.first) != original_to_parametrized.end()) {
+            actual_key = original_to_parametrized[el.first];
+            found = true;
+        }
+        if (original_to_parametrized.find(el.second) != original_to_parametrized.end()) {
+            actual_value = original_to_parametrized[el.second];
+        }
+        if (!found) { //not a paramater. Then it must be a variable, if not it's not relevant to this mdp
+            if (std::find(variables.begin(), variables.end(), actual_key) != variables.end()) {
+                found = true;
+            }
+        }
+        if (found) { //true if the variable in the set was either a parameter instance or a variable in the mdp.
+            vs_new.set[actual_key] = actual_value;
+        }
+    }
+    return vs_new;
+}
+
+VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set) {
     VariableSet set;
-    
-    for (auto s:parameter_set.set) {
-        string actual_key=s.first;
-        string actual_value=s.second;
-        if (original_to_parametrized.find(s.first)!=original_to_parametrized.end()) {
-            actual_key=original_to_parametrized[s.first];
+
+    for (auto s : parameter_set.set) {
+        string actual_key = s.first;
+        string actual_value = s.second;
+        if (parametrized_to_original.find(s.first) != parametrized_to_original.end()) {
+            actual_key = parametrized_to_original[s.first];
         }
-        if (original_to_parametrized.find(s.second)!=original_to_parametrized.end()) {
-            actual_value=original_to_parametrized[s.second];
+        if (parametrized_to_original.find(s.second) != parametrized_to_original.end()) {
+            actual_value = parametrized_to_original[s.second];
         }
-        set.set[actual_key]=actual_value;
+        set.set[actual_key] = actual_value;
     }
     return set;
+}
+
+string Mdp::getDeparametrizedAction(string action_name) {
+    vector<string> action_parts=StringOperations::stringSplit(action_name,'_');
+    stringstream depar_action_name;
+    for (string s:action_parts) {
+        if (parametrized_to_original.find(s)!=parametrized_to_original.end()) {
+            depar_action_name<<parametrized_to_original[s];
+        }
+        else {
+            depar_action_name<<s;
+        }
+        
+    }
+    return depar_action_name.str();
 }

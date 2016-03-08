@@ -76,11 +76,11 @@ int ReorderTable::rewardFunction(VariableSet state, string action) {
 
 }
 
-void ReorderTable::setParameters(string action_name) {
+void ReorderTable::assignParametersFromActionName(string action_name) {
     
 }
 
-string ReorderTable::parametrizeAction(string action_name) {
+string ReorderTable::getDeparametrizedAction(string action_name) {
     return action_name;
 }
 

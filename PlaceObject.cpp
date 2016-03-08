@@ -47,16 +47,16 @@ PlaceObject::PlaceObject() {
     parameters.push_back(goal_location_);
 }
 
-void PlaceObject::setParameters(string action_name) {
+void PlaceObject::assignParametersFromActionName(string action_name) {
     vector<string> action_parameters = StringOperations::stringSplit(action_name, '_');
     map<string, string> instance;
     instance[agent_name_] = action_parameters[0];
     instance[object_name_] = action_parameters[2];
     instance[goal_location_] = action_parameters[3];
-    fillParametersData(instance);
+    assignParameters(instance);
 }
 
-string PlaceObject::parametrizeAction(string action_name) {
+string PlaceObject::getDeparametrizedAction(string action_name) {
     vector<string> action_parameters = StringOperations::stringSplit(action_name, '_');
     string parametrized_action = parameter_instances[agent_name_] + "_" + action_parameters[1];
     if (action_parameters[1] == "place") {

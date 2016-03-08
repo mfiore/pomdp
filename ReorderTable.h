@@ -22,9 +22,9 @@ public:
     ReorderTable();
     ReorderTable(const ReorderTable& orig);
     virtual ~ReorderTable();
-    void setParameters(string action_name);
+    void assignParametersFromActionName(string action_name);
 
-    string parametrizeAction(string action_name);
+    string getDeparametrizedAction(string action_name);
 
     std::map<VariableSet, double> transitionFunction(VariableSet state, string action);
     bool isStartingState(VariableSet state);
