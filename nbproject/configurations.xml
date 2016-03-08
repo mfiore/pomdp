@@ -9,41 +9,39 @@
                    displayName="Resource Files"
                    projectFiles="true">
     </logicalFolder>
-    <logicalFolder name="SourceFiles"
+    <logicalFolder name="f1"
                    displayName="Source Files"
-                   projectFiles="true">
-      <logicalFolder name="f1" displayName="Models" projectFiles="true">
-        <logicalFolder name="f1" displayName="Actions" projectFiles="true">
-          <itemPath>MdpBasicActions.h</itemPath>
-        </logicalFolder>
-        <itemPath>GetLaundry.cpp</itemPath>
-        <itemPath>GetLaundry.h</itemPath>
-        <itemPath>PlaceObject.cpp</itemPath>
-        <itemPath>PlaceObject.h</itemPath>
-        <itemPath>ReorderTable.cpp</itemPath>
-        <itemPath>ReorderTable.h</itemPath>
-        <itemPath>StartWashingMachine.cpp</itemPath>
-        <itemPath>StartWashingMachine.h</itemPath>
-        <itemPath>TakeObject.cpp</itemPath>
-        <itemPath>TakeObject.h</itemPath>
-        <itemPath>WashLaundry.cpp</itemPath>
-        <itemPath>WashLaundry.h</itemPath>
-        <itemPath>WashLaundryFull.cpp</itemPath>
-        <itemPath>WashLaundryFull.h</itemPath>
-      </logicalFolder>
+                   projectFiles="true"
+                   kind="ROOT">
+      <itemPath>GetLaundry.cpp</itemPath>
+      <itemPath>GetLaundry.h</itemPath>
       <itemPath>Hmdp.cpp</itemPath>
       <itemPath>Hmdp.h</itemPath>
+      <itemPath>Makefile</itemPath>
       <itemPath>Mdp.cpp</itemPath>
       <itemPath>Mdp.h</itemPath>
+      <itemPath>MdpBasicActions.h</itemPath>
       <itemPath>NestedLoop.cpp</itemPath>
       <itemPath>NestedLoop.h</itemPath>
+      <itemPath>PlaceObject.cpp</itemPath>
+      <itemPath>PlaceObject.h</itemPath>
       <itemPath>Pomdp.cpp</itemPath>
       <itemPath>Pomdp.h</itemPath>
       <itemPath>PriorityQueue.cpp</itemPath>
       <itemPath>PriorityQueue.h</itemPath>
+      <itemPath>ReorderTable.cpp</itemPath>
+      <itemPath>ReorderTable.h</itemPath>
+      <itemPath>StartWashingMachine.cpp</itemPath>
+      <itemPath>StartWashingMachine.h</itemPath>
       <itemPath>StringOperations.h</itemPath>
+      <itemPath>TakeObject.cpp</itemPath>
+      <itemPath>TakeObject.h</itemPath>
       <itemPath>VariableSet.cpp</itemPath>
       <itemPath>VariableSet.h</itemPath>
+      <itemPath>WashLaundry.cpp</itemPath>
+      <itemPath>WashLaundry.h</itemPath>
+      <itemPath>WashLaundryFull.cpp</itemPath>
+      <itemPath>WashLaundryFull.h</itemPath>
       <itemPath>tinyxml2.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -87,6 +85,8 @@
       <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Hmdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Mdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -168,6 +168,8 @@
       <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Hmdp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Mdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
