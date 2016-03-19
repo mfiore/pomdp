@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/GetLaundry.o \
 	${OBJECTDIR}/Hmdp.o \
 	${OBJECTDIR}/Mdp.o \
+	${OBJECTDIR}/Mmdp.o \
 	${OBJECTDIR}/NestedLoop.o \
 	${OBJECTDIR}/PlaceObject.o \
 	${OBJECTDIR}/Pomdp.o \
@@ -90,6 +91,11 @@ ${OBJECTDIR}/Mdp.o: Mdp.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
+
+${OBJECTDIR}/Mmdp.o: Mmdp.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
 
 ${OBJECTDIR}/NestedLoop.o: NestedLoop.cpp 
 	${MKDIR} -p ${OBJECTDIR}

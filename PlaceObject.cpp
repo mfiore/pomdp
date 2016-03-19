@@ -38,12 +38,14 @@ PlaceObject::PlaceObject() {
     vector<string> par_var;
     par_var.push_back(object_loc_var_);
     parameter_variables[object_name_] = par_var;
-
+    variable_parameter[par_var[0]]=object_name_;
+    
     parameters.push_back(agent_name_);
     par_var.clear();
     par_var.push_back(agent_loc_var_);
     parameter_variables[agent_name_] = par_var;
-
+    variable_parameter[par_var[0]]=agent_name_;
+    
     parameters.push_back(goal_location_);
 }
 

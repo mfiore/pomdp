@@ -25,9 +25,10 @@
 using namespace std;
 
 class Hmdp : public Mdp {
-    typedef map<string, Hmdp*> HmdpMap;
 
 public:
+    typedef map<string, Hmdp*> HmdpMap;
+
     Hmdp();
     Hmdp(const Hmdp& orig);
     virtual ~Hmdp();
@@ -70,8 +71,9 @@ public:
     //creates the mdp. name is the assigned name on the mdp. If rewrite is true the mdp will generate a new policy and hmdp file
     //if first=true it won't calculate hierarchical reward and transition, saving some time (it's usable only on the first node
     //of a hierarchical mdp architecture)
-    void create(string name, bool rewrite, bool first);
-
+    virtual void create(string name, bool rewrite, bool first);
+    
+    
 //private:
     //to override. Returns true if the state is starting
     virtual bool isStartingState(VariableSet state) = 0;
@@ -100,6 +102,15 @@ public:
     vector<int> starting_states_;
     vector<int> goal_states_;
 
+    
+    virtual void enumerateFunctions(string fileName);
+    virtual void enumerateGoalAndStartStates();
+
+    bool isAlreadyCreated();
+    bool is_created_;
+
+    
+    void printGoalStates();
 };
 
 #endif	/* HMDP_H */

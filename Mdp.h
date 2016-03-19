@@ -1,4 +1,4 @@
-             /*
+/*
  * File:   Mdp.h
  * Author: mfiore
  *
@@ -53,26 +53,29 @@ public:
     void printQValues(VariableSet s);
 
     virtual void simulate(int n, VariableSet s);
-    
-    void assignParameters(map<string,string> instance);
+
+    void assignParameters(map<string, string> instance);
 
     virtual string getDeparametrizedAction(string action_name);
+    virtual string getParametrizedAction(string action_name);
+    
+    //private:
 
-//private:
-
-//protected:
+    //protected:
     //mdp specification
     std::vector<string> variables; //lists all variables;
     std::vector<string> actions;
     std::map<string, std::vector<string> > varValues;
-    
+
     std::vector<string> parameters; //list of parameters of the mdp (ex. object_name agent_name)
-    std::map<string,string> parameter_instances; //current set up of parameters (ex. object_name=grey_tape)
+    std::map<string, string> parameter_instances; //current set up of parameters (ex. object_name=grey_tape)
     std::map<string, std::vector<string> > parameter_variables; //each parameter can be link to variables (ex. object_name is linked to object_isAt)
-    std::map<string,string> original_to_parametrized; //map that converts a var to it's parametrized version (e.g. greyTape_isAt -> object_isAt)
-   std::map<string,string> parametrized_to_original; //opposite of the one upper
-    
-    
+    std::map<string, string> variable_parameter; //inverse link
+    std::map<string, vector<string> > original_to_parametrized; //map that converts a var to it's parametrized version (e.g. greyTape_isAt -> object_isAt)
+    //it's a vector because theoretically more parameters could be set to the same value (e.g. greyTape_isAt -> object1_isAt, object2_isAt)
+    std::map<string, string > parametrized_to_original; //opposite of the one upper
+
+
     //Variables
 
     //the system state enumeration is kept both way (from enumeration number to system state and other way)
@@ -89,7 +92,7 @@ public:
 
     double getTransitionProb(int s, string a, int s_new);
 
-    
+
     //two functions to override in the derived classes
     virtual VarStateProb transitionFunction(VariableSet state, string action) = 0;
     virtual int rewardFunction(VariableSet state, string action) = 0;
@@ -105,8 +108,16 @@ public:
     string chooseAction(int s);
 
 
-    VariableSet convertToParametrizedState(VariableSet parameter_set); //converts a state space to it's parametrized version
+    virtual VariableSet convertToParametrizedState(VariableSet parameter_set); //converts a state space to it's parametrized version
     VariableSet convertToDeparametrizedState(VariableSet parameter_set); //opposite
+
+
+    virtual void enumerateStates();
+    virtual void enumerateFunctions(string fileName);
+    bool readMdp(string fileName, bool rewrite);
+
+
+
 
 };
 

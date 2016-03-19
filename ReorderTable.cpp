@@ -8,13 +8,13 @@
 #include "ReorderTable.h"
 
 ReorderTable::ReorderTable() {
-    agent_loc_var_ = "human_isAt";
+    agent_loc_var_ = "agent_isAt";
     n_dishes_ = 3;
     for (int i = 0; i<n_dishes_;i++) {
         dish_loc_var_.push_back("dish"+boost::lexical_cast<string>(i)+"_isAt");
     }
 
-    agent_name_ = "human";
+    agent_name_ = "agent";
     dish_name_ = "dish";
     goal_location_ = "counter";
 
@@ -37,10 +37,16 @@ ReorderTable::ReorderTable() {
     for (int i = 0; i < n_dishes_; i++) {
         actions.push_back(agent_name_ + "_take_" + dish_name_  + boost::lexical_cast<string>(i));
         actions.push_back(agent_name_ + "_place_" + dish_name_ + boost::lexical_cast<string>(i) + "_" + goal_location_);
-
+       
     }
 
     this->actions = actions;
+
+    parameters.push_back(agent_name_);
+    vector<string> par_var;
+    par_var.push_back(agent_loc_var_);
+    parameter_variables[agent_name_] = par_var;
+    variable_parameter[par_var[0]] = agent_name_;
 }
 
 ReorderTable::ReorderTable(const ReorderTable& orig) {
