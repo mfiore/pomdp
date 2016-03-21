@@ -47,6 +47,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/StartWashingMachine.o \
 	${OBJECTDIR}/TakeObject.o \
 	${OBJECTDIR}/VariableSet.o \
+	${OBJECTDIR}/Wait.o \
 	${OBJECTDIR}/WashLaundry.o \
 	${OBJECTDIR}/WashLaundryFull.o
 
@@ -136,6 +137,11 @@ ${OBJECTDIR}/VariableSet.o: VariableSet.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
+
+${OBJECTDIR}/Wait.o: Wait.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
 
 ${OBJECTDIR}/WashLaundry.o: WashLaundry.cpp 
 	${MKDIR} -p ${OBJECTDIR}

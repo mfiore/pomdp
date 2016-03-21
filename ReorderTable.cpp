@@ -75,6 +75,9 @@ int ReorderTable::rewardFunction(VariableSet state, string action) {
             i_not_placed=i;
         }
     }
+//    if (n_not_placed==1) {
+//        cout<<"asd";
+//    }
     if (n_not_placed==1 && action==agent_name_+"_place_"+dish_name_+boost::lexical_cast<string>(i_not_placed)+"_"+goal_location_){
         return 1000;
     }

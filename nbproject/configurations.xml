@@ -22,6 +22,8 @@
         <itemPath>StartWashingMachine.h</itemPath>
         <itemPath>TakeObject.cpp</itemPath>
         <itemPath>TakeObject.h</itemPath>
+        <itemPath>Wait.cpp</itemPath>
+        <itemPath>Wait.h</itemPath>
         <itemPath>WashLaundry.cpp</itemPath>
         <itemPath>WashLaundry.h</itemPath>
         <itemPath>WashLaundryFull.cpp</itemPath>
@@ -133,6 +135,10 @@
       </item>
       <item path="VariableSet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Wait.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Wait.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="WashLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="WashLaundry.h" ex="false" tool="3" flavor2="0">
@@ -219,6 +225,10 @@
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="VariableSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Wait.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Wait.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="WashLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>
