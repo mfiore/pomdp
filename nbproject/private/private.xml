@@ -9,13 +9,8 @@
         <group>
             <file>file:/home/mfiore/NetBeansProjects/pomdp/Hmdp.cpp</file>
             <file>file:/home/mfiore/NetBeansProjects/pomdp/PlaceObject.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/Mdp.h</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/ReorderTable.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/Mmdp.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/Mdp.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/VariableSet.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/Mmdp.h</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/TakeObject.cpp</file>
+            <file>file:/home/mfiore/NetBeansProjects/pomdp/Hmdp.h</file>
+            <file>file:/home/mfiore/NetBeansProjects/pomdp/PlaceObject.h</file>
         </group>
     </open-files>
 </project-private>
