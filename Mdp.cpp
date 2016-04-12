@@ -191,10 +191,13 @@ void Mdp::printTransitionFunction() {
 
 
 
-            cout <<"Executing "<< action << "\n"<<"Output is:\n";
+            cout << "Executing " << action << "\n" << "Output is:\n";
             for (auto out : tOutput) {
+                if (out.first!=0) {
+                    cout<<"...\n";
+                } 
                 VariableSet vo = vecStateEnum[out.first];
-                cout<<vo.toString()<<"\n";
+                cout << vo.toString() << "\n";
                 cout << "\n";
                 cout << out.first << "\n";
             }
@@ -227,28 +230,25 @@ void Mdp::printStates() {
         }
         cout << "\n";
     }
-    cout<<"\n\nPrint combinations\n";
-    for (int i=0;i<vecStateEnum.size();i++) {
-        cout<<"State "<<i<<"\n";
-        cout<<vecStateEnum[i].toString()<<"\n";
+    cout << "\n\nPrint combinations\n";
+    for (int i = 0; i < vecStateEnum.size(); i++) {
+        cout << "State " << i << "\n";
+        cout << vecStateEnum[i].toString() << "\n";
     }
 }
 
-void Mdp::create(string name, bool rewrite) {
-    this->name = name;
-
-    string fileName = name + ".mdp";
-
+void Mdp::enumerateStates() {
     std::vector<std::vector<int>> enumInput;
     for (string variable : variables) {
         std::vector<int> valValues;
         for (int i = 0; i < varValues[variable].size(); i++) {
             valValues.push_back(i);
         }
+
         enumInput.push_back(valValues);
     }
 
-    NestedLoop loop(enumInput);
+    NestedLoop<int> loop(enumInput);
     std::vector<std::vector<int>> enumOutput = loop.buildMatrix();
     for (int i = 0; i < enumOutput.size(); i++) {
         VariableSet v;
@@ -262,6 +262,9 @@ void Mdp::create(string name, bool rewrite) {
 
         vecStateEnum.push_back(v);
     }
+}
+
+bool Mdp::readMdp(string fileName, bool rewrite) {
 
     ifstream inputFile(fileName);
     if (inputFile.good() && !rewrite) {
@@ -273,57 +276,81 @@ void Mdp::create(string name, bool rewrite) {
                 string line;
                 getline(inputFile, line);
                 vector<string> transition_v = StringOperations::stringSplit(line, ' ');
-                int i = 0;
+                int j = 0;
 
                 PairStateAction bTransitionInput{i, action};
 
-                while (i < transition_v.size()) {
-                    transitionOutput[stoi(transition_v[i])] = stod(transition_v[i + 1]);
+                while (j < transition_v.size()) {
+                    transitionOutput[stoi(transition_v[j])] = stod(transition_v[j + 1]);
                     std::vector<int> previousBeliefs = predecessors[bTransitionInput];
-                    previousBeliefs.push_back(stoi(transition_v[i]));
+                    previousBeliefs.push_back(stoi(transition_v[j]));
                     predecessors[bTransitionInput] = previousBeliefs;
 
-                    i = i + 2;
+                    j = j + 2;
                 }
 
                 transition[transitionInput] = transitionOutput;
 
                 getline(inputFile, line);
-                PairStateAction rewardInput = {i, action};
+                PairStateAction rewardInput = {j, action};
                 reward[rewardInput] = stoi(line);
             }
         }
         inputFile.close();
-    } else {
-        ofstream file(fileName);
-        cout << "Starting Enumeration\n";
-        for (int i = 0; i < vecStateEnum.size(); i++) {
-            for (string action : actions) {
-                std::map<VariableSet, double>futureBeliefs = transitionFunction(vecStateEnum[i], action);
-                StateProb transitionOutput;
+        return true;
+    }
+    return false;
+}
 
-                PairStateAction transitionInput{i, action};
-                for (auto belief : futureBeliefs) {
-                    int s = mapStateEnum[belief.first];
+void Mdp::enumerateFunctions(string fileName) {
+    ofstream file(fileName);
+    cout << "Starting Enumeration\n";
+    for (int i = 0; i < vecStateEnum.size(); i++) {
+        for (string action : actions) {
+            std::map<VariableSet, double>futureBeliefs = transitionFunction(vecStateEnum[i], action);
+            StateProb transitionOutput;
 
-                    transitionOutput[s] = belief.second;
+            PairStateAction transitionInput{i, action};
+            for (auto belief : futureBeliefs) {
+                int s = mapStateEnum.at(belief.first);
 
-                    file << s << " " << belief.second << " ";
+                transitionOutput[s] = belief.second;
 
-                    PairStateAction bTransitionInput{s, action};
-                    std::vector<int> previousBeliefs = predecessors[bTransitionInput];
-                    previousBeliefs.push_back(i);
-                    predecessors[bTransitionInput] = previousBeliefs;
-                }
-                file << "\n";
-                transition[transitionInput] = transitionOutput;
+                file << s << " " << belief.second << " ";
 
-                PairStateAction rewardInput{i, action};
-                reward[rewardInput] = rewardFunction(vecStateEnum[i], action);
-                file << reward[rewardInput] << "\n";
+                PairStateAction bTransitionInput{s, action};
+                std::vector<int> previousBeliefs = predecessors[bTransitionInput];
+                previousBeliefs.push_back(i);
+                predecessors[bTransitionInput] = previousBeliefs;
             }
+            file << "\n";
+            transition[transitionInput] = transitionOutput;
+
+            PairStateAction rewardInput{i, action};
+            reward[rewardInput] = rewardFunction(vecStateEnum[i], action);
+            file << reward[rewardInput] << "\n";
         }
-        file.close();
+    }
+    file.close();
+}
+
+void Mdp::create(string name, bool rewrite) {
+    this->name = name;
+
+    string fileName = name + ".mdp";
+
+
+//    //calculate inverse parameter variables 
+//    for (string p : parameters) {
+//        for (string v : parameter_variables[p]) {
+//            variable_parameter[v] = p;
+//        }
+//    }
+
+    enumerateStates();
+    bool read_mdp = readMdp(fileName, rewrite);
+    if (!read_mdp) {
+        enumerateFunctions(fileName);
     }
 }
 
@@ -340,13 +367,9 @@ string Mdp::chooseAction(int s) {
     return max_action;
 }
 
-
-
-
-
 string Mdp::chooseAction(VariableSet s) {
     VariableSet param_s = convertToParametrizedState(s);
-    string action=chooseAction(mapStateEnum[param_s]);
+    string action = chooseAction(mapStateEnum.at(param_s));
     return getDeparametrizedAction(action);
 }
 
@@ -359,7 +382,7 @@ void Mdp::printQValues(VariableSet s) {
 
 double Mdp::getQValue(VariableSet s, string action) {
     VariableSet param_s = convertToParametrizedState(s);
-    int i = mapStateEnum[param_s];
+    int i = mapStateEnum.at(param_s);
     PairStateAction p{i, action};
     return qValue[p];
 }
@@ -382,8 +405,8 @@ double Mdp::getTransitionProb(int s, string a, int s_new) {
 
 void Mdp::simulate(int n, VariableSet initial_state) {
 
-    VariableSet parametrized_vs=convertToParametrizedState(initial_state);
-    int int_initial_state = mapStateEnum[parametrized_vs];
+    VariableSet parametrized_vs = convertToParametrizedState(initial_state);
+    int int_initial_state = mapStateEnum.at(parametrized_vs);
     StateProb b;
     b[int_initial_state] = 1.0;
     for (int i = 0; i < n; i++) {
@@ -416,23 +439,24 @@ void Mdp::assignParameters(map<string, string> instance) {
         for (string linked_var : parameter_variables[p]) {
             string new_var_name = linked_var;
             new_var_name.replace(new_var_name.find(p), p.length(), this_instance);
-            original_to_parametrized[new_var_name] = linked_var;
+            original_to_parametrized[new_var_name].push_back(linked_var);
             parametrized_to_original[linked_var] = new_var_name;
         }
-        original_to_parametrized[this_instance] = p;
+        original_to_parametrized[this_instance].push_back(p);
         parametrized_to_original[p] = this_instance;
     }
 }
-
 
 VariableSet Mdp::convertToParametrizedState(VariableSet s) {
     VariableSet vs_new;
     for (auto el : s.set) {
         bool found = false;
 
-        string actual_key = el.first;
-        string actual_value = el.second;
-      
+        vector<string> actual_key;
+        actual_key.push_back(el.first);
+        vector<string> actual_value;
+        actual_value.push_back(el.second);
+
         if (original_to_parametrized.find(el.first) != original_to_parametrized.end()) {
             actual_key = original_to_parametrized[el.first];
             found = true;
@@ -441,12 +465,16 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
             actual_value = original_to_parametrized[el.second];
         }
         if (!found) { //not a paramater. Then it must be a variable, if not it's not relevant to this mdp
-            if (std::find(variables.begin(), variables.end(), actual_key) != variables.end()) {
+            if (std::find(variables.begin(), variables.end(), actual_key[0]) != variables.end()) {
                 found = true;
             }
         }
         if (found) { //true if the variable in the set was either a parameter instance or a variable in the mdp.
-            vs_new.set[actual_key] = actual_value;
+            for (string key : actual_key) { //do the product between all possible parameters
+                for (string value : actual_value) {
+                    vs_new.set[key] = value;
+                }
+            }
         }
     }
     return vs_new;
@@ -470,16 +498,31 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set) {
 }
 
 string Mdp::getDeparametrizedAction(string action_name) {
-    vector<string> action_parts=StringOperations::stringSplit(action_name,'_');
+    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
     stringstream depar_action_name;
-    for (string s:action_parts) {
-        if (parametrized_to_original.find(s)!=parametrized_to_original.end()) {
-            depar_action_name<<parametrized_to_original[s];
+    for (string s : action_parts) {
+        if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
+            depar_action_name << parametrized_to_original[s];
+        } else {
+            depar_action_name << s;
         }
-        else {
-            depar_action_name<<s;
-        }
-        
+
     }
     return depar_action_name.str();
 }
+
+string Mdp::getParametrizedAction(string action_name) {
+    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    stringstream param_action_name;
+
+    param_action_name << "agent_" << action_parts[1];
+    if (action_parts.size() > 2) {
+        param_action_name << "_object";
+    }
+    if (action_parts.size() > 3) {
+        param_action_name << "_support";
+    }
+    return param_action_name.str();
+
+}
+

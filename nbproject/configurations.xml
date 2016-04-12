@@ -9,15 +9,11 @@
                    displayName="Resource Files"
                    projectFiles="true">
     </logicalFolder>
-    <logicalFolder name="SourceFiles"
-                   displayName="Source Files"
-                   projectFiles="true">
-      <logicalFolder name="f1" displayName="Models" projectFiles="true">
-        <logicalFolder name="f1" displayName="Actions" projectFiles="true">
-          <itemPath>MdpBasicActions.h</itemPath>
-        </logicalFolder>
+    <logicalFolder name="f1" displayName="Source Files" projectFiles="true">
+      <logicalFolder name="f1" displayName="models" projectFiles="true">
         <itemPath>GetLaundry.cpp</itemPath>
         <itemPath>GetLaundry.h</itemPath>
+        <itemPath>MdpBasicActions.h</itemPath>
         <itemPath>PlaceObject.cpp</itemPath>
         <itemPath>PlaceObject.h</itemPath>
         <itemPath>ReorderTable.cpp</itemPath>
@@ -26,6 +22,8 @@
         <itemPath>StartWashingMachine.h</itemPath>
         <itemPath>TakeObject.cpp</itemPath>
         <itemPath>TakeObject.h</itemPath>
+        <itemPath>Wait.cpp</itemPath>
+        <itemPath>Wait.h</itemPath>
         <itemPath>WashLaundry.cpp</itemPath>
         <itemPath>WashLaundry.h</itemPath>
         <itemPath>WashLaundryFull.cpp</itemPath>
@@ -33,8 +31,11 @@
       </logicalFolder>
       <itemPath>Hmdp.cpp</itemPath>
       <itemPath>Hmdp.h</itemPath>
+      <itemPath>Makefile</itemPath>
       <itemPath>Mdp.cpp</itemPath>
       <itemPath>Mdp.h</itemPath>
+      <itemPath>Mmdp.cpp</itemPath>
+      <itemPath>Mmdp.h</itemPath>
       <itemPath>NestedLoop.cpp</itemPath>
       <itemPath>NestedLoop.h</itemPath>
       <itemPath>Pomdp.cpp</itemPath>
@@ -88,11 +89,17 @@
       </item>
       <item path="Hmdp.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Mdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Mdp.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MdpBasicActions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Mmdp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Mmdp.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="NestedLoop.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -127,6 +134,10 @@
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="VariableSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Wait.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Wait.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="WashLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -169,11 +180,17 @@
       </item>
       <item path="Hmdp.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Mdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Mdp.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MdpBasicActions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Mmdp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Mmdp.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="NestedLoop.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -208,6 +225,10 @@
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="VariableSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Wait.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Wait.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="WashLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>

@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/GetLaundry.o \
 	${OBJECTDIR}/Hmdp.o \
 	${OBJECTDIR}/Mdp.o \
+	${OBJECTDIR}/Mmdp.o \
 	${OBJECTDIR}/NestedLoop.o \
 	${OBJECTDIR}/PlaceObject.o \
 	${OBJECTDIR}/Pomdp.o \
@@ -46,6 +47,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/StartWashingMachine.o \
 	${OBJECTDIR}/TakeObject.o \
 	${OBJECTDIR}/VariableSet.o \
+	${OBJECTDIR}/Wait.o \
 	${OBJECTDIR}/WashLaundry.o \
 	${OBJECTDIR}/WashLaundryFull.o
 
@@ -91,6 +93,11 @@ ${OBJECTDIR}/Mdp.o: Mdp.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
 
+${OBJECTDIR}/Mmdp.o: Mmdp.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
+
 ${OBJECTDIR}/NestedLoop.o: NestedLoop.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -130,6 +137,11 @@ ${OBJECTDIR}/VariableSet.o: VariableSet.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
+
+${OBJECTDIR}/Wait.o: Wait.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
 
 ${OBJECTDIR}/WashLaundry.o: WashLaundry.cpp 
 	${MKDIR} -p ${OBJECTDIR}

@@ -373,7 +373,7 @@ void Pomdp::createPomdp(string name, bool rewrite) {
         enumInput.push_back(valValues);
     }
 
-    NestedLoop loop(enumInput);
+    NestedLoop<int> loop(enumInput);
     std::vector<std::vector<int>> enumOutput = loop.buildMatrix();
     for (int i = 0; i < enumOutput.size(); i++) {
         VariableSet v;
