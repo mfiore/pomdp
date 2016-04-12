@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <boost/lexical_cast.hpp>
+#include "Wait.h"
 
 using namespace std;
 
@@ -58,6 +59,11 @@ private:
     string getDeparametrizedAction(string action_name);
     
     string convertToSingleMdpAction(Mdp *mdp,int index,string mmdp_action);
+    
+    
+    void createSubMmdps();
+
+    bool readMdp(string fileName, bool rewrite);
 };
 
 #endif	/* MMDP_H */

@@ -276,23 +276,23 @@ bool Mdp::readMdp(string fileName, bool rewrite) {
                 string line;
                 getline(inputFile, line);
                 vector<string> transition_v = StringOperations::stringSplit(line, ' ');
-                int i = 0;
+                int j = 0;
 
                 PairStateAction bTransitionInput{i, action};
 
-                while (i < transition_v.size()) {
-                    transitionOutput[stoi(transition_v[i])] = stod(transition_v[i + 1]);
+                while (j < transition_v.size()) {
+                    transitionOutput[stoi(transition_v[j])] = stod(transition_v[j + 1]);
                     std::vector<int> previousBeliefs = predecessors[bTransitionInput];
-                    previousBeliefs.push_back(stoi(transition_v[i]));
+                    previousBeliefs.push_back(stoi(transition_v[j]));
                     predecessors[bTransitionInput] = previousBeliefs;
 
-                    i = i + 2;
+                    j = j + 2;
                 }
 
                 transition[transitionInput] = transitionOutput;
 
                 getline(inputFile, line);
-                PairStateAction rewardInput = {i, action};
+                PairStateAction rewardInput = {j, action};
                 reward[rewardInput] = stoi(line);
             }
         }

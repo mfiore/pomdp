@@ -100,10 +100,10 @@ map<VariableSet, double> Hmdp::convertToHigherState(VariableSet original_set, ma
 map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set) {
     map<VariableSet, double> temp_result;
 
-    //    cout<<set.toString()<<"\n";
+        cout<<set.toString()<<"\n";
 
     VariableSet v_param = convertToParametrizedState(set);
-    //    cout<<v_param.toString()<<"\n";
+        cout<<v_param.toString()<<"\n";
     int i = convertHierarchicState(v_param);
 
     //    int i = convertHierarchicState(set);

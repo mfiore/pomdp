@@ -37,7 +37,9 @@ ReorderTable::ReorderTable() {
     for (int i = 0; i < n_dishes_; i++) {
         actions.push_back(agent_name_ + "_take_" + dish_name_  + boost::lexical_cast<string>(i));
         actions.push_back(agent_name_ + "_place_" + dish_name_ + boost::lexical_cast<string>(i) + "_" + goal_location_);
-       
+        hierarchy_map_[agent_name_ + "_take_" + dish_name_  + boost::lexical_cast<string>(i)]=new TakeObject();
+        hierarchy_map_[agent_name_ + "_place_" + dish_name_  + boost::lexical_cast<string>(i)+ "_" + goal_location_]=new PlaceObject();
+  
     }
 
     this->actions = actions;

@@ -11,12 +11,16 @@
 #include "Mmdp.h"
 
 Mmdp::Mmdp() {
+    is_created_ = false;
 }
 
 Mmdp::Mmdp(const Mmdp& orig) {
 }
 
 Mmdp::~Mmdp() {
+//    for (auto h : hierarchy_map_) {
+//        delete[] h.second;
+//    }
 }
 
 void Mmdp::createJointMdpVariables() {
@@ -24,6 +28,7 @@ void Mmdp::createJointMdpVariables() {
     //get variables from single agents mdps
     int i = 0;
     for (auto mdp : agent_hmpd_) {
+        cout << mdp.first << "\n";
         string i_s = boost::lexical_cast<string>(i);
         for (auto var : mdp.second->variables) {
             //convert values to multiparameter if needed
@@ -102,21 +107,21 @@ void Mmdp::createJointMdpVariables() {
         }
         actions.push_back(action_name);
     }
-
 }
 
 void Mmdp::create(string name, bool rewrite, bool first) {
     if (!is_created_) {
+
+        cout << "Creating " << name << "\n";
+
         is_created_ = true;
         createJointMdpVariables();
+        createSubMmdps();
 
         assignParametersFromActionName(name);
         enumerateStates();
-        vector<string> values = varValues["dish1_isAt"];
-        for (string v : values) {
-            cout << v << "\n";
-        }
-        //        printStates();
+
+//        printStates();
 
         //        for (auto v : mapStateEnum) {
         //            VariableSet set = v.first;
@@ -128,7 +133,6 @@ void Mmdp::create(string name, bool rewrite, bool first) {
             i->second->create(i->first, rewrite, false);
         }
 
-        cout << "Creating " << name << "\n";
 
         string fileName = name + ".pomdp";
 
@@ -315,12 +319,12 @@ void Mmdp::enumerateFunctions(string fileName) {
             StateProb future_beliefs;
 
             vector<string> single_actions = StringOperations::stringSplit(action, '-');
-            bool all_wait=true;
-            for (int i=0; i<single_actions.size();i++) {
-                string a=single_actions[i];
-                vector<string> action_parts=StringOperations::stringSplit(a,'_');
-                if (action_parts[1]!="wait") {
-                    all_wait=false;
+            bool all_wait = true;
+            for (int i = 0; i < single_actions.size(); i++) {
+                string a = single_actions[i];
+                vector<string> action_parts = StringOperations::stringSplit(a, '_');
+                if (action_parts[1] != "wait") {
+                    all_wait = false;
                     break;
                 }
             }
@@ -402,39 +406,39 @@ void Mmdp::enumerateFunctions(string fileName) {
 
                 VariableSet h_state = vecStateEnum[i];
                 string h_action;
-//                if (action.find("wait") != action.npos) {
-//                    vector<string> single_actions = StringOperations::stringSplit(action, '-');
-//                    int index = 0;
-//                    for (string sa : single_actions) {
-//                        if (sa.find("wait") == sa.npos) {
-//                            h_action = sa;
-//                            break;
-//                        }
-//                        index++;
-//                    }
-//                    h->assignParametersFromActionName(h_action);
-//                    //                    VariableSet v_param = h->convertToParametrizedState(vecStateEnum[i]);
-//                    //                   cout<<v_param.toString();
-//                    //                 h_state = convertToMdpState(h, index, vecStateEnum[i]);
-//                    //               cout<<h_state.toString();
-//                }
+                //                if (action.find("wait") != action.npos) {
+                //                    vector<string> single_actions = StringOperations::stringSplit(action, '-');
+                //                    int index = 0;
+                //                    for (string sa : single_actions) {
+                //                        if (sa.find("wait") == sa.npos) {
+                //                            h_action = sa;
+                //                            break;
+                //                        }
+                //                        index++;
+                //                    }
+                //                    h->assignParametersFromActionName(h_action);
+                //                    //                    VariableSet v_param = h->convertToParametrizedState(vecStateEnum[i]);
+                //                    //                   cout<<v_param.toString();
+                //                    //                 h_state = convertToMdpState(h, index, vecStateEnum[i]);
+                //                    //               cout<<h_state.toString();
+                //                }
 
                 VariableSet v_param = h->convertToParametrizedState(vecStateEnum[i]);
                 if (h->mapStateEnum.find(v_param) != h->mapStateEnum.end()) {
-
+    
                     VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
                     for (auto temp_b : temp_future_beliefs) {
                         VariableSet fb = temp_b.first;
-                        //                        printStates();
-                        //                        cout << fb.toString() << "\n";
+                        //                                                printStates();
+//                        cout << fb.toString() << "\n";
 
                         int fbi = mapStateEnum.at(temp_b.first);
                         future_beliefs[mapStateEnum.at(temp_b.first)] = temp_b.second;
                     }
                     VariableSet vstry = vecStateEnum[i];
 
-//                    r = h->getHierarchicReward(vstry) + rewardFunction(vecStateEnum[i], action);
-                    r= rewardFunction(vecStateEnum[i], action);
+                    //                    r = h->getHierarchicReward(vstry) + rewardFunction(vecStateEnum[i], action);
+                    r = rewardFunction(vecStateEnum[i], action);
                 }
             }
 
@@ -487,19 +491,19 @@ VarStateProb Mmdp::transitionFunction(VariableSet state, string action) {
 int Mmdp::rewardFunction(VariableSet state, string action) {
     if (isGoalState(state)) return 1000;
     return 0;
-//        int index=0;
-//    int r=0;
-//    vector<string> single_actions=StringOperations::stringSplit(action,'-');
-//    for (auto mdp:agent_hmpd_) {
-//        string mdp_action=convertToSingleMdpAction(mdp.second,index,single_actions[index]);
-//        VariableSet mdp_state=convertToMdpState(mdp.second,index,state);
-//        r=r+mdp.second->rewardFunction(mdp_state,mdp_action);
-//        index++;
-//    }
-////    if (r>0) {
-////        cout<<"ah";
-////    }
-//    return r;
+    //        int index=0;
+    //    int r=0;
+    //    vector<string> single_actions=StringOperations::stringSplit(action,'-');
+    //    for (auto mdp:agent_hmpd_) {
+    //        string mdp_action=convertToSingleMdpAction(mdp.second,index,single_actions[index]);
+    //        VariableSet mdp_state=convertToMdpState(mdp.second,index,state);
+    //        r=r+mdp.second->rewardFunction(mdp_state,mdp_action);
+    //        index++;
+    //    }
+    ////    if (r>0) {
+    ////        cout<<"ah";
+    ////    }
+    //    return r;
 }
 
 bool Mmdp::isStartingState(VariableSet state) {
@@ -692,4 +696,83 @@ string Mmdp::convertToSingleMdpAction(Mdp *mdp, int index, string mmdp_action) {
         ss << action_parts[i];
     }
     return ss.str();
+}
+
+void Mmdp::createSubMmdps() {
+
+    //for each hierarchical action we create a submdp:
+    //if the action is hierarchical for the agent_mdp will be the linked sub_hmdp 
+    //else the action for the agent_mdp will be the same hmdp
+    for (string a : actions) {
+        vector<string> single_actions = StringOperations::stringSplit(a, '-');
+        int action_index = 0;
+        bool is_hierarchical = false;
+        Mmdp* sub_mmdp = new Mmdp();
+        for (auto mdp_agent : agent_hmpd_) {
+            vector<string> action_parts = StringOperations::stringSplit(single_actions[action_index], '_');
+            if (action_parts[1] == "wait") {
+                sub_mmdp->agent_hmpd_[mdp_agent.first] = new Wait();
+            } else {
+                string sub_action = convertToSingleMdpAction(mdp_agent.second, action_index, single_actions[action_index]);
+
+                Hmdp *sub_hmdp = mdp_agent.second;
+                if (sub_hmdp->hierarchy_map_.find(sub_action) != sub_hmdp->hierarchy_map_.end()) {
+                    sub_mmdp->agent_hmpd_[mdp_agent.first] = sub_hmdp->hierarchy_map_[sub_action];
+                    is_hierarchical = true;
+                } else {
+                    sub_mmdp->agent_hmpd_[mdp_agent.first] = sub_hmdp;
+                }
+            }
+            action_index++;
+        }
+
+        if (is_hierarchical) {
+            hierarchy_map_[a] = sub_mmdp;
+        }
+    }
+}
+
+
+bool Mmdp::readMdp(string fileName, bool rewrite) {
+
+    ifstream inputFile(fileName);
+    if (inputFile.good() && !rewrite) {
+        for (int i = 0; i < vecStateEnum.size(); i++) {
+            if (!isMmdpStateCongruent(vecStateEnum[i])) {
+                continue;
+            }
+            for (string action : actions) {
+                if (action=="agent0_wait-agent1_place_object1_support1" && i==97) {
+                    cout<<"asd";
+                }
+                PairStateAction transitionInput{i, action};
+                StateProb transitionOutput;
+
+                string line;
+                getline(inputFile, line);
+                vector<string> transition_v = StringOperations::stringSplit(line, ' ');
+                int j = 0;
+
+                PairStateAction bTransitionInput{i, action};
+
+                while (j < transition_v.size()) {
+                    transitionOutput[stoi(transition_v[j])] = stod(transition_v[j + 1]);
+                    std::vector<int> previousBeliefs = predecessors[bTransitionInput];
+                    previousBeliefs.push_back(stoi(transition_v[j]));
+                    predecessors[bTransitionInput] = previousBeliefs;
+
+                    j = j + 2;
+                }
+
+                transition[transitionInput] = transitionOutput;
+
+                getline(inputFile, line);
+                PairStateAction rewardInput = {i, action};
+                reward[rewardInput] = stoi(line);
+            }
+        }
+        inputFile.close();
+        return true;
+    }
+    return false;
 }

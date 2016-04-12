@@ -114,7 +114,7 @@ public:
 
     virtual void enumerateStates();
     virtual void enumerateFunctions(string fileName);
-    bool readMdp(string fileName, bool rewrite);
+    virtual bool readMdp(string fileName, bool rewrite);
 
 
 
