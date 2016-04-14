@@ -41,6 +41,7 @@ ReorderTable::ReorderTable() {
         hierarchy_map_[agent_name_ + "_place_" + dish_name_  + boost::lexical_cast<string>(i)+ "_" + goal_location_]=new PlaceObject();
   
     }
+//    actions.push_back(agent_name_+"_wait");
 
     this->actions = actions;
 
@@ -60,6 +61,12 @@ ReorderTable::~ReorderTable() {
 }
 
 std::map<VariableSet, double> ReorderTable::transitionFunction(VariableSet state, string action) {
+    VarStateProb future_beliefs;
+
+    if (action==agent_name_+"_wait") {
+        future_beliefs[state]=1;
+    }
+    return future_beliefs;
 
 }
 

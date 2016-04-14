@@ -179,12 +179,16 @@ void Mdp::prioritizedSweeping() {
 //UTILITY FUNCTIONS
 
 void Mdp::printTransitionFunction() {
+    ofstream log("log.txt");
     cout << "Transition Function\n";
     for (int i = 0; i < vecStateEnum.size(); i++) {
         VariableSet vs = vecStateEnum[i];
         cout << "In state:\n";
         cout << vs.toString() << "\n";
         cout << "\n";
+        log << "In state:\n";
+        log << vs.toString() << "\n";
+        log << "\n";
         for (string action : actions) {
             PairStateAction tInput{i, action};
             StateProb tOutput = transition[tInput];
@@ -192,16 +196,22 @@ void Mdp::printTransitionFunction() {
 
 
             cout << "Executing " << action << "\n" << "Output is:\n";
+            log << "Executing " << action << "\n" << "Output is:\n";
             for (auto out : tOutput) {
                 if (out.first!=0) {
                     cout<<"...\n";
+                    log<<"...\n";
                 } 
                 VariableSet vo = vecStateEnum[out.first];
                 cout << vo.toString() << "\n";
                 cout << "\n";
                 cout << out.first << "\n";
+                log << vo.toString() << "\n";
+                log << "\n";
+                log << out.first << "\n";
             }
             cout << "\n";
+            log << "\n";
         }
     }
 }
@@ -375,6 +385,7 @@ string Mdp::chooseAction(VariableSet s) {
 
 void Mdp::printQValues(VariableSet s) {
     VariableSet param_s = convertToParametrizedState(s);
+    cout<<param_s.toString()<<"\n";
     for (string action : actions) {
         cout << action << " - " << getQValue(param_s, action) << "\n";
     }

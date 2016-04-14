@@ -111,6 +111,9 @@ public:
 
     
     void printGoalStates();
+
+    void printHierarchy();
+
 };
 
 #endif	/* HMDP_H */

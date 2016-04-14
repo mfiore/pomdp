@@ -32,6 +32,7 @@ PlaceObject::PlaceObject() {
     }
     actions.push_back(agent_name_ + "_move_" + goal_location_);
     actions.push_back(agent_name_ + "_place_" + object_name_ + "_" + goal_location_);
+    actions.push_back(agent_name_ + "_wait");
 
     this->actions = actions;
     parameters.push_back(object_name_);
@@ -83,7 +84,10 @@ std::map<VariableSet, double> PlaceObject::transitionFunction(VariableSet state,
     vector<string> action_parameters = MdpBasicActions::getActionParameters(action);
     VarStateProb future_beliefs;
     string action_name = action_parameters[1];
-    if (action_name == "place") {
+    if (action_name=="wait") {
+        future_beliefs[state]=1;
+    }
+    else if (action_name == "place") {
         future_beliefs = MdpBasicActions::applyPlace(object_loc_var_, object_isAt, human_isAt, goal_location_,
                 agent_name_, state);
     } else if (action_name == "move") {

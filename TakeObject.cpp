@@ -29,7 +29,8 @@ TakeObject::TakeObject() {
         actions.push_back(agent_name_+"_move_"+l);
     }
     actions.push_back(agent_name_+"_take_"+object_name_);
-
+    actions.push_back(agent_name_+"_wait");
+    
     this->actions = actions;
     parameters.push_back(object_name_);
     vector<string> par_var;
@@ -71,11 +72,16 @@ string TakeObject::getDeparametrizedAction(string action_name) {
 VarStateProb TakeObject::transitionFunction(VariableSet state, string action) {
     string human_isAt = state.set[agent_loc_var_];
     string object_isAt = state.set[object_loc_var_];
+    
 
     vector<string> action_parameters=MdpBasicActions::getActionParameters(action);
     VarStateProb future_beliefs;
     string action_name=action_parameters[1];
-    if (action_name=="take") {
+
+    if (action_name=="wait") {
+        future_beliefs[state]=1;
+    }
+    else if (action_name=="take") {
         future_beliefs=MdpBasicActions::applyTake(human_isAt,object_isAt,agent_name_,object_loc_var_,state);
     }
     else if (action_name=="move") {
