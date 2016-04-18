@@ -29,7 +29,7 @@ TakeObject::TakeObject() {
         actions.push_back(agent_name_+"_move_"+l);
     }
     actions.push_back(agent_name_+"_take_"+object_name_);
-    actions.push_back(agent_name_+"_wait");
+//    actions.push_back(agent_name_+"_wait");
     
     this->actions = actions;
     parameters.push_back(object_name_);
