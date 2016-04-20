@@ -110,14 +110,13 @@ void Mmdp::createJointMdpVariables() {
 }
 
 void Mmdp::createSubMdpNames(string name) {
-    vector<string> single_names=StringOperations::stringSplit(name,'-');
-    int i=0;
-    for (auto mdp:agent_hmpd_) {
-        mdp.second->name=single_names[i];
+    vector<string> single_names = StringOperations::stringSplit(name, '-');
+    int i = 0;
+    for (auto mdp : agent_hmpd_) {
+        mdp.second->name = single_names[i];
         i++;
     }
 }
-
 
 void Mmdp::create(string name, bool rewrite, bool first) {
     if (!is_created_) {
@@ -125,20 +124,20 @@ void Mmdp::create(string name, bool rewrite, bool first) {
         cout << "Creating " << name << "\n";
         this->name = name;
         createSubMdpNames(name);
-        
-        if (name=="agent0_place_dish0_counter-agent1_reorder_table") {
-            cout<<"h";
-        }
+
+        //        if (name=="agent0_place_dish0_counter-agent1_reorder_table") {
+        //            cout<<"h";
+        //        }
 
         is_created_ = true;
         createJointMdpVariables();
         createSubMmdps();
 
-   
+
 
         enumerateStates();
 
- 
+
 
         //        printStates();
 
@@ -172,7 +171,7 @@ void Mmdp::create(string name, bool rewrite, bool first) {
                 mdp.second->printParameters();
             }
         }
-        
+
 
         string fileName = name + ".pomdp";
 
@@ -375,11 +374,11 @@ void Mmdp::enumerateFunctions(string fileName) {
                 VariableSet mmdp_instance_state = convertToDeparametrizedState(vecStateEnum[i]); //will need it to check for inconsistencies
 
                 for (auto mdp : agent_hmpd_) {
-//                    if (action == "agent0_move_table-agent1_wait" &&
-//                            i == 0 && fileName == "agent0_place_dish0_counter-agent1_reorder_table.pomdp") {
-//                        cout << "";
-//                        mdp.second->printParameters();
-//                    }
+                    //                    if (action == "agent0_move_table-agent1_wait" &&
+                    //                            i == 0 && fileName == "agent0_place_dish0_counter-agent1_reorder_table.pomdp") {
+                    //                        cout << "";
+                    //                        mdp.second->printParameters();
+                    //                    }
 
 
                     vector<string> action_parts = StringOperations::stringSplit(single_actions[index], '_');
@@ -407,7 +406,7 @@ void Mmdp::enumerateFunctions(string fileName) {
                     for (auto state : cumulative_future_mdp_states) {
                         VariableSet converted_state = convertToParametrizedState(state.first);
 
-//                        cout << converted_state.toString() << endl;
+                        //                        cout << converted_state.toString() << endl;
                         future_beliefs[mapStateEnum.at(converted_state)] = state.second;
                     }
                 } else {
@@ -420,13 +419,13 @@ void Mmdp::enumerateFunctions(string fileName) {
 
                 VariableSet v_param = h->convertToParametrizedState(vecStateEnum[i]);
                 if (h->mapStateEnum.find(v_param) != h->mapStateEnum.end()) {
-                    cout << "this state\n";
-                    cout << vecStateEnum[i].toString() << endl << endl;
+                    //                    cout << "this state\n";
+                    //                    cout << vecStateEnum[i].toString() << endl << endl;
                     VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
                     for (auto temp_b : temp_future_beliefs) {
                         VariableSet fb = temp_b.first;
-                        cout << "output state\n";
-                        cout << fb.toString() << "\n\n";
+                        //                        cout << "output state\n";
+                        //                        cout << fb.toString() << "\n\n";
 
                         future_beliefs[mapStateEnum.at(temp_b.first)] = temp_b.second;
                     }
@@ -693,6 +692,8 @@ void Mmdp::createSubMmdps() {
     //else the action for the agent_mdp will be the same hmdp
     for (string a : actions) {
         string name = "";
+        
+        vector<string> wait_indexs;
 
         vector<string> single_actions = StringOperations::stringSplit(a, '-');
         int action_index = 0;
@@ -701,39 +702,48 @@ void Mmdp::createSubMmdps() {
 
         for (auto mdp_agent : agent_hmpd_) {
             vector<string> action_parts = StringOperations::stringSplit(single_actions[action_index], '_');
-            //            if (action_parts[1] == "wait") {
-            //
-            //                sub_mmdp->agent_hmpd_[mdp_agent.first] = new Wait();
-            //                sub_mmdp->agent_hmpd_[mdp_agent.first]->name = single_actions[action_index];
-            //
-            //                is_hierarchical = true;
-            //            } else {
-            //            if (action_parts[1]!="wait"){
-            string sub_action = convertToSingleMdpAction(mdp_agent.second, action_index, single_actions[action_index]);
-
-            Hmdp *sub_hmdp = mdp_agent.second;
-            if (sub_hmdp->hierarchy_map_.find(sub_action) != sub_hmdp->hierarchy_map_.end()) {
-                sub_mmdp->agent_hmpd_[mdp_agent.first] = sub_hmdp->hierarchy_map_[sub_action];
-                is_hierarchical = true;
+            if (action_parts[1] == "wait") {
+                //
+//                sub_mmdp->agent_hmpd_[mdp_agent.first] = new Wait();
+//                sub_mmdp->agent_hmpd_[mdp_agent.first]->name = single_actions[action_index];
+                wait_indexs.push_back(mdp_agent.first);
                 if (name == "") {
                     name = name + single_actions[action_index];
                 } else {
                     name = name + "-" + single_actions[action_index];
                 }
+                //
+                //                is_hierarchical = true;
             } else {
-                sub_mmdp->agent_hmpd_[mdp_agent.first] = sub_hmdp;
-                if (name == "") {
-                    name = mdp_agent.second->name;
+                string sub_action = convertToSingleMdpAction(mdp_agent.second, action_index, single_actions[action_index]);
+
+                Hmdp *sub_hmdp = mdp_agent.second;
+                if (sub_hmdp->hierarchy_map_.find(sub_action) != sub_hmdp->hierarchy_map_.end()) {
+                    sub_mmdp->agent_hmpd_[mdp_agent.first] = sub_hmdp->hierarchy_map_[sub_action];
+                    is_hierarchical = true;
+                    if (name == "") {
+                        name = name + single_actions[action_index];
+                    } else {
+                        name = name + "-" + single_actions[action_index];
+                    }
                 } else {
-                    name = name + "-" + mdp_agent.second->name;
+                    sub_mmdp->agent_hmpd_[mdp_agent.first] = sub_hmdp;
+                    if (name == "") {
+                        name = mdp_agent.second->name;
+                    } else {
+                        name = name + "-" + mdp_agent.second->name;
+                    }
                 }
             }
             //            }
             action_index++;
         }
-   
-        
+
+
         if (is_hierarchical) {
+            for (int i=0;i<wait_indexs.size();i++) {
+                sub_mmdp->agent_hmpd_[wait_indexs[i]]=new Wait();
+            }
             hierarchy_map_[name] = sub_mmdp;
         }
     }
