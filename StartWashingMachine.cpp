@@ -5,7 +5,6 @@
  * Created on December 22, 2015, 12:18 PM
  */
 
-#include <c++/4.6/bits/algorithmfwd.h>
 
 #include "StartWashingMachine.h"
 
