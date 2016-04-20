@@ -52,11 +52,6 @@ int Hmdp::convertHierarchicState(VariableSet set) {
     for (string v : variables) {
         this_set.set[v] = set.set[v];
     }
-    //    for (auto s:mapStateEnum) {
-    //        VariableSet v=s.first;
-    //        cout<<v.toString()<<"\n";
-    //        cout<<s.second<<"\n";
-    //    }
     return mapStateEnum.at(this_set);
 
 }
@@ -77,9 +72,7 @@ map<VariableSet, double> Hmdp::convertToHigherState(VariableSet original_set, ma
 
     for (auto b : temp_result) {
         VariableSet param_vs = b.first;
-        //        cout<<param_vs.toString();
         VariableSet deparametrized_vs = convertToDeparametrizedState(param_vs);
-        //      cout<<deparametrized_vs.toString();
         VariableSet result_vs;
         for (string s : higher_variables) {
             if (deparametrized_vs.set.find(s) != deparametrized_vs.set.end()) {
@@ -172,7 +165,6 @@ void Hmdp::calculateHierarchicReward() {
             // solving failed
             return;
         }
-        //        VectorXd x = a.householderQr().solve(b);
         i = 0;
         for (int s : starting_states_) {
             temp_hierarchic_reward[s] = x(s);
@@ -251,14 +243,9 @@ void Hmdp::enumerateFunctions(string fileName) {
                 r = rewardFunction(vecStateEnum[i], action);
             } else {
                 Hmdp* h = hierarchy_map_[action];
-                //            h->setParameters(action);
-                //              cout<<vecStateEnum[i].toString()<<"\n";
                 h->assignParametersFromActionName(action);
                 VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
                 for (auto temp_b : temp_future_beliefs) {
-                    //                    for (auto asd : temp_b.first.set) {
-                    //                  cout << asd.first << " " << asd.second << "\n";
-                    //                    }
                     future_beliefs[mapStateEnum.at(temp_b.first)] = temp_b.second;
                 }
                 VariableSet vstry = vecStateEnum[i];
@@ -383,7 +370,6 @@ string Hmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-//        cout<<state.toString()<<"\n";
         string action = chooseAction(mapStateEnum.at(this_state));
         if (hierarchy_map_.find(action) != hierarchy_map_.end()) {
             Hmdp * h = hierarchy_map_[action];
@@ -407,7 +393,6 @@ string Hmdp::chooseHierarchicAction(VariableSet state) {
 string Hmdp::chooseHierarchicAction(int b) {
     return chooseHierarchicAction(vecStateEnum[b]);
 }
-//
 
 void Hmdp::simulate(int n, VariableSet initial_state) {
     VariableSet parametrized_vs = convertToParametrizedState(initial_state);

@@ -18,9 +18,7 @@ Mmdp::Mmdp(const Mmdp& orig) {
 }
 
 Mmdp::~Mmdp() {
-    //    for (auto h : hierarchy_map_) {
-    //        delete[] h.second;
-    //    }
+
 }
 
 void Mmdp::createJointMdpVariables() {
@@ -125,34 +123,14 @@ void Mmdp::create(string name, bool rewrite, bool first) {
         this->name = name;
         createSubMdpNames(name);
 
-        //        if (name=="agent0_place_dish0_counter-agent1_reorder_table") {
-        //            cout<<"h";
-        //        }
 
         is_created_ = true;
         createJointMdpVariables();
         createSubMmdps();
 
-
-
         enumerateStates();
 
 
-
-        //        printStates();
-
-        //        for (auto v : mapStateEnum) {
-        //            VariableSet set = v.first;
-        //            cout << set.toString();
-        //            cout << v.second << "\n\n";
-        //        }
-
-        //        if (name == "agent0_place_dish0_counter-agent1_wait") {
-        if (name == "agent0_move_table-agent1_take_dish0") {
-            printActions();
-            printStates();
-            printParameters();
-        }
         for (HmdpMap::iterator i = hierarchy_map_.begin(); i != hierarchy_map_.end(); i++) {
 
             i->second->create(i->first, rewrite, false);
@@ -175,49 +153,6 @@ void Mmdp::create(string name, bool rewrite, bool first) {
 
         string fileName = name + ".pomdp";
 
-        if (name == "human0_reorder_table-human1_reorder_table") {
-            cout << "here we are\n";
-        }
-
-        //        for (auto p_i : parameter_instances) {
-        //            cout << p_i.first << " " << p_i.second << "\n";
-        //        }
-        //        cout<<"\n";
-        //        for (auto mdp : agent_hmpd_) {
-        //            for (auto par : mdp.second->parameter_instances) {
-        //                cout << par.first << " " << par.second << "\n";
-        //            }
-        //            cout << "\n";
-        //            for (auto el : mdp.second->parametrized_to_original) {
-        //                cout << el.first << " " << el.second << "\n";
-        //            }
-        //            cout << "\n";
-        //            for (auto var : mdp.second->variable_parameter) {
-        //                cout << var.first << " " << var.second << "\n";
-        //            }
-        //            cout << "\n";
-        //
-        //            cout << vecStateEnum[0].toString() << "\n";
-        //
-        //            VariableSet mdp_state = convertToMdpState(mdp.second, 0, vecStateEnum[0]);
-        //            cout << mdp_state.toString() << "\n";
-        //
-        //            VariableSet mmdp_state = convertToMmdpState(mdp_state, mdp.second, 0);
-        //            cout << mmdp_state.toString() << "\n";
-        //
-        //
-        //
-        //
-        //            VariableSet depar_mdp_state = mdp.second->convertToDeparametrizedState(mdp_state);
-        //            cout << depar_mdp_state.toString() << "\n";
-        //
-        //            VariableSet depar_mmdp_state = convertToDeparametrizedState(mmdp_state);
-        //            cout << depar_mmdp_state.toString() << "\n";
-        //
-        //            VariableSet par_mmdp_state = convertToParametrizedState(depar_mmdp_state);
-        //            cout << par_mmdp_state.toString() << "\n";
-        //        }
-
         bool has_read = readMdp(fileName, rewrite);
         if (name == "reorder_table") {
             cout << "here wew are";
@@ -227,9 +162,6 @@ void Mmdp::create(string name, bool rewrite, bool first) {
         if (!has_read) {
             enumerateFunctions(fileName);
         }
-        //        printTransitionFunction();
-        //        printRewardFunction();
-
 
         valueIteration(rewrite);
 
@@ -251,14 +183,6 @@ void Mmdp::create(string name, bool rewrite, bool first) {
 void Mmdp::assignParametersFromActionName(string action_name) {
     map<string, string> instance;
 
-    //    for (auto p : parameters) {
-    //        cout << p << "\n";
-    //    }
-    //    for (auto p : parameter_variables) {
-    //        for (auto s : p.second) {
-    //            cout << p.first << " " << s << "\n";
-    //        }
-    //    }
     vector<string> single_actions = StringOperations::stringSplit(action_name, '-');
     for (int i = 0; i < single_actions.size(); i++) {
         string i_s = boost::lexical_cast<string>(i);
@@ -374,12 +298,6 @@ void Mmdp::enumerateFunctions(string fileName) {
                 VariableSet mmdp_instance_state = convertToDeparametrizedState(vecStateEnum[i]); //will need it to check for inconsistencies
 
                 for (auto mdp : agent_hmpd_) {
-                    //                    if (action == "agent0_move_table-agent1_wait" &&
-                    //                            i == 0 && fileName == "agent0_place_dish0_counter-agent1_reorder_table.pomdp") {
-                    //                        cout << "";
-                    //                        mdp.second->printParameters();
-                    //                    }
-
 
                     vector<string> action_parts = StringOperations::stringSplit(single_actions[index], '_');
                     VarStateProb mdp_future_states;
@@ -704,16 +622,12 @@ void Mmdp::createSubMmdps() {
             vector<string> action_parts = StringOperations::stringSplit(single_actions[action_index], '_');
             if (action_parts[1] == "wait") {
                 //
-//                sub_mmdp->agent_hmpd_[mdp_agent.first] = new Wait();
-//                sub_mmdp->agent_hmpd_[mdp_agent.first]->name = single_actions[action_index];
                 wait_indexs.push_back(mdp_agent.first);
                 if (name == "") {
                     name = name + single_actions[action_index];
                 } else {
                     name = name + "-" + single_actions[action_index];
                 }
-                //
-                //                is_hierarchical = true;
             } else {
                 string sub_action = convertToSingleMdpAction(mdp_agent.second, action_index, single_actions[action_index]);
 
@@ -760,19 +674,6 @@ bool Mmdp::readMdp(string fileName, bool rewrite) {
             }
             for (string action : actions) {
                 vector<string> single_actions = StringOperations::stringSplit(action, '-');
-                //                bool all_wait = true;
-                //                for (int i = 0; i < single_actions.size(); i++) {
-                //                    string a = single_actions[i];
-                //                    vector<string> action_parts = StringOperations::stringSplit(a, '_');
-                //                    if (action_parts[1] != "wait") {
-                //                        all_wait = false;
-                //                        break;
-                //                    }
-                //                }
-                //                if (all_wait) {
-                //                    continue;
-                //                }
-
 
                 PairStateAction transitionInput{i, action};
                 StateProb transitionOutput;
