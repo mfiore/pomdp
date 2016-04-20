@@ -65,6 +65,8 @@ private:
 
     bool readMdp(string fileName, bool rewrite);
 
+    
+    void createSubMdpNames(string name);
 //    void printMmdpHierarchy();
 };
 

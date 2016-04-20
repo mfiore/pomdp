@@ -116,7 +116,9 @@ public:
     virtual void enumerateFunctions(string fileName);
     virtual bool readMdp(string fileName, bool rewrite);
 
+    void printActions();
 
+    void printParameters();
 
 
 };

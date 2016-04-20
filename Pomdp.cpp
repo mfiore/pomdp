@@ -12,7 +12,6 @@
 #include <stack>
 #include <utility>
 #include <algorithm>
-#include <c++/4.6/bits/stl_queue.h>
 
 Pomdp::Pomdp() {
 }
