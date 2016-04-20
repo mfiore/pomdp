@@ -232,7 +232,7 @@ void Hmdp::calculateHierarchicTransition() {
             }
         }
 
-        hierarchic_transition_ = temp_hierarcic_transition;
+       hierarchic_transition_ = temp_hierarcic_transition;
     }
 }
 

@@ -535,3 +535,46 @@ string Mdp::getParametrizedAction(string action_name) {
 
 }
 
+
+void Mdp::printActions() {
+    cout<<"Actions are:"<<endl;
+    for (string a: actions) {
+        cout<<a<<endl;
+    }
+    cout<<endl;
+}
+
+void Mdp::printParameters() {
+    cout<<"List of Parameters:"<<endl;
+    for (string p:parameters) {
+        cout<<p<<endl;
+    }
+    cout<<endl;
+    cout<<"List of parameter variables"<<endl;
+    for (auto p:parameter_variables) {
+        cout<<"-"<<p.first<<":"<<endl;
+        for (string pp:p.second) {
+            cout<<pp<<endl;
+        }
+        cout<<endl;
+    }
+    cout<<endl;
+    cout<<"Parameter instances"<<endl;
+    for (auto s:parameter_instances) {
+        cout<<s.first<<" "<<s.second<<endl;
+    }
+    cout<<endl;
+    cout<<"Original to parametrized"<<endl;
+    for (auto s:original_to_parametrized) {
+        cout<<"-"<<s.first<<":"<<endl;
+        for (string ss:s.second) {
+            cout<<ss<<endl;
+        }
+    }
+    cout<<endl;
+    cout<<"Parametrized to original"<<endl;
+    for (auto s:parametrized_to_original) {
+        cout<<s.first<<" "<<s.second<<endl;
+    }
+    cout<<endl;
+}

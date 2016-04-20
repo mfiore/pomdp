@@ -32,7 +32,7 @@ PlaceObject::PlaceObject() {
     }
     actions.push_back(agent_name_ + "_move_" + goal_location_);
     actions.push_back(agent_name_ + "_place_" + object_name_ + "_" + goal_location_);
-    actions.push_back(agent_name_ + "_wait");
+//    actions.push_back(agent_name_ + "_wait");
 
     this->actions = actions;
     parameters.push_back(object_name_);
