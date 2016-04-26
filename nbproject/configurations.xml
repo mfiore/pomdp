@@ -59,9 +59,6 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
-  <sourceRootList>
-    <Elem>../../devel/src/eigen-eigen-b30b87236a1b</Elem>
-  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="3">
@@ -73,8 +70,8 @@
       <compileType>
         <ccTool>
           <incDir>
-            <pElem>../../devel/src/eigen-eigen-b30b87236a1b/Eigen</pElem>
-            <pElem>../../devel/src/eigen-eigen-b30b87236a1b</pElem>
+            <pElem>../../devel/src/eigen/Eigen</pElem>
+            <pElem>../../devel/src/eigen</pElem>
           </incDir>
           <commandLine>-std=c++11</commandLine>
         </ccTool>
