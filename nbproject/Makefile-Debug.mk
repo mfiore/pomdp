@@ -21,7 +21,7 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
+CND_PLATFORM=GNU-Linux
 CND_DLIB_EXT=so
 CND_CONF=Debug
 CND_DISTDIR=dist
@@ -81,77 +81,77 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a: ${OBJECTFILES}
 ${OBJECTDIR}/GetLaundry.o: GetLaundry.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetLaundry.o GetLaundry.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetLaundry.o GetLaundry.cpp
 
 ${OBJECTDIR}/Hmdp.o: Hmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmdp.o Hmdp.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmdp.o Hmdp.cpp
 
 ${OBJECTDIR}/Mdp.o: Mdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
 
 ${OBJECTDIR}/Mmdp.o: Mmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
 
 ${OBJECTDIR}/NestedLoop.o: NestedLoop.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
 
 ${OBJECTDIR}/PlaceObject.o: PlaceObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PlaceObject.o PlaceObject.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PlaceObject.o PlaceObject.cpp
 
 ${OBJECTDIR}/Pomdp.o: Pomdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Pomdp.o Pomdp.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Pomdp.o Pomdp.cpp
 
 ${OBJECTDIR}/PriorityQueue.o: PriorityQueue.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
 
 ${OBJECTDIR}/ReorderTable.o: ReorderTable.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReorderTable.o ReorderTable.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReorderTable.o ReorderTable.cpp
 
 ${OBJECTDIR}/StartWashingMachine.o: StartWashingMachine.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/StartWashingMachine.o StartWashingMachine.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/StartWashingMachine.o StartWashingMachine.cpp
 
 ${OBJECTDIR}/TakeObject.o: TakeObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TakeObject.o TakeObject.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TakeObject.o TakeObject.cpp
 
 ${OBJECTDIR}/VariableSet.o: VariableSet.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
 
 ${OBJECTDIR}/Wait.o: Wait.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
 
 ${OBJECTDIR}/WashLaundry.o: WashLaundry.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundry.o WashLaundry.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundry.o WashLaundry.cpp
 
 ${OBJECTDIR}/WashLaundryFull.o: WashLaundryFull.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen-eigen-b30b87236a1b/Eigen -I../../devel/src/eigen-eigen-b30b87236a1b -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundryFull.o WashLaundryFull.cpp
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundryFull.o WashLaundryFull.cpp
 
 # Subprojects
 .build-subprojects:
