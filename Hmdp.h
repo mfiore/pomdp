@@ -12,7 +12,6 @@
 #include <map>
 #include <cmath>
 #include <vector>
-#include <map>
 #include <Eigen/Dense>
 #include<Eigen/SparseLU>
 #include <Eigen/SparseCore>
@@ -27,7 +26,7 @@ using namespace std;
 class Hmdp : public Mdp {
 
 public:
-    typedef map<string, Hmdp*> HmdpMap;
+    typedef std::map<string, Hmdp*> HmdpMap;
 
     Hmdp();
     Hmdp(const Hmdp& orig);
@@ -40,14 +39,14 @@ public:
     //gets the hierarchic transition from a certain state. As before, the i version is not needed.
     //the version including an action is used for simulation purposes, when we want to know the resulting state of
     //applying an action in a hierarchical mdp setting.
-    map<int, double> getHierarchicTransition(int s);
-    map<VariableSet, double> getHierarchicTransition(VariableSet s);
-    map<VariableSet, double> getHierarchicTransition(VariableSet set, string action);
+    std::map<int, double> getHierarchicTransition(int s);
+    std::map<VariableSet, double> getHierarchicTransition(VariableSet s);
+    std::map<VariableSet, double> getHierarchicTransition(VariableSet set, string action);
     
     //converts the current state space to the one of the caller (meaning the mdp at the higher level of hierarchy which called
     //the current mdp). original_set is the higher level original state space (needed because some variables might not exist
     //the current mdp, and we will fill them with the originalvalues). temp_results is the current state space of this mdp
-    map<VariableSet,double> convertToHigherState(VariableSet original_set, map<VariableSet, double> temp_result);
+    std::map<VariableSet,double> convertToHigherState(VariableSet original_set, std::map<VariableSet, double> temp_result);
 
     
     //asigns the parameters of an action from it's name (e.g. we call the TakeObject MDP with action human_take_take

@@ -52,7 +52,7 @@ PlaceObject::PlaceObject() {
 
 void PlaceObject::assignParametersFromActionName(string action_name) {
     vector<string> action_parameters = StringOperations::stringSplit(action_name, '_');
-    map<string, string> instance;
+    std::map<string, string> instance;
     instance[agent_name_] = action_parameters[0];
     instance[object_name_] = action_parameters[2];
     instance[goal_location_] = action_parameters[3];

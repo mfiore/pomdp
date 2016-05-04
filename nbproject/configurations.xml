@@ -11,6 +11,14 @@
     </logicalFolder>
     <logicalFolder name="f1" displayName="Source Files" projectFiles="true">
       <logicalFolder name="f1" displayName="models" projectFiles="true">
+        <logicalFolder name="f1" displayName="Saphari" projectFiles="true">
+          <itemPath>AssembleBracket.cpp</itemPath>
+          <itemPath>AssembleBracket.h</itemPath>
+          <itemPath>CleanSurface.cpp</itemPath>
+          <itemPath>CleanSurface.h</itemPath>
+          <itemPath>Saphari.cpp</itemPath>
+          <itemPath>Saphari.h</itemPath>
+        </logicalFolder>
         <itemPath>GetLaundry.cpp</itemPath>
         <itemPath>GetLaundry.h</itemPath>
         <itemPath>MdpBasicActions.h</itemPath>
@@ -78,6 +86,14 @@
         <archiverTool>
         </archiverTool>
       </compileType>
+      <item path="AssembleBracket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AssembleBracket.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="CleanSurface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CleanSurface.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
@@ -117,6 +133,10 @@
       <item path="ReorderTable.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ReorderTable.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Saphari.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Saphari.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="StartWashingMachine.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -169,6 +189,14 @@
         <archiverTool>
         </archiverTool>
       </compileType>
+      <item path="AssembleBracket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AssembleBracket.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="CleanSurface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CleanSurface.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
@@ -208,6 +236,10 @@
       <item path="ReorderTable.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ReorderTable.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Saphari.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Saphari.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="StartWashingMachine.cpp" ex="false" tool="1" flavor2="0">
       </item>

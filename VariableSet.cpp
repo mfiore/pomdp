@@ -7,7 +7,7 @@
 
 #include "VariableSet.h"
 
-VariableSet::VariableSet(map<string,string> set) {
+VariableSet::VariableSet(std::map<string,string> set) {
     set=set;
 }
 

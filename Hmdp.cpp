@@ -33,8 +33,8 @@ double Hmdp::getHierarchicReward(VariableSet set) {
     return hierarchic_reward_[i];
 }
 
-map<int, double> Hmdp::getHierarchicTransition(int i) {
-    map<int, double> result;
+std::map<int, double> Hmdp::getHierarchicTransition(int i) {
+    std::map<int, double> result;
 
     for (int g : goal_states_) {
         pair<int, int> hierachic_input{i, g};
@@ -56,8 +56,8 @@ int Hmdp::convertHierarchicState(VariableSet set) {
 
 }
 
-map<VariableSet, double> Hmdp::convertToHigherState(VariableSet original_set, map<VariableSet, double> temp_result) {
-    map<VariableSet, double> result;
+std::map<VariableSet, double> Hmdp::convertToHigherState(VariableSet original_set, std::map<VariableSet, double> temp_result) {
+    std::map<VariableSet, double> result;
 
     vector<string> higher_variables;
     for (auto v : original_set.set) {
@@ -88,8 +88,8 @@ map<VariableSet, double> Hmdp::convertToHigherState(VariableSet original_set, ma
 
 }
 
-map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set) {
-    map<VariableSet, double> temp_result;
+std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set) {
+    std::map<VariableSet, double> temp_result;
     
 
     VariableSet v_param = convertToParametrizedState(set);
@@ -111,8 +111,8 @@ map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set) {
 
 }
 
-map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set, string action) {
-    map<VariableSet, double> temp_result;
+std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set, string action) {
+    std::map<VariableSet, double> temp_result;
 
     if (active_module != "this") {
         temp_result = hierarchy_map_[active_module]->getHierarchicTransition(set, action);
@@ -441,7 +441,7 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
 
 void Hmdp::assignParametersFromActionName(string action_name) {
     vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
-    map<string, string> instance;
+    std::map<string, string> instance;
     if (action_parts.size() > 0) {
         instance["agent"] = action_parts[0];
     }

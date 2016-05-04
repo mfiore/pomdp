@@ -32,8 +32,8 @@
 using namespace std;
 
 typedef pair<int, string> PairStateAction;
-typedef map<int, double> StateProb;
-typedef map<VariableSet, double> VarStateProb;
+typedef std::map<int, double> StateProb;
+typedef std::map<VariableSet, double> VarStateProb;
 
 class Mdp {
 public:
@@ -54,7 +54,7 @@ public:
 
     virtual void simulate(int n, VariableSet s);
 
-    void assignParameters(map<string, string> instance);
+    void assignParameters(std::map<string, string> instance);
 
     virtual string getDeparametrizedAction(string action_name);
     virtual string getParametrizedAction(string action_name);
@@ -71,7 +71,7 @@ public:
     std::map<string, string> parameter_instances; //current set up of parameters (ex. object_name=grey_tape)
     std::map<string, std::vector<string> > parameter_variables; //each parameter can be link to variables (ex. object_name is linked to object_isAt)
     std::map<string, string> variable_parameter; //inverse link
-    std::map<string, vector<string> > original_to_parametrized; //map that converts a var to it's parametrized version (e.g. greyTape_isAt -> object_isAt)
+    std::map<string, std::vector<string> > original_to_parametrized; //map that converts a var to it's parametrized version (e.g. greyTape_isAt -> object_isAt)
     //it's a vector because theoretically more parameters could be set to the same value (e.g. greyTape_isAt -> object1_isAt, object2_isAt)
     std::map<string, string > parametrized_to_original; //opposite of the one upper
 

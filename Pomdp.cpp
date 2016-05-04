@@ -456,12 +456,12 @@ string Pomdp::chooseAction() {
 }
 
 string Pomdp::chooseAction(int s) {
-    map<int, double> a_belief;
+    std::map<int, double> a_belief;
     a_belief[s] = 1.0;
     return chooseAction(a_belief);
 }
 
-string Pomdp::chooseAction(map<int, double> belief) {
+string Pomdp::chooseAction(std::map<int, double> belief) {
     string bestAction;
     double maxValue = -1;
     std::map<string, int> actionValues;

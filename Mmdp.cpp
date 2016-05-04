@@ -181,7 +181,7 @@ void Mmdp::create(string name, bool rewrite, bool first) {
 }
 
 void Mmdp::assignParametersFromActionName(string action_name) {
-    map<string, string> instance;
+    std::map<string, string> instance;
 
     vector<string> single_actions = StringOperations::stringSplit(action_name, '-');
     for (int i = 0; i < single_actions.size(); i++) {
@@ -461,7 +461,7 @@ VariableSet Mmdp::convertToMmdpState(VariableSet mdp_state, Hmdp* mdp, int index
 }
 
 void Mmdp::assignParametersToMdp(Hmdp* mdp, int index) {
-    map<string, string> instance;
+    std::map<string, string> instance;
     for (auto parameter : mdp->parameters) {
         string actual_par = convertToMultiParameter(mdp, parameter, index);
         instance[parameter] = parameter_instances[actual_par];
@@ -473,7 +473,7 @@ void Mmdp::assignParametersToMdp(Hmdp* mdp, int index) {
 }
 
 bool Mmdp::isMmdpStateCongruent(VariableSet state) {
-    map<string, string> var_values;
+    std::map<string, string> var_values;
 
     for (auto var : state.set) {
         if (parametrized_to_original.find(var.first) != parametrized_to_original.end()) {
@@ -493,7 +493,7 @@ bool Mmdp::isMmdpStateCongruent(VariableSet state) {
 }
 
 string Mmdp::getDeparametrizedAction(string action_name) {
-    map<string, string> instance;
+    std::map<string, string> instance;
     vector<string> single_actions = StringOperations::stringSplit(action_name, '-');
 
     vector<string> action_parts = StringOperations::stringSplit(action_name, '_');

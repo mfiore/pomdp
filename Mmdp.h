@@ -24,7 +24,7 @@ public:
 
     virtual void create(string name, bool rewrite, bool first);
 
-    map<string, Hmdp*> agent_hmpd_;
+    std::map<string, Hmdp*> agent_hmpd_;
     VariableSet convertToParametrizedState(VariableSet s);
 
 private:
