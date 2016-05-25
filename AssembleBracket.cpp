@@ -17,7 +17,7 @@
 AssembleBracket::AssembleBracket() {
     agent_name_ = "agent";
     bracket_name_ = "bracket";
-    glue_name_ = "glue";
+    glue_name_ = "gluebottle";
     surface_name_ = "surface";
 
     std::vector<string> locations{"table", "surface1", "surface2", "surface3"};
@@ -49,7 +49,7 @@ AssembleBracket::AssembleBracket() {
     actions.push_back(agent_name_ +"_apply_"+bracket_name_+"_"+surface_name_);
     hierarchy_map_[agent_name_ +"_clean_"+surface_name_] = new CleanSurface();
     hierarchy_map_[agent_name_ +"_glue_"+surface_name_] = new GlueSurface();
-    hierarchy_map_[agent_name_ +"_apply_"+bracket_name_+"_"+surface_name_] = new ApplyBracket();
+    hierarchy_map_[agent_name_ +"_apply_"+bracket_name_+"_"+surface_name_] = new AttachBracket();
 
     this->actions = actions;
 
@@ -91,12 +91,12 @@ std::map<VariableSet, double> AssembleBracket::transitionFunction(VariableSet st
 }
 
 bool AssembleBracket::isStartingState(VariableSet state) {
-    return state.set[surface_status_var]!="completed";
+    return state.set[surface_status_var_]!="completed";
 
 }
 
 int AssembleBracket::rewardFunction(VariableSet state, string action) {
-    if (state.set[surface_status_var_]=="glued" && action=agent_name_+"_apply_"+bracket_name_+"_"+surface_name_) {
+    if (state.set[surface_status_var_]=="glued" && action==agent_name_+"_apply_"+bracket_name_+"_"+surface_name_) {
         return 100;
     }
     else return 0;
@@ -105,7 +105,7 @@ int AssembleBracket::rewardFunction(VariableSet state, string action) {
 
 
 bool AssembleBracket::isGoalState(VariableSet state) {
-    if (state.set[surface_status_var_=="completed"]) return true;
+    if (state.set[surface_status_var_]=="completed") return true;
     return false;
 
 }

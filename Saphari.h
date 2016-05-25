@@ -37,7 +37,7 @@ public:
 private:
     string agent_loc_var_;
     vector<string> bracket_loc_var_;
-    vector<string> glue_loc_var_;
+    string glue_loc_var_;
     vector<string> surface_status_var_;
  
     

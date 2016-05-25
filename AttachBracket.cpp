@@ -1,0 +1,112 @@
+/* 
+ * File:   AttachBracket.cpp
+ * Author: mfiore
+ * 
+ * Created on May 25, 2016, 2:06 PM
+ */
+
+#include "AttachBracket.h"
+
+AttachBracket::AttachBracket() {
+    agent_name_ = "agent";
+    surface_name_ = "surface";
+    bracket_name_="bracket";
+
+    std::vector<string> locations{"table", "surface1", "surface2", "surface3", "surface"};
+    std::vector<string> statuses{"none", "cleaned", "glued", "completed"};
+
+    agent_loc_var_ = agent_name_ + "_isAt";
+    surface_status_var_ = surface_name_ + "_status";
+    bracket_loc_var_=bracket_name_+"_isAt";
+    
+    variables.push_back(agent_loc_var_);
+    variables.push_back(surface_status_var_);
+    variables.push_back(bracket_loc_var_);
+    
+    std::map<string, std::vector < string>> var_values;
+    var_values[agent_loc_var_] = locations;
+    var_values[surface_status_var_] = statuses;
+    var_values[bracket_loc_var_]=locations;
+    var_values[bracket_loc_var_].push_back(agent_name_);
+
+    this->varValues = var_values;
+
+    actions.push_back(agent_name_ + "_move_" + surface_name_ );
+    actions.push_back(agent_name_ + "_apply_bracket_" + surface_name_);
+    hierarchy_map_[agent_name_ + "_get_" + bracket_name_] = new GetObject();
+
+
+    this->actions = actions;
+
+    parameters.push_back(agent_name_);
+    parameters.push_back(surface_name_);
+    parameters.push_back(bracket_name_);
+
+    vector<string> par_var;
+    par_var.push_back(agent_loc_var_);
+    parameter_variables[agent_name_] = par_var;
+    variable_parameter[par_var[0]] = agent_name_;
+
+
+    par_var.clear();
+    par_var.push_back(surface_status_var_);
+    variable_parameter[par_var[0]] = surface_name_;
+    
+    par_var.clear();
+    par_var.push_back(bracket_loc_var_);
+    parameter_variables[bracket_name_]=par_var;
+    variable_parameter[par_var[0]]=bracket_name_;
+    
+}
+
+AttachBracket::AttachBracket(const AttachBracket& orig) {
+
+}
+
+AttachBracket::~AttachBracket() {
+
+}
+
+std::map<VariableSet, double> AttachBracket::transitionFunction(VariableSet state, string action) {
+    VarStateProb future_beliefs;
+
+    vector<string> action_parameters = MdpBasicActions::getActionParameters(action);
+    string action_name = action_parameters[1];
+
+    if (action_name == "wait") {
+        future_beliefs[state] = 1;
+    } else if (action_name == "apply_bracket"
+            && state.set[surface_status_var_] == "glued"
+            && state.set[agent_loc_var_] == surface_name_
+            && state.set[bracket_loc_var_]==agent_name_) {
+        state.set[surface_status_var_] == "completed";
+    } else if (action_name == "move") {
+        future_beliefs = MdpBasicActions::applyMove(agent_loc_var_, action_parameters[2], state);
+    }
+    else {
+        future_beliefs[state]=1;
+    }
+    return future_beliefs;
+}
+
+bool AttachBracket::isStartingState(VariableSet state) {
+    if (state.set[surface_status_var_] == "glued") return true;
+    return false;
+
+}
+
+int AttachBracket::rewardFunction(VariableSet state, string action) {
+    if (state.set[surface_status_var_] == "glued"
+            && state.set[agent_loc_var_ ] == surface_name_
+            && action == agent_name_ + "_apply_bracket_" + surface_name_
+            && state.set[bracket_loc_var_]==agent_name_) {
+        return 100;
+    } else return 0;
+
+}
+
+bool AttachBracket::isGoalState(VariableSet state) {
+    if (state.set[surface_status_var_] == "completed") return true;
+    return false;
+
+}

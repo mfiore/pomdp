@@ -16,7 +16,7 @@
 Saphari::Saphari() {
     agent_name_ = "agent";
     bracket_name_ = "bracket";
-    glue_name_ = "glue";
+    glue_name_ = "gluebottle";
     surface_name_ = "surface";
 
 

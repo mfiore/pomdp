@@ -5,36 +5,41 @@
  */
 
 /* 
- * File:   CleanSurface.cpp
+ * File:   GlueSurface.cpp
  * Author: mfiore
  * 
- * Created on May 4, 2016, 5:18 PM
+ * Created on May 25, 2016, 2:06 PM
  */
 
-#include "CleanSurface.h"
+#include "GlueSurface.h"
 
-CleanSurface::CleanSurface() {
+GlueSurface::GlueSurface() {
     agent_name_ = "agent";
     surface_name_ = "surface";
+    glue_name_="gluebottle";
 
     std::vector<string> locations{"table", "surface1", "surface2", "surface3", "surface"};
-    std::vector<string> statuses{"none", "cleaned", "glued", "completed"};
+    std::vector<string> statuses{"none", "glued", "glued", "completed"};
 
     agent_loc_var_ = agent_name_ + "_isAt";
     surface_status_var_ = surface_name_ + "_status";
-
+    glue_loc_var_=glue_name_+"_isAt";
+    
     variables.push_back(agent_loc_var_);
     variables.push_back(surface_status_var_);
-
+    variables.push_back(glue_loc_var_);
+    
     std::map<string, std::vector < string>> var_values;
     var_values[agent_loc_var_] = locations;
     var_values[surface_status_var_] = statuses;
-
+    var_values[glue_loc_var_]=locations;
+    var_values[glue_loc_var_].push_back(agent_name_);
 
     this->varValues = var_values;
 
+    actions.push_back(agent_name_ + "_get_" + glue_name_);
     actions.push_back(agent_name_ + "_move_" + surface_name_);
-    actions.push_back(agent_name_ + "_clean_" + surface_name_);
+    actions.push_back(agent_name_ + "_glue_" + surface_name_);
 
     this->actions = actions;
 
@@ -52,15 +57,15 @@ CleanSurface::CleanSurface() {
     variable_parameter[par_var[0]] = surface_name_;
 }
 
-CleanSurface::CleanSurface(const CleanSurface& orig) {
+GlueSurface::GlueSurface(const GlueSurface& orig) {
 
 }
 
-CleanSurface::~CleanSurface() {
+GlueSurface::~GlueSurface() {
 
 }
 
-std::map<VariableSet, double> CleanSurface::transitionFunction(VariableSet state, string action) {
+std::map<VariableSet, double> GlueSurface::transitionFunction(VariableSet state, string action) {
     VarStateProb future_beliefs;
 
     vector<string> action_parameters = MdpBasicActions::getActionParameters(action);
@@ -68,10 +73,11 @@ std::map<VariableSet, double> CleanSurface::transitionFunction(VariableSet state
 
     if (action_name == "wait") {
         future_beliefs[state] = 1;
-    } else if (action_name == "clean"
-            && state.set[surface_status_var_] == "none"
-            && state.set[agent_loc_var_] == surface_name_) {
-        state.set[surface_status_var_] == "cleaned";
+    } else if (action_name == "glue"
+            && state.set[surface_status_var_] == "cleaned"
+            && state.set[agent_loc_var_] == surface_name_
+            && state.set[glue_loc_var_]==agent_name_) {
+        state.set[surface_status_var_] == "glued";
     } else if (action_name == "move") {
         future_beliefs = MdpBasicActions::applyMove(agent_loc_var_, action_parameters[2], state);
     }
@@ -81,23 +87,24 @@ std::map<VariableSet, double> CleanSurface::transitionFunction(VariableSet state
     return future_beliefs;
 }
 
-bool CleanSurface::isStartingState(VariableSet state) {
-    if (state.set[surface_status_var_] == "none") return true;
+bool GlueSurface::isStartingState(VariableSet state) {
+    if (state.set[surface_status_var_] == "cleaned") return true;
     return false;
 
 }
 
-int CleanSurface::rewardFunction(VariableSet state, string action) {
-    if (state.set[surface_status_var_] == "none"
-            && state.set[agent_loc_var_ ] == surface_name_
-            && action == agent_name_ + "_clean_" + surface_name_) {
+int GlueSurface::rewardFunction(VariableSet state, string action) {
+    if (state.set[surface_status_var_] == "cleaned"
+            && state.set[agent_loc_var_ ]== surface_name_
+            && action == agent_name_ + "_glue_" + surface_name_
+            && state.set[glue_loc_var_]==agent_name_) {
         return 100;
     } else return 0;
 
 }
 
-bool CleanSurface::isGoalState(VariableSet state) {
-    if (state.set[surface_status_var_] == "cleaned") return true;
+bool GlueSurface::isGoalState(VariableSet state) {
+    if (state.set[surface_status_var_ ]== "glued") return true;
     return false;
 
 }

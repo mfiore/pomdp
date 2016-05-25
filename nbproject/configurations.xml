@@ -14,8 +14,14 @@
         <logicalFolder name="f1" displayName="Saphari" projectFiles="true">
           <itemPath>AssembleBracket.cpp</itemPath>
           <itemPath>AssembleBracket.h</itemPath>
+          <itemPath>AttachBracket.cpp</itemPath>
+          <itemPath>AttachBracket.h</itemPath>
           <itemPath>CleanSurface.cpp</itemPath>
           <itemPath>CleanSurface.h</itemPath>
+          <itemPath>GetObject.cpp</itemPath>
+          <itemPath>GetObject.h</itemPath>
+          <itemPath>GlueSurface.cpp</itemPath>
+          <itemPath>GlueSurface.h</itemPath>
           <itemPath>Saphari.cpp</itemPath>
           <itemPath>Saphari.h</itemPath>
         </logicalFolder>
@@ -90,6 +96,10 @@
       </item>
       <item path="AssembleBracket.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="AttachBracket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AttachBracket.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="CleanSurface.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="CleanSurface.h" ex="false" tool="3" flavor2="0">
@@ -97,6 +107,14 @@
       <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GetObject.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetObject.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GlueSurface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GlueSurface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -193,6 +211,10 @@
       </item>
       <item path="AssembleBracket.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="AttachBracket.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AttachBracket.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="CleanSurface.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="CleanSurface.h" ex="false" tool="3" flavor2="0">
@@ -200,6 +222,14 @@
       <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GetObject.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetObject.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GlueSurface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GlueSurface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>

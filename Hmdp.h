@@ -13,7 +13,7 @@
 #include <cmath>
 #include <vector>
 #include <Eigen/Dense>
-#include<Eigen/SparseLU>
+#include <Eigen/SparseLU>
 #include <Eigen/SparseCore>
 #include <Eigen/SparseCholesky>
 #include <Eigen/IterativeLinearSolvers>

@@ -18,7 +18,7 @@
 #include <string>
 #include "CleanSurface.h"
 #include "GlueSurface.h"
-#include "ApplyBracket.h"
+#include "AttachBracket.h"
 #include <map>
 #include <boost/lexical_cast.hpp>
 

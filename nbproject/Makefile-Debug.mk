@@ -36,8 +36,11 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/AssembleBracket.o \
+	${OBJECTDIR}/AttachBracket.o \
 	${OBJECTDIR}/CleanSurface.o \
 	${OBJECTDIR}/GetLaundry.o \
+	${OBJECTDIR}/GetObject.o \
+	${OBJECTDIR}/GlueSurface.o \
 	${OBJECTDIR}/Hmdp.o \
 	${OBJECTDIR}/Mdp.o \
 	${OBJECTDIR}/Mmdp.o \
@@ -86,6 +89,11 @@ ${OBJECTDIR}/AssembleBracket.o: AssembleBracket.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AssembleBracket.o AssembleBracket.cpp
 
+${OBJECTDIR}/AttachBracket.o: AttachBracket.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AttachBracket.o AttachBracket.cpp
+
 ${OBJECTDIR}/CleanSurface.o: CleanSurface.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -95,6 +103,16 @@ ${OBJECTDIR}/GetLaundry.o: GetLaundry.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetLaundry.o GetLaundry.cpp
+
+${OBJECTDIR}/GetObject.o: GetObject.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetObject.o GetObject.cpp
+
+${OBJECTDIR}/GlueSurface.o: GlueSurface.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GlueSurface.o GlueSurface.cpp
 
 ${OBJECTDIR}/Hmdp.o: Hmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
