@@ -60,14 +60,17 @@ void GetObject::assignParametersFromActionName(string action_name) {
     assignParameters(instance);
 }
 
-string GetObject::getDeparametrizedAction(string action_name) {
-     vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
-     string parametrized_action=parameter_instances[agent_name_]+"_"+action_parameters[1];
-     if (action_parameters[1]=="take") {
-        parametrized_action=parametrized_action+"_"+parameter_instances[object_name_];
-     }
-     return parametrized_action;
-}
+//string GetObject::getDeparametrizedAction(string action_name) {
+//     vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
+//     string parametrized_action=parameter_instances[agent_name_]+"_"+action_parameters[1];
+//     if (action_parameters[1]=="take") {
+//        parametrized_action=parametrized_action+"_"+parameter_instances[object_name_];
+//     }
+//     else {
+//         parametrized_action=parameterized_action+"_"
+//     }
+//     return parametrized_action;
+//}
 
 VarStateProb GetObject::transitionFunction(VariableSet state, string action) {
     string human_isAt = state.set[agent_loc_var_];

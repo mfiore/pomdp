@@ -19,6 +19,7 @@
 #include <map>
 #include <boost/lexical_cast.hpp>
 #include "MdpBasicActions.h"
+#include "GetObject.h"
 
 using namespace std;
 
@@ -32,6 +33,7 @@ public:
     bool isStartingState(VariableSet state);
     int rewardFunction(VariableSet state, string action);
     bool isGoalState(VariableSet state);
+    void assignParametersFromActionName(string action_name);
 
 private:
     string agent_loc_var_;

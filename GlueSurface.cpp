@@ -19,7 +19,7 @@ GlueSurface::GlueSurface() {
     glue_name_="gluebottle";
 
     std::vector<string> locations{"table", "surface1", "surface2", "surface3", "surface"};
-    std::vector<string> statuses{"none", "glued", "glued", "completed"};
+    std::vector<string> statuses{"none", "cleaned", "glued", "completed"};
 
     agent_loc_var_ = agent_name_ + "_isAt";
     surface_status_var_ = surface_name_ + "_status";
@@ -40,6 +40,7 @@ GlueSurface::GlueSurface() {
     actions.push_back(agent_name_ + "_get_" + glue_name_);
     actions.push_back(agent_name_ + "_move_" + surface_name_);
     actions.push_back(agent_name_ + "_glue_" + surface_name_);
+    hierarchy_map_[agent_name_ + "_get_" + glue_name_] = new GetObject();
 
     this->actions = actions;
 
@@ -54,6 +55,7 @@ GlueSurface::GlueSurface() {
 
     par_var.clear();
     par_var.push_back(surface_status_var_);
+    parameter_variables[surface_name_] = par_var;
     variable_parameter[par_var[0]] = surface_name_;
 }
 
@@ -65,6 +67,18 @@ GlueSurface::~GlueSurface() {
 
 }
 
+
+void GlueSurface::assignParametersFromActionName(string action_name) {
+    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    std::map<string, string> instance;
+    if (action_parts.size() > 0) {
+        instance[agent_name_] = action_parts[0];
+    }
+    if (action_parts.size() > 2) {
+        instance[surface_name_] = action_parts[2];
+    }
+    assignParameters(instance);
+}
 std::map<VariableSet, double> GlueSurface::transitionFunction(VariableSet state, string action) {
     VarStateProb future_beliefs;
 
@@ -77,7 +91,8 @@ std::map<VariableSet, double> GlueSurface::transitionFunction(VariableSet state,
             && state.set[surface_status_var_] == "cleaned"
             && state.set[agent_loc_var_] == surface_name_
             && state.set[glue_loc_var_]==agent_name_) {
-        state.set[surface_status_var_] == "glued";
+        state.set[surface_status_var_] = "glued";
+        future_beliefs[state]=1;
     } else if (action_name == "move") {
         future_beliefs = MdpBasicActions::applyMove(agent_loc_var_, action_parameters[2], state);
     }

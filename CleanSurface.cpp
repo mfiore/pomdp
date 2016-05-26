@@ -49,6 +49,7 @@ CleanSurface::CleanSurface() {
 
     par_var.clear();
     par_var.push_back(surface_status_var_);
+    parameter_variables[surface_name_] = par_var;
     variable_parameter[par_var[0]] = surface_name_;
 }
 
@@ -59,6 +60,19 @@ CleanSurface::CleanSurface(const CleanSurface& orig) {
 CleanSurface::~CleanSurface() {
 
 }
+
+void CleanSurface::assignParametersFromActionName(string action_name) {
+    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    std::map<string, string> instance;
+    if (action_parts.size() > 0) {
+        instance[agent_name_] = action_parts[0];
+    }
+    if (action_parts.size() > 2) {
+        instance[surface_name_] = action_parts[2];
+    }
+    assignParameters(instance);
+}
+
 
 std::map<VariableSet, double> CleanSurface::transitionFunction(VariableSet state, string action) {
     VarStateProb future_beliefs;
@@ -71,7 +85,8 @@ std::map<VariableSet, double> CleanSurface::transitionFunction(VariableSet state
     } else if (action_name == "clean"
             && state.set[surface_status_var_] == "none"
             && state.set[agent_loc_var_] == surface_name_) {
-        state.set[surface_status_var_] == "cleaned";
+        state.set[surface_status_var_] = "cleaned";
+        future_beliefs[state]=1;
     } else if (action_name == "move") {
         future_beliefs = MdpBasicActions::applyMove(agent_loc_var_, action_parameters[2], state);
     }

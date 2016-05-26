@@ -24,13 +24,14 @@ Saphari::Saphari() {
     std::vector<string> statuses{"none","cleaned","glued","completed"};
     
     agent_loc_var_ = agent_name_+"_isAt";
-    for (int i = 0; i<3;i++) {
+    for (int i = 1; i<4;i++) {
         bracket_loc_var_.push_back(bracket_name_+boost::lexical_cast<string>(i)+"_isAt");
-        surface_status_var_.push_back(bracket_name_+boost::lexical_cast<string>(i)+"_status");
+        surface_status_var_.push_back(surface_name_+boost::lexical_cast<string>(i)+"_status");
     }
     
     glue_loc_var_=glue_name_+"_isAt";
-
+    
+    variables.push_back(glue_loc_var_);
     variables.push_back(agent_loc_var_);
     
     std::map<string, std::vector < string>> var_values;

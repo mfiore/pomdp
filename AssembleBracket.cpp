@@ -20,7 +20,7 @@ AssembleBracket::AssembleBracket() {
     glue_name_ = "gluebottle";
     surface_name_ = "surface";
 
-    std::vector<string> locations{"table", "surface1", "surface2", "surface3"};
+    std::vector<string> locations{"table", "surface1", "surface2", "surface3","surface"};
     std::vector<string> statuses{"none","cleaned","glued","completed"};
     
     agent_loc_var_ = agent_name_+"_isAt";
@@ -69,6 +69,7 @@ AssembleBracket::AssembleBracket() {
     
     par_var.clear();
     par_var.push_back(surface_status_var_);
+    parameter_variables[surface_name_] = par_var;
     variable_parameter[par_var[0]]=surface_name_;
 }
 
@@ -79,6 +80,23 @@ AssembleBracket::AssembleBracket(const AssembleBracket& orig) {
 AssembleBracket::~AssembleBracket() {
 
 }
+
+
+void AssembleBracket::assignParametersFromActionName(string action_name) {
+    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    std::map<string, string> instance;
+    if (action_parts.size() > 0) {
+        instance[agent_name_] = action_parts[0];
+    }
+    if (action_parts.size() > 2) {
+        instance[bracket_name_] = action_parts[2];
+    }
+    if (action_parts.size() > 3) {
+        instance[surface_name_] = action_parts[3];
+    }
+    assignParameters(instance);
+}
+
 
 std::map<VariableSet, double> AssembleBracket::transitionFunction(VariableSet state, string action) {
     VarStateProb future_beliefs;

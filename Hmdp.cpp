@@ -95,6 +95,7 @@ std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set) {
     VariableSet v_param = convertToParametrizedState(set);
     cout<<"Param in hierarchic transition\n";
     cout<<v_param.toString()<<"\n";
+    printParameters();
     int i = convertHierarchicState(v_param);
 
 
@@ -301,6 +302,8 @@ void Hmdp::create(string name, bool rewrite, bool first) {
         string fileName = name + ".pomdp";
 
         enumerateStates();
+//        printStates();
+
         bool has_read = readMdp(fileName, rewrite);
         if (!has_read) {
             enumerateFunctions(fileName);
@@ -395,6 +398,7 @@ string Hmdp::chooseHierarchicAction(int b) {
 }
 
 void Hmdp::simulate(int n, VariableSet initial_state) {
+    printParameters();
     VariableSet parametrized_vs = convertToParametrizedState(initial_state);
 
     int int_initial_state = mapStateEnum.at(parametrized_vs);

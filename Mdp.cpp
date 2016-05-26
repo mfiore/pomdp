@@ -196,10 +196,10 @@ void Mdp::printTransitionFunction() {
             cout << "Executing " << action << "\n" << "Output is:\n";
             log << "Executing " << action << "\n" << "Output is:\n";
             for (auto out : tOutput) {
-                if (out.first!=0) {
-                    cout<<"...\n";
-                    log<<"...\n";
-                } 
+                if (out.first != 0) {
+                    cout << "...\n";
+                    log << "...\n";
+                }
                 VariableSet vo = vecStateEnum[out.first];
                 cout << vo.toString() << "\n";
                 cout << "\n";
@@ -348,12 +348,12 @@ void Mdp::create(string name, bool rewrite) {
     string fileName = name + ".mdp";
 
 
-//    //calculate inverse parameter variables 
-//    for (string p : parameters) {
-//        for (string v : parameter_variables[p]) {
-//            variable_parameter[v] = p;
-//        }
-//    }
+    //    //calculate inverse parameter variables 
+    //    for (string p : parameters) {
+    //        for (string v : parameter_variables[p]) {
+    //            variable_parameter[v] = p;
+    //        }
+    //    }
 
     enumerateStates();
     bool read_mdp = readMdp(fileName, rewrite);
@@ -383,7 +383,7 @@ string Mdp::chooseAction(VariableSet s) {
 
 void Mdp::printQValues(VariableSet s) {
     VariableSet param_s = convertToParametrizedState(s);
-    cout<<param_s.toString()<<"\n";
+    cout << param_s.toString() << "\n";
     for (string action : actions) {
         cout << action << " - " << getQValue(param_s, action) << "\n";
     }
@@ -509,13 +509,21 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set) {
 string Mdp::getDeparametrizedAction(string action_name) {
     vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
     stringstream depar_action_name;
-    for (string s : action_parts) {
+    for (int i = 0; i < action_parts.size() - 1; i++) {
+        string s=action_parts[i];
+        if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
+            depar_action_name << parametrized_to_original[s] << "_";
+        } else {
+            depar_action_name << s << "_";
+        }
+    }
+    if (action_parts.size() > 0) {
+        string s = action_parts[action_parts.size() - 1];
         if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
             depar_action_name << parametrized_to_original[s];
         } else {
             depar_action_name << s;
         }
-
     }
     return depar_action_name.str();
 }
@@ -535,46 +543,45 @@ string Mdp::getParametrizedAction(string action_name) {
 
 }
 
-
 void Mdp::printActions() {
-    cout<<"Actions are:"<<endl;
-    for (string a: actions) {
-        cout<<a<<endl;
+    cout << "Actions are:" << endl;
+    for (string a : actions) {
+        cout << a << endl;
     }
-    cout<<endl;
+    cout << endl;
 }
 
 void Mdp::printParameters() {
-    cout<<"List of Parameters:"<<endl;
-    for (string p:parameters) {
-        cout<<p<<endl;
+    cout << "List of Parameters:" << endl;
+    for (string p : parameters) {
+        cout << p << endl;
     }
-    cout<<endl;
-    cout<<"List of parameter variables"<<endl;
-    for (auto p:parameter_variables) {
-        cout<<"-"<<p.first<<":"<<endl;
-        for (string pp:p.second) {
-            cout<<pp<<endl;
+    cout << endl;
+    cout << "List of parameter variables" << endl;
+    for (auto p : parameter_variables) {
+        cout << "-" << p.first << ":" << endl;
+        for (string pp : p.second) {
+            cout << pp << endl;
         }
-        cout<<endl;
+        cout << endl;
     }
-    cout<<endl;
-    cout<<"Parameter instances"<<endl;
-    for (auto s:parameter_instances) {
-        cout<<s.first<<" "<<s.second<<endl;
+    cout << endl;
+    cout << "Parameter instances" << endl;
+    for (auto s : parameter_instances) {
+        cout << s.first << " " << s.second << endl;
     }
-    cout<<endl;
-    cout<<"Original to parametrized"<<endl;
-    for (auto s:original_to_parametrized) {
-        cout<<"-"<<s.first<<":"<<endl;
-        for (string ss:s.second) {
-            cout<<ss<<endl;
+    cout << endl;
+    cout << "Original to parametrized" << endl;
+    for (auto s : original_to_parametrized) {
+        cout << "-" << s.first << ":" << endl;
+        for (string ss : s.second) {
+            cout << ss << endl;
         }
     }
-    cout<<endl;
-    cout<<"Parametrized to original"<<endl;
-    for (auto s:parametrized_to_original) {
-        cout<<s.first<<" "<<s.second<<endl;
+    cout << endl;
+    cout << "Parametrized to original" << endl;
+    for (auto s : parametrized_to_original) {
+        cout << s.first << " " << s.second << endl;
     }
-    cout<<endl;
+    cout << endl;
 }

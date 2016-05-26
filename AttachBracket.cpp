@@ -32,7 +32,8 @@ AttachBracket::AttachBracket() {
     this->varValues = var_values;
 
     actions.push_back(agent_name_ + "_move_" + surface_name_ );
-    actions.push_back(agent_name_ + "_apply_bracket_" + surface_name_);
+    actions.push_back(agent_name_ + "_apply_" + surface_name_);
+    actions.push_back(agent_name_ + "_get_" + bracket_name_);
     hierarchy_map_[agent_name_ + "_get_" + bracket_name_] = new GetObject();
 
 
@@ -67,6 +68,21 @@ AttachBracket::~AttachBracket() {
 
 }
 
+void AttachBracket::assignParametersFromActionName(string action_name) {
+    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    std::map<string, string> instance;
+    if (action_parts.size() > 0) {
+        instance["agent"] = action_parts[0];
+    }
+    if (action_parts.size() > 2) {
+        instance["bracket"] = action_parts[2];
+    }
+    if (action_parts.size() > 3) {
+        instance["surface"] = action_parts[3];
+    }
+    assignParameters(instance);
+}
+
 std::map<VariableSet, double> AttachBracket::transitionFunction(VariableSet state, string action) {
     VarStateProb future_beliefs;
 
@@ -75,11 +91,12 @@ std::map<VariableSet, double> AttachBracket::transitionFunction(VariableSet stat
 
     if (action_name == "wait") {
         future_beliefs[state] = 1;
-    } else if (action_name == "apply_bracket"
+    } else if (action_name == "apply"
             && state.set[surface_status_var_] == "glued"
             && state.set[agent_loc_var_] == surface_name_
             && state.set[bracket_loc_var_]==agent_name_) {
-        state.set[surface_status_var_] == "completed";
+        state.set[surface_status_var_] = "completed";
+        future_beliefs[state]=1;
     } else if (action_name == "move") {
         future_beliefs = MdpBasicActions::applyMove(agent_loc_var_, action_parameters[2], state);
     }
@@ -98,7 +115,7 @@ bool AttachBracket::isStartingState(VariableSet state) {
 int AttachBracket::rewardFunction(VariableSet state, string action) {
     if (state.set[surface_status_var_] == "glued"
             && state.set[agent_loc_var_ ] == surface_name_
-            && action == agent_name_ + "_apply_bracket_" + surface_name_
+            && action == agent_name_ + "_apply_" + surface_name_
             && state.set[bracket_loc_var_]==agent_name_) {
         return 100;
     } else return 0;
