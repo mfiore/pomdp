@@ -36,7 +36,7 @@ AssembleBracket::AssembleBracket() {
     std::map<string, std::vector < string>> var_values;
     var_values[agent_loc_var_] = locations;
     var_values[glue_loc_var_] = locations;
-    var_values[glue_loc_var_].push_back(agent_name_);;
+    var_values[glue_loc_var_].push_back(agent_name_);
     var_values[bracket_loc_var_]=locations;
     var_values[bracket_loc_var_].push_back(agent_name_);
     var_values[surface_status_var_]=statuses;

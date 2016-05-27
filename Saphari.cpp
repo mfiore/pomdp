@@ -37,6 +37,7 @@ Saphari::Saphari() {
     std::map<string, std::vector < string>> var_values;
     var_values[agent_loc_var_] = locations;
     var_values[glue_loc_var_]=locations;
+    var_values[glue_loc_var_].push_back(agent_name_);
     for (int i=0;i<3;i++) {
         variables.push_back(bracket_loc_var_[i]);
         var_values[bracket_loc_var_[i]]=locations;
@@ -48,8 +49,8 @@ Saphari::Saphari() {
     this->varValues = var_values;
 
     std::vector<string> actions;
-    for (int i = 0; i < 3; i++) {
-        for (int j=0; j<3; j++) {
+    for (int i = 1; i < 4; i++) {
+        for (int j=1; j<4; j++) {
             actions.push_back(agent_name_ + "_assemble_" + bracket_name_+to_string(i)+"_"+surface_name_+to_string(j));
             hierarchy_map_[agent_name_ + "_assemble_" + bracket_name_+to_string(i)+"_"+surface_name_+to_string(j)] = new AssembleBracket();
             

@@ -93,9 +93,9 @@ std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set) {
     
 
     VariableSet v_param = convertToParametrizedState(set);
-    cout<<"Param in hierarchic transition\n";
-    cout<<v_param.toString()<<"\n";
-    printParameters();
+//    cout<<"Param in hierarchic transition\n";
+//    cout<<v_param.toString()<<"\n";
+//    printParameters();
     int i = convertHierarchicState(v_param);
 
 
@@ -244,7 +244,25 @@ void Hmdp::enumerateFunctions(string fileName) {
                 r = rewardFunction(vecStateEnum[i], action);
             } else {
                 Hmdp* h = hierarchy_map_[action];
+       
                 h->assignParametersFromActionName(action);
+ 
+//                if (action=="agent_assemble_bracket1_surface1" &&
+//                        fileName=="agent_saphari.pomdp") {
+//                    cout<<"";
+//                    VariableSet s;
+//                    s.set["agent1_isAt"]="surface1";
+//                    s.set["bracket1_isAt"]="agent";
+//                    s.set["bracket2_isAt"]="table";
+//                    s.set["bracket3_isAt"]="table";
+//                    s.set["gluebottle_isAt"]="agent";
+//                    s.set["surface1_status"]="completed";
+//                    s.set["surface2_status"]="none";
+//                    s.set["surface3_status"]="none";
+//                    mapStateEnum.at(s);
+//                    printStates();
+//
+//                }
                 VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
                 for (auto temp_b : temp_future_beliefs) {
                     future_beliefs[mapStateEnum.at(temp_b.first)] = temp_b.second;
@@ -301,8 +319,8 @@ void Hmdp::create(string name, bool rewrite, bool first) {
         cout << "Creating " << name << "\n";
         string fileName = name + ".pomdp";
 
+    
         enumerateStates();
-//        printStates();
 
         bool has_read = readMdp(fileName, rewrite);
         if (!has_read) {
@@ -377,7 +395,8 @@ string Hmdp::chooseHierarchicAction(VariableSet state) {
         if (hierarchy_map_.find(action) != hierarchy_map_.end()) {
             Hmdp * h = hierarchy_map_[action];
             active_module = action;
-            h->assignParametersFromActionName(action);
+            string dp=getDeparametrizedAction(action);
+            h->assignParametersFromActionName(dp);
             return hierarchy_map_[action]->chooseHierarchicAction(state);
         } else {
             return action;

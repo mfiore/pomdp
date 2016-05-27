@@ -241,6 +241,11 @@ void Mdp::printStates() {
     cout << "\n\nPrint combinations\n";
     for (int i = 0; i < vecStateEnum.size(); i++) {
         cout << "State " << i << "\n";
+        if (vecStateEnum[i].set.find("gluebottle_isAt") != vecStateEnum[i].set.end()) {
+            if (vecStateEnum[i].set.at("gluebottle_isAt") != "surface3") {
+                cout << "";
+            }
+        }
         cout << vecStateEnum[i].toString() << "\n";
     }
 }
@@ -270,6 +275,7 @@ void Mdp::enumerateStates() {
 
         vecStateEnum.push_back(v);
     }
+
 }
 
 bool Mdp::readMdp(string fileName, bool rewrite) {
@@ -510,7 +516,7 @@ string Mdp::getDeparametrizedAction(string action_name) {
     vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
     stringstream depar_action_name;
     for (int i = 0; i < action_parts.size() - 1; i++) {
-        string s=action_parts[i];
+        string s = action_parts[i];
         if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
             depar_action_name << parametrized_to_original[s] << "_";
         } else {

@@ -73,7 +73,17 @@ void CleanSurface::assignParametersFromActionName(string action_name) {
     assignParameters(instance);
 }
 
+string CleanSurface::getParametrizedAction(string action_name) {
+    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    stringstream param_action_name;
 
+    param_action_name << "agent_" << action_parts[1];
+    if (action_parts.size() > 2) {
+        param_action_name << "_surface";
+    }
+    return param_action_name.str();
+
+}
 std::map<VariableSet, double> CleanSurface::transitionFunction(VariableSet state, string action) {
     VarStateProb future_beliefs;
 

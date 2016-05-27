@@ -33,6 +33,8 @@ public:
     int rewardFunction(VariableSet state, string action);
     bool isGoalState(VariableSet state);
     void assignParametersFromActionName(string action_name);
+    string getParametrizedAction(string action_name);
+
 
 private:
     string agent_loc_var_;
