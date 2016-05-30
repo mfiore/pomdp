@@ -100,13 +100,13 @@ int Saphari::rewardFunction(VariableSet state, string action) {
             i_not_completed=i;
         }
         else {
-            if (state.set[bracket_loc_var_[0]]==surface_name_+to_string(i)) {
+            if (state.set[bracket_loc_var_[0]]==surface_name_+to_string(i+1)) {
                 is_placed[0]=true;
             }
-            else if (state.set[bracket_loc_var_[1]]==surface_name_+to_string(i)) {
+            else if (state.set[bracket_loc_var_[1]]==surface_name_+to_string(i+1)) {
                 is_placed[1]=true;
             }
-            else if (state.set[bracket_loc_var_[2]]==surface_name_+to_string(i)) {
+            else if (state.set[bracket_loc_var_[2]]==surface_name_+to_string(i+1)) {
                 is_placed[2]=true;
             }
         }
@@ -118,7 +118,7 @@ int Saphari::rewardFunction(VariableSet state, string action) {
         }
     }
    if (n_not_completed==1 && 
-           action==agent_name_+"_assemble_"+bracket_name_+to_string(i_not_placed)+"_"+surface_name_+to_string(i_not_completed)) {
+           action==agent_name_+"_assemble_"+bracket_name_+to_string(i_not_placed+1)+"_"+surface_name_+to_string(i_not_completed+1)) {
           return 1000;
         }
     else return 0;

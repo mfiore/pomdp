@@ -51,6 +51,7 @@ AttachBracket::AttachBracket() {
 
     par_var.clear();
     par_var.push_back(surface_status_var_);
+    parameter_variables[surface_name_]=par_var;
     variable_parameter[par_var[0]] = surface_name_;
     
     par_var.clear();

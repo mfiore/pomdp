@@ -113,6 +113,8 @@ public:
 
     void printHierarchy();
 
+    string getDeparametrizedAction(string action_name);
+
 };
 
 #endif	/* HMDP_H */

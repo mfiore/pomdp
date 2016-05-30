@@ -513,6 +513,7 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set) {
 }
 
 string Mdp::getDeparametrizedAction(string action_name) {
+    
     vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
     stringstream depar_action_name;
     for (int i = 0; i < action_parts.size() - 1; i++) {
