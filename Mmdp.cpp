@@ -105,6 +105,7 @@ void Mmdp::createJointMdpVariables() {
         }
         actions.push_back(action_name);
     }
+    
 }
 
 void Mmdp::createSubMdpNames(string name) {
@@ -194,7 +195,7 @@ void Mmdp::assignParametersFromActionName(string action_name) {
             instance["object" + i_s] = action_parts[2];
         }
         if (action_parts.size() > 3) {
-            instance["support" + i_s] = action_parts[3];
+            instance["surface" + i_s] = action_parts[3];
         }
     }
     assignParameters(instance);
@@ -289,7 +290,11 @@ void Mmdp::enumerateFunctions(string fileName) {
             if (hierarchy_map_.find(action) == hierarchy_map_.end()) {
                 //if it's not a hierarchical action we have to check the state from each mdp, and look 
                 //to see if the resulting state is not incongruent
-
+                if (action=="agent0_move_surface0-agent1_move_table") {
+                    cout<<"asd";
+                    printStates();
+                    printParameters();
+                }
 
                 vector<string> single_actions = StringOperations::stringSplit(action, '-');
                 int index = 0;

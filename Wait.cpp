@@ -11,7 +11,7 @@ Wait::Wait() {
     agent_loc_var_ = "agent_isAt";
     variables.push_back(agent_loc_var_);
 
-    std::vector<string> locations{"table", "bed", "counter", "shelf"};
+    std::vector<string> locations{"table", "surface1", "surface2", "surface3"};
     agent_name_ = "agent";
 
     std::map<string, std::vector<string> > var_values;

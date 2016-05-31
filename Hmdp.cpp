@@ -120,7 +120,7 @@ std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set, str
 //        hierarchy_map_[active_module]->assignParametersFromActionName(action);
         temp_result = hierarchy_map_[active_module]->getHierarchicTransition(set, action);
     } else {
-                printParameters();
+//                printParameters();
         VariableSet v_param = convertToParametrizedState(set);
 
         int i = convertHierarchicState(v_param);
@@ -402,6 +402,7 @@ string Hmdp::chooseHierarchicAction(VariableSet state) {
             active_module = action;
             string dp = getDeparametrizedAction(action);
             h->assignParametersFromActionName(dp);
+//            h->printParameters();
             return hierarchy_map_[action]->chooseHierarchicAction(state);
         } else {
             return action;
@@ -440,10 +441,11 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
 
             StateProb output;
             if (active_module != "this") {
+                Hmdp* lowest_active=getLowestActiveModule();
+                cout << "Executing " << lowest_active->getDeparametrizedAction(action) << "\n";
+
+
                 Hmdp* sub_mdp = hierarchy_map_[active_module];
-                cout << "Executing " << sub_mdp->getDeparametrizedAction(action) << "\n";
-
-
                 VarStateProb var_output = sub_mdp->getHierarchicTransition(depar_s, action);
 
                 for (auto o : var_output) {
@@ -510,7 +512,7 @@ void Hmdp::printHierarchy() {
 
 string Hmdp::getDeparametrizedAction(string action_name) {
 //    if (hierarchy_map_.find(action_name) != hierarchy_map_.end()) {
-////        return hierarchy_map_[action_name]->getDeparametrizedAction(action_name);
+//        return hierarchy_map_[action_name]->getDeparametrizedAction(action_name);
 //    } else {
 
         vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
@@ -532,5 +534,11 @@ string Hmdp::getDeparametrizedAction(string action_name) {
             }
         }
         return depar_action_name.str();
-    }
-//}
+//    }
+}
+
+
+Hmdp* Hmdp::getLowestActiveModule() {
+  if (active_module!="this") return hierarchy_map_[active_module]->getLowestActiveModule();
+  else return this;  
+}

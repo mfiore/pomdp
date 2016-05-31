@@ -72,6 +72,7 @@ public:
     //of a hierarchical mdp architecture)
     virtual void create(string name, bool rewrite, bool first);
     
+    Hmdp* getLowestActiveModule();
     
 //private:
     //to override. Returns true if the state is starting
