@@ -30,6 +30,10 @@ Wait::Wait() {
     par_var.push_back(agent_loc_var_);
     parameter_variables[agent_name_] = par_var;
     variable_parameter[par_var[0]] = agent_name_;
+
+    parameter_action_place[0]=agent_name_;
+
+    name="agent_wait";
 }
 
 Wait::Wait(const Wait& orig) {

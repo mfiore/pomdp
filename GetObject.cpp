@@ -43,6 +43,11 @@ GetObject::GetObject() {
     par_var.push_back(agent_loc_var_);
     parameter_variables[agent_name_]=par_var;
     variable_parameter[par_var[0]]=agent_name_;
+
+    parameter_action_place[0] = agent_name_;
+    parameter_action_place[2] = object_name_;
+    name = "agent_get_object";
+
 }
 
 GetObject::GetObject(const GetObject& orig) {
@@ -51,14 +56,14 @@ GetObject::GetObject(const GetObject& orig) {
 GetObject::~GetObject() {
 }
 
-void GetObject::assignParametersFromActionName(string action_name) {
-    vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
-    std::map<string,string> instance;
- 
-    instance[agent_name_]=action_parameters[0];
-    instance[object_name_]=action_parameters[2]; 
-    assignParameters(instance);
-}
+//void GetObject::assignParametersFromActionName(string action_name) {
+//    vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
+//    std::map<string,string> instance;
+// 
+//    instance[agent_name_]=action_parameters[0];
+//    instance[object_name_]=action_parameters[2]; 
+//    assignParameters(instance);
+//}
 
 //string GetObject::getDeparametrizedAction(string action_name) {
 //     vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');

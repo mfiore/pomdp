@@ -57,6 +57,10 @@ AssembleBracket::AssembleBracket() {
     parameters.push_back(bracket_name_);
     parameters.push_back(surface_name_);
     
+    parameter_action_place[0]=agent_name_;
+    parameter_action_place[2]=bracket_name_;
+    parameter_action_place[3]=surface_name_;
+    
     vector<string> par_var;
     par_var.push_back(agent_loc_var_);
     parameter_variables[agent_name_] = par_var;
@@ -71,6 +75,8 @@ AssembleBracket::AssembleBracket() {
     par_var.push_back(surface_status_var_);
     parameter_variables[surface_name_] = par_var;
     variable_parameter[par_var[0]]=surface_name_;
+    
+    name="agent_assemble_bracket_surface";
 }
 
 AssembleBracket::AssembleBracket(const AssembleBracket& orig) {
@@ -82,20 +88,20 @@ AssembleBracket::~AssembleBracket() {
 }
 
 
-void AssembleBracket::assignParametersFromActionName(string action_name) {
-    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
-    std::map<string, string> instance;
-    if (action_parts.size() > 0) {
-        instance[agent_name_] = action_parts[0];
-    }
-    if (action_parts.size() > 2) {
-        instance[bracket_name_] = action_parts[2];
-    }
-    if (action_parts.size() > 3) {
-        instance[surface_name_] = action_parts[3];
-    }
-    assignParameters(instance);
-}
+//void AssembleBracket::assignParametersFromActionName(string action_name) {
+//    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+//    std::map<string, string> instance;
+//    if (action_parts.size() > 0) {
+//        instance[agent_name_] = action_parts[0];
+//    }
+//    if (action_parts.size() > 2) {
+//        instance[bracket_name_] = action_parts[2];
+//    }
+//    if (action_parts.size() > 3) {
+//        instance[surface_name_] = action_parts[3];
+//    }
+//    assignParameters(instance);
+//}
 
 
 std::map<VariableSet, double> AssembleBracket::transitionFunction(VariableSet state, string action) {

@@ -41,6 +41,10 @@ CleanSurface::CleanSurface() {
     parameters.push_back(agent_name_);
     parameters.push_back(surface_name_);
 
+    parameter_action_place[0]=agent_name_;
+    parameter_action_place[2]=surface_name_;
+
+    
     vector<string> par_var;
     par_var.push_back(agent_loc_var_);
     parameter_variables[agent_name_] = par_var;
@@ -51,6 +55,9 @@ CleanSurface::CleanSurface() {
     par_var.push_back(surface_status_var_);
     parameter_variables[surface_name_] = par_var;
     variable_parameter[par_var[0]] = surface_name_;
+
+    name = "agent_clean_surface";
+
 }
 
 CleanSurface::CleanSurface(const CleanSurface& orig) {
@@ -61,29 +68,29 @@ CleanSurface::~CleanSurface() {
 
 }
 
-void CleanSurface::assignParametersFromActionName(string action_name) {
-    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
-    std::map<string, string> instance;
-    if (action_parts.size() > 0) {
-        instance[agent_name_] = action_parts[0];
-    }
-    if (action_parts.size() > 2) {
-        instance[surface_name_] = action_parts[2];
-    }
-    assignParameters(instance);
-}
+//void CleanSurface::assignParametersFromActionName(string action_name) {
+//    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+//    std::map<string, string> instance;
+//    if (action_parts.size() > 0) {
+//        instance[agent_name_] = action_parts[0];
+//    }
+//    if (action_parts.size() > 2) {
+//        instance[surface_name_] = action_parts[2];
+//    }
+//    assignParameters(instance);
+//}
 
-string CleanSurface::getParametrizedAction(string action_name) {
-    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
-    stringstream param_action_name;
-
-    param_action_name << "agent_" << action_parts[1];
-    if (action_parts.size() > 2) {
-        param_action_name << "_surface";
-    }
-    return param_action_name.str();
-
-}
+//string CleanSurface::getParametrizedAction(string action_name) {
+//    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+//    stringstream param_action_name;
+//
+//    param_action_name << "agent_" << action_parts[1];
+//    if (action_parts.size() > 2) {
+//        param_action_name << "_surface";
+//    }
+//    return param_action_name.str();
+//
+//}
 std::map<VariableSet, double> CleanSurface::transitionFunction(VariableSet state, string action) {
     VarStateProb future_beliefs;
 

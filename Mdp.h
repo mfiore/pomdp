@@ -75,7 +75,9 @@ public:
     //it's a vector because theoretically more parameters could be set to the same value (e.g. greyTape_isAt -> object1_isAt, object2_isAt)
     std::map<string, string > parametrized_to_original; //opposite of the one upper
 
-
+    /*position of the parameters in an action. Ex. human_take_bottle: agent -> 1, object ->3
+     */
+    std::map<int,string> parameter_action_place; 
     //Variables
 
     //the system state enumeration is kept both way (from enumeration number to system state and other way)

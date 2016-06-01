@@ -477,14 +477,10 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
 void Hmdp::assignParametersFromActionName(string action_name) {
     vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
     std::map<string, string> instance;
-    if (action_parts.size() > 0) {
-        instance["agent"] = action_parts[0];
-    }
-    if (action_parts.size() > 2) {
-        instance["object"] = action_parts[2];
-    }
-    if (action_parts.size() > 3) {
-        instance["support"] = action_parts[3];
+    for (int i=0; i<action_parts.size();i++) {
+        if(parameter_action_place.find(i)!=parameter_action_place.end()) {
+            instance[parameter_action_place[i]]=action_parts[i];
+        }
     }
     assignParameters(instance);
 }

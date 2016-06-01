@@ -57,7 +57,7 @@ public:
 
     //returns the action chosen from a hierarchy. The action will be returned as the parametrized version. To get the original one
     //we need to call getDeparametrizedAction
-    string chooseHierarchicAction(VariableSet state);
+   virtual  string chooseHierarchicAction(VariableSet state);
     string chooseHierarchicAction(int s);
     
     //simulate n steps on the initial state using the policy

@@ -27,11 +27,13 @@ public:
     std::map<string, Hmdp*> agent_hmpd_;
     VariableSet convertToParametrizedState(VariableSet s);
 
-private:
     void createJointMdpVariables();
     virtual void enumerateGoalAndStartStates();
     virtual void enumerateFunctions(string fileName);
     virtual void assignParametersFromActionName(string action_name);
+
+
+    string chooseHierarchicAction(VariableSet state);
 
     
 
@@ -68,6 +70,8 @@ private:
     
     void createSubMdpNames(string name);
 //    void printMmdpHierarchy();
+    
+    Hmdp* getSubMdp(string action);
 };
 
 #endif	/* MMDP_H */

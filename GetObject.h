@@ -21,7 +21,7 @@ public:
     GetObject(const GetObject& orig);
     virtual ~GetObject();
     
-    void assignParametersFromActionName(string action_name);
+//    void assignParametersFromActionName(string action_name);
 //    string getDeparametrizedAction(string action_name);
 
 private:
