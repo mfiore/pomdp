@@ -13,6 +13,7 @@
 #include <vector>
 #include <boost/lexical_cast.hpp>
 #include "Wait.h"
+#include <set>
 
 using namespace std;
 
@@ -30,7 +31,7 @@ public:
     void createJointMdpVariables();
     virtual void enumerateGoalAndStartStates();
     virtual void enumerateFunctions(string fileName);
-    virtual void assignParametersFromActionName(string action_name);
+    virtual void assignParametersFromActionName(string action_name,set<string> changed_mdps,map<string,string> super_instance);
 
 
     string chooseHierarchicAction(VariableSet state);
@@ -71,7 +72,11 @@ public:
     void createSubMdpNames(string name);
 //    void printMmdpHierarchy();
     
-    Hmdp* getSubMdp(string action);
+    pair<string,set<string> > getSubMdpName(string action);
+
+    
+    
+    string original_action_;
 };
 
 #endif	/* MMDP_H */

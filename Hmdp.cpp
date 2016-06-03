@@ -93,9 +93,9 @@ std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set) {
 
 
     VariableSet v_param = convertToParametrizedState(set);
-    //    cout<<"Param in hierarchic transition\n";
-    //    cout<<v_param.toString()<<"\n";
-    //    printParameters();
+//        cout<<"Param in hierarchic transition\n";
+//        cout<<v_param.toString()<<"\n";
+//        printParameters();
     int i = convertHierarchicState(v_param);
 
 
