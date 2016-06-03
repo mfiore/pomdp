@@ -27,7 +27,7 @@ void Mmdp::createJointMdpVariables() {
     int i = 0;
     for (auto mdp : agent_hmpd_) {
         cout << mdp.first << "\n";
-        string i_s = boost::lexical_cast<string>(i);
+        string i_s = "p"+boost::lexical_cast<string>(i);
         for (auto var : mdp.second->variables) {
             //convert values to multiparameter if needed
             vector<string> actual_var_values;
@@ -197,7 +197,7 @@ void Mmdp::assignParametersFromActionName(string action_name, set<string> change
                 }
             }
         } else {
-            string i_s = boost::lexical_cast<string>(i);
+            string i_s = "p"+boost::lexical_cast<string>(i);
             vector<string> action_parts = StringOperations::stringSplit(single_actions[i], '_');
             for (int j = 0; j < action_parts.size(); j++) {
                 if (agent.second->parameter_action_place.find(j) != agent.second->parameter_action_place.end()) {
@@ -221,7 +221,7 @@ void Mmdp::assignParametersFromActionName(string action_name, set<string> change
 }
 
 string Mmdp::convertToSingleParameter(string var_name, int index) {
-    string i_s = boost::lexical_cast<string>(index);
+    string i_s = "p"+boost::lexical_cast<string>(index);
     string actual_var_name = var_name;
     if (variable_parameter.find(var_name) != variable_parameter.end()) {
         string par = variable_parameter[var_name];
@@ -235,7 +235,7 @@ string Mmdp::convertToSingleParameter(string var_name, int index) {
 }
 
 string Mmdp::convertToMultiParameter(Mdp* mdp, string var_name, int i) {
-    string i_s = boost::lexical_cast<string>(i);
+    string i_s = "p"+boost::lexical_cast<string>(i);
     string actual_var_name = var_name;
     if (mdp->variable_parameter.find(var_name) != mdp->variable_parameter.end()) {
         string par = mdp->variable_parameter[var_name];
@@ -301,7 +301,8 @@ void Mmdp::enumerateFunctions(string fileName) {
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
 
-            if (i == 809 && action == "agent0_glue_surface0-agent1_move_surface1") {
+            if (i == 5 && fileName =="agent_clean_surface-agent_glue_surface.pomdp" &&
+                    action=="agentp0_move_surfacep0-agentp1_move_surfacep1") {
                 cout << "";
                 printParameters();
             }
@@ -567,7 +568,7 @@ string Mmdp::getDeparametrizedAction(string action_name) {
     }
     for (int i = 0; i < single_actions.size(); i++) {
 
-        string i_s = boost::lexical_cast<string>(i);
+        string i_s = "p"+boost::lexical_cast<string>(i);
         vector<string> action_parts = StringOperations::stringSplit(single_actions[i], '_');
         for (int j = 0; j < action_parts.size() - 1; j++) {
             string s = action_parts[j];
@@ -613,11 +614,19 @@ VariableSet Mmdp::convertToParametrizedState(VariableSet s) {
             actual_value = original_to_parametrized[el.second];
         }
         //        if (!found) { //not a paramater. Then it must be a variable, if not it's not relevant to this mdp
-        if (std::find(variables.begin(), variables.end(), actual_key[0]) != variables.end()) {
+        //a variable can be both a parameter and a normal variable (if in one of the mdp is a var and in the other is a par)
+        if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
             if (vs_new.set.find(el.first) == vs_new.set.end()) {
-                vs_new.set[el.first] = el.second;
-            }
 
+                if (std::find(varValues[el.first].begin(), varValues[el.first].end(), actual_value[0])!=varValues[el.first].end()) {
+                        vs_new.set[el.first] = actual_value[0];
+                    }
+                else if (actual_value[0] != el.second &&
+                        std::find(varValues[el.first].begin(),varValues[el.first].end(),el.second)!=varValues[el.first].end()) {
+                    vs_new.set[el.first] = el.second;
+                }
+                
+            }
         }
         //        }
         if (found) {
