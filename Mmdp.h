@@ -15,6 +15,7 @@
 #include "Wait.h"
 #include <set>
 
+
 using namespace std;
 
 class Mmdp : public Hmdp {
@@ -51,11 +52,11 @@ public:
 
     VariableSet convertToMmdpState(VariableSet mdp_state, Hmdp* mdp, int index);
 
-    VariableSet convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state);
+    pair<VariableSet,set<string> > convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state);
     void assignParametersToMdp(Hmdp* mdp, int index);
 
     VarStateProb joinMdpFutureStates(VarStateProb mdp_future_state, VarStateProb cumulative_future_state,
-    VariableSet mmdp_state, Hmdp *mdp, int index, bool *no_incongruences);
+    VariableSet mmdp_state, Hmdp *mdp, int index, bool *no_incongruences, std::set<string> new_not_present_variables);
     
     bool isMmdpStateCongruent(VariableSet state);
 

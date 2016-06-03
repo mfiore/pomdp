@@ -239,6 +239,7 @@ void Hmdp::enumerateFunctions(string fileName) {
     cout << "Starting Enumeration\n";
     for (int i = 0; i < vecStateEnum.size(); i++) {
         for (string action : actions) {
+         
             double r;
             StateProb future_beliefs;
             if (hierarchy_map_.find(action) == hierarchy_map_.end()) {
@@ -434,9 +435,10 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
         StateProb temp_b;
         for (auto s : b) {
             VariableSet depar_s = convertToDeparametrizedState(vecStateEnum[s.first]);
-
+            
             cout << "State: \n";
-            cout << vecStateEnum[s.first].toString();
+//            cout << vecStateEnum[s.first].toString();
+            cout<<depar_s.toString();
             string action = chooseHierarchicAction(s.first);
 
             StateProb output;

@@ -247,7 +247,8 @@ string Mmdp::convertToMultiParameter(Mdp* mdp, string var_name, int i) {
 }
 
 VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStateProb cumulative_future_state,
-        VariableSet mmdp_instance_state, Hmdp *mdp, int index, bool *no_incongruences) {
+        VariableSet mmdp_instance_state, Hmdp *mdp, int index, bool *no_incongruences, 
+        std::set<string> new_not_present_variables) {
     VarStateProb result;
 
     //if one of the two states is empty we return the other
@@ -269,16 +270,18 @@ VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStatePr
             VariableSet new_cumulative_state = cumulative_state.first;
 
             for (auto var : instance_state.set) {
-                string original_value = mmdp_instance_state.set[var.first];
-                //if the variable is not present in the cumulative state we just add it
-                if (new_cumulative_state.set.find(var.first) == new_cumulative_state.set.end()) {
-                    new_cumulative_state.set[var.first] = var.second;
-                }//if it's there and there is an incongruency we quit 
-                else if (new_cumulative_state.set[var.first] != var.second &&
-                        new_cumulative_state.set[var.first] != original_value &&
-                        var.second != original_value) {
-                    *no_incongruences = false;
-                    return result;
+                if (new_not_present_variables.find(var.first) == new_not_present_variables.end()) {
+                    string original_value = mmdp_instance_state.set[var.first];
+                    //if the variable is not present in the cumulative state we just add it
+                    if (new_cumulative_state.set.find(var.first) == new_cumulative_state.set.end()) {
+                        new_cumulative_state.set[var.first] = var.second;
+                    }//if it's there and there is an incongruency we quit 
+                    else if (new_cumulative_state.set[var.first] != var.second &&
+                            new_cumulative_state.set[var.first] != original_value &&
+                            var.second != original_value) {
+                        *no_incongruences = false;
+                        return result;
+                    }
                 }
             }
             result[new_cumulative_state] = cumulative_state.second * state.second;
@@ -298,7 +301,10 @@ void Mmdp::enumerateFunctions(string fileName) {
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
 
-
+            if (i == 809 && action == "agent0_glue_surface0-agent1_move_surface1") {
+                cout << "";
+                printParameters();
+            }
             double r = 0;
             StateProb future_beliefs;
 
@@ -331,8 +337,9 @@ void Mmdp::enumerateFunctions(string fileName) {
 
                     vector<string> action_parts = StringOperations::stringSplit(single_actions[index], '_');
                     VarStateProb mdp_future_states;
-                    VariableSet mdp_state = convertToMdpState(mdp.second, index, vecStateEnum[i]);
-
+                    pair<VariableSet, set<string> > mdp_state_result = convertToMdpState(mdp.second, index, vecStateEnum[i]);
+                    VariableSet mdp_state = mdp_state_result.first;
+                    set<string> not_present_variables = mdp_state_result.second;
                     if (action_parts[1] == "wait") {
                         mdp_future_states[mdp_state] = 1;
                     } else {
@@ -341,7 +348,7 @@ void Mmdp::enumerateFunctions(string fileName) {
                         r = r + mdp.second->rewardFunction(mdp_state, mdp_action);
                     }
                     cumulative_future_mdp_states = joinMdpFutureStates(mdp_future_states, cumulative_future_mdp_states,
-                            mmdp_instance_state, mdp.second, index, &no_incongruences);
+                            mmdp_instance_state, mdp.second, index, &no_incongruences, not_present_variables);
 
                     if (!no_incongruences) {
                         break;
@@ -424,9 +431,9 @@ void Mmdp::enumerateGoalAndStartStates() {
         bool is_starting_state = true;
         bool is_goal_state = false;
         for (auto mdp : agent_hmpd_) {
-            VariableSet mdp_state = convertToMdpState(mdp.second, i, state.first);
-            is_starting_state = is_starting_state && mdp.second->isStartingState(mdp_state);
-            is_goal_state = is_goal_state || mdp.second->isGoalState(mdp_state);
+            pair<VariableSet,set<string> > mdp_state = convertToMdpState(mdp.second, i, state.first);
+            is_starting_state = is_starting_state && mdp.second->isStartingState(mdp_state.first);
+            is_goal_state = is_goal_state || mdp.second->isGoalState(mdp_state.first);
             i++;
         }
 
@@ -471,7 +478,9 @@ bool Mmdp::isGoalState(VariableSet state) {
     return std::find(goal_states_.begin(), goal_states_.end(), i_state) != goal_states_.end();
 }
 
-VariableSet Mmdp::convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state) {
+pair<VariableSet, set<string >> Mmdp::convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state) {
+    pair<VariableSet, set<string> > result;
+    set<string> not_present_variables;
     VariableSet mdp_state;
     //    cout<<mmdp_state.toString()<<"\n";
     for (auto mdp_var : mdp->variables) {
@@ -481,11 +490,19 @@ VariableSet Mmdp::convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state
         }
         string actual_var_value = mmdp_state.set[actual_var_name];
         if (std::find(parameters.begin(), parameters.end(), actual_var_value) != parameters.end()) {
-            actual_var_value = convertToSingleParameter(actual_var_value, index);
+            string agent_parameter = actual_var_value.substr(actual_var_value.length() - 1);
+            if (agent_parameter == to_string(index)) { //it's actually a parameter of this mmdp
+                actual_var_value = convertToSingleParameter(actual_var_value, index);
+            } else {
+                not_present_variables.insert(actual_var_name);
+                actual_var_value = mdp->varValues[mdp_var][0];
+            }
         }
         mdp_state.set[mdp_var] = actual_var_value;
     }
-    return mdp_state;
+    result.first = mdp_state;
+    result.second = not_present_variables;
+    return result;
 }
 
 VariableSet Mmdp::convertToMmdpState(VariableSet mdp_state, Hmdp* mdp, int index) {
@@ -597,8 +614,8 @@ VariableSet Mmdp::convertToParametrizedState(VariableSet s) {
         }
         //        if (!found) { //not a paramater. Then it must be a variable, if not it's not relevant to this mdp
         if (std::find(variables.begin(), variables.end(), actual_key[0]) != variables.end()) {
-            if (vs_new.set.find(el.first)==vs_new.set.end()) {
-                vs_new.set[el.first]=el.second;
+            if (vs_new.set.find(el.first) == vs_new.set.end()) {
+                vs_new.set[el.first] = el.second;
             }
 
         }
