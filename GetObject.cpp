@@ -13,7 +13,7 @@ GetObject::GetObject() {
     variables.push_back(agent_loc_var_);
     variables.push_back(object_loc_var_);
     
-    std::vector<string> locations{"table", "surface1", "surface2", "surface3", "surface"};
+    std::vector<string> locations{"table", "surface1", "surface2", "surface3"};
     agent_name_ = "agent";
     object_name_="object";
   
@@ -21,6 +21,7 @@ GetObject::GetObject() {
     var_values[agent_loc_var_] = locations;
     var_values[object_loc_var_] = locations;
     var_values[object_loc_var_].push_back(agent_name_);
+    var_values[object_loc_var_].push_back("other");
 
     this->varValues = var_values;
     

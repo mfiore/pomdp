@@ -38,10 +38,12 @@ Saphari::Saphari() {
     var_values[agent_loc_var_] = locations;
     var_values[glue_loc_var_] = locations;
     var_values[glue_loc_var_].push_back(agent_name_);
+    var_values[glue_loc_var_].push_back("other");
     for (int i = 0; i < 3; i++) {
         variables.push_back(bracket_loc_var_[i]);
         var_values[bracket_loc_var_[i]] = locations;
         var_values[bracket_loc_var_[i]].push_back(agent_name_);
+        var_values[bracket_loc_var_[i]].push_back("other");
 
         variables.push_back(surface_status_var_[i]);
         var_values[surface_status_var_[i]] = statuses;

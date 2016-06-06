@@ -497,7 +497,6 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
 
 VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set) {
     VariableSet set;
-
     for (auto s : parameter_set.set) {
         string actual_key = s.first;
         string actual_value = s.second;
@@ -507,7 +506,14 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set) {
         if (parametrized_to_original.find(s.second) != parametrized_to_original.end()) {
             actual_value = parametrized_to_original[s.second];
         }
-        set.set[actual_key] = actual_value;
+        if (set.set.find(actual_key)!=set.set.end()) {
+            if (set.set[actual_key]=="other") {
+                set.set[actual_key]=actual_value;
+            }
+        }
+        else {
+            set.set[actual_key]=actual_value;
+        }
     }
     return set;
 }
