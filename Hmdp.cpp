@@ -108,8 +108,8 @@ std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set) {
         }
     }
 
-
-    return convertToHigherState(set, temp_result);
+    return temp_result;
+//    return convertToHigherState(set, temp_result);
 
 }
 
@@ -253,22 +253,7 @@ void Hmdp::enumerateFunctions(string fileName) {
 
                 h->assignParametersFromActionName(action);
 
-                //                if (action=="agent_assemble_bracket1_surface1" &&
-                //                        fileName=="agent_saphari.pomdp") {
-                //                    cout<<"";
-                //                    VariableSet s;
-                //                    s.set["agent1_isAt"]="surface1";
-                //                    s.set["bracket1_isAt"]="agent";
-                //                    s.set["bracket2_isAt"]="table";
-                //                    s.set["bracket3_isAt"]="table";
-                //                    s.set["gluebottle_isAt"]="agent";
-                //                    s.set["surface1_status"]="completed";
-                //                    s.set["surface2_status"]="none";
-                //                    s.set["surface3_status"]="none";
-                //                    mapStateEnum.at(s);
-                //                    printStates();
-                //
-                //                }
+        
                 VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
                 for (auto temp_b : temp_future_beliefs) {
                     future_beliefs[mapStateEnum.at(temp_b.first)] = temp_b.second;

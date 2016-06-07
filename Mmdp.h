@@ -76,6 +76,7 @@ public:
     pair<string,set<string> > getSubMdpName(string action);
 
     
+    string findValue(string variable, vector<string> possible_values);
     
     string original_action_;
 };

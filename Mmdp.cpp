@@ -274,19 +274,31 @@ VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStatePr
             VariableSet new_cumulative_state = cumulative_state.first;
 
             for (auto var : instance_state.set) {
+                //if we should consider this variable (it doesn't have a value not present in the current sub-mdp)
                 if (new_not_present_variables.find(var.first) == new_not_present_variables.end()) {
+                    //value of the variable before the transition (original mmdp space)
                     string original_value = mmdp_instance_state.set[var.first];
                     //if the variable is not present in the cumulative state we just add it
                     if (new_cumulative_state.set.find(var.first) == new_cumulative_state.set.end()) {
                         new_cumulative_state.set[var.first] = var.second;
-                    }//if it's there and there is an incongruency we quit 
-                    else if (new_cumulative_state.set[var.first] != var.second &&
-                            new_cumulative_state.set[var.first] != original_value &&
-                            var.second != original_value && var.second != "other" && original_value != "other") {
-                        *no_incongruences = false;
-                        return result;
+                    }//if it's there it's more complex
+                    else if (new_cumulative_state.set[var.first] != var.second) { //if they have different values 
+                        //case 1: if one of the two values is different from original we take the other value
+                        //we only consider the case where the new one is different. If not we just keep the old one
+                        if (new_cumulative_state.set[var.first] == original_value &&
+                                var.second != original_value) {
+                            new_cumulative_state.set[var.first] = var.second;
+                        }//case 2: the values are different from themselves and from original. It's an incongruency and we quit
+                        else if (new_cumulative_state.set[var.first] != original_value &&
+                                var.second != original_value) {
+                            *no_incongruences = false;
+                            return result;
+                        }
                     }
                 }
+                //                else {
+                //                    new_cumulative_state.set[var.first] = var.second;
+                //                }
             }
             result[new_cumulative_state] = cumulative_state.second * state.second;
         }
@@ -298,18 +310,15 @@ void Mmdp::enumerateFunctions(string fileName) {
     ofstream file(fileName);
     cout << "Starting Enumeration\n";
 
-
+    int nline = 0;
 
     for (int i = 0; i < vecStateEnum.size(); i++) {
 
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
-            if (fileName=="agent_glue_surface-agent_glue_surface.pomdp" &&
-                    action=="agentp0_move_surfacep0-agentp1_glue_surfacep1"
-                    && i==4) {
-                cout<<"";
+            if (i == 0 && action == "agentp0_take_objectp0-agentp1_move_table") {
+                cout << "";
             }
-
 
             double r = 0;
             StateProb future_beliefs;
@@ -355,6 +364,7 @@ void Mmdp::enumerateFunctions(string fileName) {
                 if (no_incongruences) {
                     //convert the cumulative_future_state to parameter state
                     for (auto state : cumulative_future_mdp_states) {
+
                         VariableSet converted_state = convertToParametrizedState(state.first);
 
                         //                        cout << converted_state.toString() << endl;
@@ -366,68 +376,81 @@ void Mmdp::enumerateFunctions(string fileName) {
             } else {
                 //if it's a hierarchical action it's the same as an hmdp
                 Mmdp* h = (Mmdp*) hierarchy_map_[module_name];
-
-
-                h->assignParametersFromActionName(action, changed_mdps, parameter_instances);
+                if (action == "agentp0_get_bracketp0-agentp1_wait" &&
+                        i == 0) {
+                    cout << "h";
+                }
+                string depar_action = getDeparametrizedAction(action);
+                h->assignParametersFromActionName(getDeparametrizedAction(action), changed_mdps, parameter_instances);
                 h->printParameters();
 
 
-                VariableSet v_param = h->convertToParametrizedState(vecStateEnum[i]);
-                if (h->mapStateEnum.find(v_param) != h->mapStateEnum.end()) {
-                    if (action == "agentp0_move_table-agentp1_get_gluebottle" &&
-                            fileName == "agent_get_object-agent_glue_surface.pomdp") {
-                        cout << "h";
-                    }
 
-                    VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
+                //                VariableSet v_param = h->convertToParametrizedState(vecStateEnum[i]);
+                VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i]);
+                VariableSet v_param = h->convertToParametrizedState(v_deparam);
+
+                if (h->mapStateEnum.find(v_param) != h->mapStateEnum.end()) {
+
+
+                    //                    VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
+                    VarStateProb temp_future_beliefs = h->getHierarchicTransition(v_deparam);
 
                     for (auto temp_b : temp_future_beliefs) {
                         VariableSet fb = temp_b.first;
-
-                        for (string v : variables) {
-                            if (std::find(varValues[v].begin(), varValues[v].end(), fb.set[v]) == varValues[v].end()) {
-                                string original_var = v;
-                                if (parametrized_to_original.find(v) != parametrized_to_original.end()) {
-                                    original_var = parametrized_to_original[v];
-                                }
-                                if (original_to_parametrized.find(original_var)!=original_to_parametrized.end()) {
-                                vector<string> parameter_vars = original_to_parametrized[original_var];
-                                for (string p : parameter_vars) {
-                                    if (p != v && std::find(varValues[p].begin(), varValues[p].end(), fb.set[v]) != varValues[p].end()) {
-                                        fb.set[p] = fb.set[v];
-                                    }
-                                }
+                        VariableSet param_fb = convertToParametrizedState(fb);
+                        for (auto v : vecStateEnum[i].set) {
+                            if (param_fb.set.find(v.first) == param_fb.set.end()) {
+                                param_fb.set[v.first] = v.second;
                             }
-                            fb.set[v] = "other";
                         }
+
+                        //                        for (string v : variables) {
+                        //                            if (std::find(varValues[v].begin(), varValues[v].end(), fb.set[v]) == varValues[v].end()) {
+                        //                                string original_var = v;
+                        //                                if (parametrized_to_original.find(v) != parametrized_to_original.end()) {
+                        //                                    original_var = parametrized_to_original[v];
+                        //                                }
+                        //                                if (original_to_parametrized.find(original_var) != original_to_parametrized.end()) {
+                        //                                    vector<string> parameter_vars = original_to_parametrized[original_var];
+                        //                                    for (string p : parameter_vars) {
+                        //                                        if (p != v && std::find(varValues[p].begin(), varValues[p].end(), fb.set[v]) != varValues[p].end()) {
+                        //                                            fb.set[p] = fb.set[v];
+                        //                                        }
+                        //                                    }
+                        //                                }
+                        //                                fb.set[v] = "other";
+                        //                            }
+                        //                        }
+                        future_beliefs[mapStateEnum.at(param_fb)] = temp_b.second;
                     }
-                    future_beliefs[mapStateEnum.at(fb)] = temp_b.second;
+                    VariableSet vstry = vecStateEnum[i];
+
+                    r = rewardFunction(vecStateEnum[i], action);
                 }
-                VariableSet vstry = vecStateEnum[i];
-
-                r = rewardFunction(vecStateEnum[i], action);
             }
+
+            PairStateAction transitionInput{i, action};
+            for (auto belief : future_beliefs) {
+                int s = belief.first;
+
+                file << s << " " << belief.second << " ";
+                PairStateAction bTransitionInput{s, action};
+                std::vector<int> previousBeliefs = predecessors[bTransitionInput];
+                previousBeliefs.push_back(i);
+                predecessors[bTransitionInput] = previousBeliefs;
+            }
+            file << "\n";
+            nline++;
+            transition[transitionInput] = future_beliefs;
+
+            PairStateAction rewardInput{i, action};
+            reward[rewardInput] = r;
+            file << r << "\n";
+            nline++;
         }
-
-        PairStateAction transitionInput{i, action};
-        for (auto belief : future_beliefs) {
-            int s = belief.first;
-
-            file << s << " " << belief.second << " ";
-            PairStateAction bTransitionInput{s, action};
-            std::vector<int> previousBeliefs = predecessors[bTransitionInput];
-            previousBeliefs.push_back(i);
-            predecessors[bTransitionInput] = previousBeliefs;
-        }
-        file << "\n";
-        transition[transitionInput] = future_beliefs;
-
-        PairStateAction rewardInput{i, action};
-        reward[rewardInput] = r;
-        file << r << "\n";
     }
-}
-file.close();
+    file.close();
 }
 
 void Mmdp::enumerateGoalAndStartStates() {
@@ -604,60 +627,41 @@ string Mmdp::getDeparametrizedAction(string action_name) {
 
 }
 
+string Mmdp::findValue(string variable, vector<string> possible_values) {
+    for (string v : possible_values) {
+        if (std::find(varValues[variable].begin(), varValues[variable].end(), v) != varValues[variable].end()) {
+            return v;
+        }
+    }
+    return "other";
+}
+
 VariableSet Mmdp::convertToParametrizedState(VariableSet s) {
     VariableSet vs_new;
     for (auto el : s.set) {
-        bool found = false;
-        vector<string> actual_key;
-        actual_key.push_back(el.first);
-        vector<string> actual_value;
-        string original_value = el.second;
-        actual_value.push_back(el.second);
+        vector<string> par_key;
+        vector<string> possible_values;
 
         if (original_to_parametrized.find(el.first) != original_to_parametrized.end()) {
-            actual_key = original_to_parametrized[el.first];
-            found = true;
+            par_key = original_to_parametrized[el.first];
         }
         if (original_to_parametrized.find(el.second) != original_to_parametrized.end()) {
-            actual_value = original_to_parametrized[el.second];
+            possible_values = original_to_parametrized[el.second];
         }
-        //        if (!found) { //not a paramater. Then it must be a variable, if not it's not relevant to this mdp
-        //a variable can be both a parameter and a normal variable (if in one of the mdp is a var and in the other is a par)
-        if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
-            if (vs_new.set.find(el.first) == vs_new.set.end()) {
-
-                if (std::find(varValues[el.first].begin(), varValues[el.first].end(), actual_value[0]) != varValues[el.first].end()) {
-                    vs_new.set[el.first] = actual_value[0];
-                } else if (actual_value[0] != el.second &&
-                        std::find(varValues[el.first].begin(), varValues[el.first].end(), el.second) != varValues[el.first].end()) {
-                    vs_new.set[el.first] = el.second;
-                } else {
-                    vs_new.set[el.first] = "other";
+        possible_values.push_back(el.second);
+        //if it's a parameter variable
+        if (par_key.size() > 0) {
+            for (string key : par_key) {
+                if (vs_new.set.find(key) == vs_new.set.end()) {
+                    string value = findValue(key, possible_values);
+                    vs_new.set[key] = value;
                 }
-
             }
         }
-        //        }
-        if (found) {
-            for (int i = 0; i < actual_key.size(); i++) { //assign the variables to values
-                if (vs_new.set.find(actual_key[i]) == vs_new.set.end()) { //variable is not already there
-                    bool found_value = false; //will take a value in the varValues of actual_key or original value if nothing is found
-                    int value_index = 0;
-                    for (int j = 0; j < actual_value.size(); j++) {
-
-                        if (std::find(varValues[actual_key[i]].begin(), varValues[actual_key[i]].end(), actual_value[j]) != varValues[actual_key[i]].end()) {
-                            found_value = true;
-                            value_index = j;
-                            break;
-                        }
-                    }
-                    if (found_value) {
-                        vs_new.set[actual_key[i]] = actual_value[value_index];
-                    } else {
-                        //                        vs_new.set[actual_key[i]] = original_value;
-                        vs_new.set[actual_key[i]] = "other";
-                    }
-                }
+        if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
+            if (vs_new.set.find(el.first) == vs_new.set.end()) {
+                string value = findValue(el.first, possible_values);
+                vs_new.set[el.first] = value;
             }
         }
     }
@@ -778,7 +782,7 @@ void Mmdp::createSubMmdps() {
 }
 
 bool Mmdp::readMdp(string fileName, bool rewrite) {
-
+    int nline = 0;
     ifstream inputFile(fileName);
     if (inputFile.good() && !rewrite) {
         for (int i = 0; i < vecStateEnum.size(); i++) {
@@ -793,6 +797,7 @@ bool Mmdp::readMdp(string fileName, bool rewrite) {
 
                 string line;
                 getline(inputFile, line);
+                nline++;
                 vector<string> transition_v = StringOperations::stringSplit(line, ' ');
                 int j = 0;
 
@@ -810,6 +815,7 @@ bool Mmdp::readMdp(string fileName, bool rewrite) {
                 transition[transitionInput] = transitionOutput;
 
                 getline(inputFile, line);
+                nline++;
                 PairStateAction rewardInput = {i, action};
                 reward[rewardInput] = stoi(line);
             }
