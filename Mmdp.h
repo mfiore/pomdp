@@ -78,7 +78,14 @@ public:
     
     string findValue(string variable, vector<string> possible_values);
     
+    //transitions can make a state set not congruent when there is a resource conflict between two mdps. This procedure
+    //checks the values and make them congruent. 
+//    VariableSet makeMmdpStateCongruent(VariableSet new_vs, VariableSet original_vs);  
+    
+    
     string original_action_;
+    
+    bool hasParametersInCommon();
 };
 
 #endif	/* MMDP_H */

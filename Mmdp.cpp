@@ -121,10 +121,15 @@ void Mmdp::createSubMdpNames(string name) {
 void Mmdp::create(string action_name, bool rewrite, bool first) {
     if (!is_created_) {
 
-        //       
-        for (auto a : agent_hmpd_) {
-            name = StringOperations::addToString(name, a.second->name, '-');
+        if (hasParametersInCommon()) {
+            name = action_name;
         }
+        else {
+            for (auto a : agent_hmpd_) {
+                name = StringOperations::addToString(name, a.second->name, '-');
+            }
+        }
+
         //        this->name = name;
         //        createSubMdpNames(name);
         cout << "Creating " << name << "\n";
@@ -314,12 +319,12 @@ void Mmdp::enumerateFunctions(string fileName) {
 
     for (int i = 0; i < vecStateEnum.size(); i++) {
 
+
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
-            if (i == 0 && action == "agentp0_take_objectp0-agentp1_move_table") {
+            if (i == 144 && action == "agentp0_move_table-agentp1_take_objectp1") {
                 cout << "";
             }
-
             double r = 0;
             StateProb future_beliefs;
 
@@ -364,9 +369,7 @@ void Mmdp::enumerateFunctions(string fileName) {
                 if (no_incongruences) {
                     //convert the cumulative_future_state to parameter state
                     for (auto state : cumulative_future_mdp_states) {
-
                         VariableSet converted_state = convertToParametrizedState(state.first);
-
                         //                        cout << converted_state.toString() << endl;
                         future_beliefs[mapStateEnum.at(converted_state)] = state.second;
                     }
@@ -707,7 +710,6 @@ void Mmdp::createSubMmdps() {
         bool is_hierarchical = false;
         Mmdp* sub_mmdp = new Mmdp();
 
-        bool parameters_in_common = false; //when the actions have parameters in common it's necessary to create a new submmdp
 
         for (auto mdp_agent : agent_hmpd_) {
             vector<string> action_parts = StringOperations::stringSplit(single_actions[action_index], '_');
@@ -720,28 +722,35 @@ void Mmdp::createSubMmdps() {
                 string sub_action = convertToSingleMdpAction(mdp_agent.second, action_index, single_actions[action_index]);
 
                 Hmdp *this_agent_hmdp = mdp_agent.second;
-                this_agent_hmdp->assignParametersFromActionName(single_actions[action_index]);
+                //                this_agent_hmdp->assignParametersFromActionName(single_actions[action_index]);
                 if (this_agent_hmdp->hierarchy_map_.find(sub_action) != this_agent_hmdp->hierarchy_map_.end()) {
+                    this_agent_hmdp->hierarchy_map_[sub_action]->assignParametersFromActionName(single_actions[action_index]);
                     sub_mmdp->agent_hmpd_[mdp_agent.first] = this_agent_hmdp->hierarchy_map_[sub_action];
                     is_hierarchical = true;
                     specific_name = StringOperations::addToString(specific_name, single_actions[action_index], '-');
                     generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name, '-');
 
                 } else {
+                    this_agent_hmdp->assignParametersFromActionName(single_actions[action_index]);
+
                     sub_mmdp->agent_hmpd_[mdp_agent.first] = this_agent_hmdp;
                     specific_name = StringOperations::addToString(specific_name, single_actions[action_index], '-');
                     generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name, '-');
                 }
+                //                sub_mmdp->assignParametersFromActionName()
+
             }
             //            }
             action_index++;
         }
 
         if (is_hierarchical) {
+
             //add wait mdps
             for (int i = 0; i < wait_indexs.size(); i++) {
                 sub_mmdp->agent_hmpd_[wait_indexs[i]] = new Wait();
             }
+
 
             //check if mdp already exists
             bool already_exists = false;
@@ -749,23 +758,9 @@ void Mmdp::createSubMmdps() {
                 already_exists = true;
             }
             //check if the subactions have parameters in common
-            std::map<string, Hmdp*>::iterator it = agent_hmpd_.begin();
-            std::map<string, Hmdp*>::iterator next = it;
-            next++;
-            while (next != agent_hmpd_.end()) {
-                map<string, string> this_instance = it->second->parameter_instances;
-                map<string, string> other_instance = next->second->parameter_instances;
-                for (auto s : this_instance) {
-                    if (other_instance.find(s.first) != other_instance.end()) {
-                        if (other_instance[s.first] == s.second) {
-                            parameters_in_common = true;
-                            break;
-                        }
-                    }
-                }
-                it++;
-                next++;
-            }
+            //when the actions have parameters in common it's necessary to create a new submmdp
+            bool parameters_in_common = sub_mmdp->hasParametersInCommon();
+
             if (parameters_in_common) {
                 hierarchy_map_[specific_name] = sub_mmdp;
             } else if (already_exists) {
@@ -779,6 +774,29 @@ void Mmdp::createSubMmdps() {
         }
     }
     //    printHierarchy();
+}
+
+bool Mmdp::hasParametersInCommon() {
+    bool parameters_in_common = false;
+    for (auto agent1 : agent_hmpd_) {
+        for (auto agent2 : agent_hmpd_) {
+            if (agent1.first != agent2.first) {
+                map<string, string> this_instance = agent1.second->parameter_instances;
+                map<string, string> other_instance = agent2.second->parameter_instances;
+                for (auto s : this_instance) {
+                    if (other_instance.find(s.first) != other_instance.end()) {
+                        if (other_instance[s.first] == s.second) {
+                            parameters_in_common = true;
+                            break;
+                        }
+                    }
+                }
+                if (parameters_in_common) break;
+            }
+        }
+        if (parameters_in_common) break;
+    }
+    return parameters_in_common;
 }
 
 bool Mmdp::readMdp(string fileName, bool rewrite) {
@@ -895,3 +913,25 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     }
 }
 
+//VariableSet Mmdp::makeMmdpStateCongruent(VariableSet new_vs, VariableSet original_vs) {
+//    VariableSet result_vs;
+//    for (auto s : new_vs.set) {
+//        string actual_value=s.second;
+//        //check if its a parameter
+//        if (parametrized_to_original.find(s.first) != parametrized_to_original.end()) {
+//            //we need to check if there are other parameters linked to the original variable and if their values conflict
+//            string original_var = parametrized_to_original(s.first);
+//            vector<string> parameter_vars = original_to_parametrized[original_var];
+//            for (string par : parameter_vars) {
+//                if (par != s.first) { //if it's another par and it's different from the current variable
+//                    if (result_vs.set.find(par) != result_vs.set.end()) {
+//                        //if it's already in the set we need to choose which value we take
+//                        if (result_vs[par]!=s.second) {
+//                            
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
