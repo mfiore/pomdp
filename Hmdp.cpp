@@ -326,18 +326,18 @@ void Hmdp::create(string name, bool rewrite, bool first) {
             ifstream i_file(name + ".hmdp");
             if (!rewrite && i_file.good()) {
                 i_file.close();
-                readHierarchical();
+                readHierarchical(name+".hmdp");
             } else {
                 calculateHierarchicReward();
                 calculateHierarchicTransition();
-                writeHierarchical();
+                writeHierarchical(name+".hmdp");
             }
         }
     }
 }
 
-void Hmdp::readHierarchical() {
-    ifstream i_file(name + ".hmdp");
+void Hmdp::readHierarchical(string fileName) {
+    ifstream i_file(fileName);
     if (i_file.good()) {
         string reward_line;
         getline(i_file, reward_line);
@@ -362,8 +362,8 @@ void Hmdp::readHierarchical() {
     i_file.close();
 }
 
-void Hmdp::writeHierarchical() {
-    ofstream o_file(name + ".hmdp");
+void Hmdp::writeHierarchical(string fileName) {
+    ofstream o_file(fileName);
     for (int s : starting_states_) {
         o_file << hierarchic_reward_[s] << " ";
     }
@@ -463,6 +463,7 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
 
 void Hmdp::assignParametersFromActionName(string action_name) {
     vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    vector<string> name_parts=StringOperations::stringSplit(name, '_');
     std::map<string, string> instance;
     for (int i=0; i<action_parts.size();i++) {
         if(parameter_action_place.find(i)!=parameter_action_place.end()) {
@@ -470,6 +471,11 @@ void Hmdp::assignParametersFromActionName(string action_name) {
         }
     }
     assignParameters(instance);
+    parametrized_name=action_parts[0];
+    parametrized_name+='_'+name_parts[1];
+    for (int i=2; i<action_parts.size();i++) {
+        parametrized_name+="_"+action_parts[i];
+    }
 }
 
 void Hmdp::printGoalStates() {

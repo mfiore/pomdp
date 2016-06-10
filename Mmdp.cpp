@@ -120,22 +120,32 @@ void Mmdp::createSubMdpNames(string name) {
 
 void Mmdp::create(string action_name, bool rewrite, bool first) {
     if (!is_created_) {
+        is_created_ = true;
 
-        if (hasParametersInCommon()) {
-            name = action_name;
-        } else {
-            for (auto a : agent_hmpd_) {
-                name = StringOperations::addToString(name, a.second->name, '-');
-            }
+        
+        
+        for (auto a : agent_hmpd_) {
+            name = StringOperations::addToString(name, a.second->name, '-');
+        }
+        
+        if (name=="agent_glue_surface-agent_apply_bracket_surface"){
+            cout<<"";
         }
 
-        //        this->name = name;
-        //        createSubMdpNames(name);
-        cout << "Creating " << name << "\n";
+        parametrized_name = action_name;
 
+        cout << "Creating " << parametrized_name << "\n";
 
-        is_created_ = true;
+        std::set<string> changed_mdps;
+        for (auto agent : agent_hmpd_) {
+            changed_mdps.insert(agent.first);
+        }
         createJointMdpVariables();
+        assignParametersFromActionName(parametrized_name, changed_mdps, map<string, string>());
+
+
+
+
         createSubMmdps();
 
         enumerateStates();
@@ -144,49 +154,46 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
         //            h.second->create(h.first, rewrite, false);
         //        }
         for (string a : actions) {
+        
             pair<string, set<string> > sub_mdp_result = getSubMdpName(a);
             string module_name = sub_mdp_result.first;
             if (module_name != "this") {
                 if (hierarchy_map_[module_name]->is_created_ == false) {
-                    hierarchy_map_[module_name]->create(a, rewrite, false);
+                    string depar_action=getDeparametrizedAction(a);
+                    hierarchy_map_[module_name]->create(depar_action, rewrite, false);
                 }
             }
         }
 
 
 
-        std::set<string> changed_mdps;
-        for (auto agent : agent_hmpd_) {
-            changed_mdps.insert(agent.first);
+        string fileName;
+        if (hasParametersInCommon()) {
+            fileName = parametrized_name;
+        } else {
+            fileName = name;
         }
-        assignParametersFromActionName(action_name, changed_mdps, map<string, string>());
 
-
-
-        string fileName = name + ".pomdp";
-
-        bool has_read = readMdp(fileName, rewrite);
-        if (name == "reorder_table") {
-            cout << "here wew are";
-        }
+        bool has_read = readMdp(fileName + ".pomdp", rewrite);
+      
         enumerateGoalAndStartStates();
 
         if (!has_read) {
-            enumerateFunctions(fileName);
+            enumerateFunctions(fileName + ".pomdp");
         }
 
         valueIteration(rewrite);
 
         if (!first) {
-            ifstream i_file(name + ".hmdp");
+            ifstream i_file(fileName + ".hmdp");
             if (!rewrite && i_file.good()) {
                 i_file.close();
-                readHierarchical();
+                readHierarchical(fileName + ".hmdp");
             } else {
                 calculateHierarchicReward();
                 calculateHierarchicTransition();
             }
-            writeHierarchical();
+            writeHierarchical(fileName+".hmdp");
 
         }
     }
@@ -321,7 +328,8 @@ void Mmdp::enumerateFunctions(string fileName) {
 
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
-            if (i == 144 && action == "agentp0_move_table-agentp1_take_objectp1") {
+            if (i == 0 && action == "agentp0_move_surfacep0-agentp1_move_surfacep1" &&
+                    fileName=="agent_glue_surface-agent_apply_bracket_surface.pomdp") {
                 cout << "";
             }
             double r = 0;
@@ -703,37 +711,44 @@ void Mmdp::createSubMmdps() {
         string specific_name = ""; //the specific name is the name of actions
 
         vector<string> wait_indexs;
+        string depar_action = getDeparametrizedAction(a);
 
+        vector<string> single_actions_depar = StringOperations::stringSplit(depar_action, '-');
         vector<string> single_actions = StringOperations::stringSplit(a, '-');
+        vector<string> parametrized_sub_names = StringOperations::stringSplit(parametrized_name, '-');
         int action_index = 0;
         bool is_hierarchical = false;
         Mmdp* sub_mmdp = new Mmdp();
 
-
         for (auto mdp_agent : agent_hmpd_) {
             vector<string> action_parts = StringOperations::stringSplit(single_actions[action_index], '_');
+
+
             if (action_parts[1] == "wait") {
                 //
                 wait_indexs.push_back(mdp_agent.first);
-                specific_name = StringOperations::addToString(specific_name, single_actions[action_index], '-');
-                generic_name = StringOperations::addToString(generic_name, single_actions[action_index], '-');
+                specific_name = StringOperations::addToString(specific_name, single_actions_depar[action_index], '-');
+                generic_name = StringOperations::addToString(generic_name, mdp_agent.first + "_wait", '-');
             } else {
                 string sub_action = convertToSingleMdpAction(mdp_agent.second, action_index, single_actions[action_index]);
 
                 Hmdp *this_agent_hmdp = mdp_agent.second;
                 //                this_agent_hmdp->assignParametersFromActionName(single_actions[action_index]);
                 if (this_agent_hmdp->hierarchy_map_.find(sub_action) != this_agent_hmdp->hierarchy_map_.end()) {
-                    this_agent_hmdp->hierarchy_map_[sub_action]->assignParametersFromActionName(single_actions[action_index]);
+
+                    this_agent_hmdp->hierarchy_map_[sub_action]->assignParametersFromActionName(single_actions_depar[action_index]);
+
                     sub_mmdp->agent_hmpd_[mdp_agent.first] = this_agent_hmdp->hierarchy_map_[sub_action];
+
                     is_hierarchical = true;
-                    specific_name = StringOperations::addToString(specific_name, single_actions[action_index], '-');
+                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name, '-');
                     generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name, '-');
 
                 } else {
-                    this_agent_hmdp->assignParametersFromActionName(single_actions[action_index]);
+                    this_agent_hmdp->assignParametersFromActionName(single_actions_depar[action_index]);
 
                     sub_mmdp->agent_hmpd_[mdp_agent.first] = this_agent_hmdp;
-                    specific_name = StringOperations::addToString(specific_name, single_actions[action_index], '-');
+                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name, '-');
                     generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name, '-');
                 }
                 //                sub_mmdp->assignParametersFromActionName()
@@ -749,7 +764,6 @@ void Mmdp::createSubMmdps() {
             for (int i = 0; i < wait_indexs.size(); i++) {
                 sub_mmdp->agent_hmpd_[wait_indexs[i]] = new Wait();
             }
-
 
             //check if mdp already exists
             bool already_exists = false;
@@ -775,10 +789,10 @@ void Mmdp::createSubMmdps() {
     //    printHierarchy();
 }
 
-bool Mmdp::hasParametersInCommon() {
+bool Mmdp::hasParametersInCommon(map<string, Hmdp*> agents) {
     bool parameters_in_common = false;
-    for (auto agent1 : agent_hmpd_) {
-        for (auto agent2 : agent_hmpd_) {
+    for (auto agent1 : agents) {
+        for (auto agent2 : agents) {
             if (agent1.first != agent2.first) {
                 map<string, string> this_instance = agent1.second->parameter_instances;
                 map<string, string> other_instance = agent2.second->parameter_instances;
@@ -805,8 +819,13 @@ bool Mmdp::hasParametersInCommon() {
             }
         }
         if (parameters_in_common) break;
+
     }
     return parameters_in_common;
+}
+
+bool Mmdp::hasParametersInCommon() {
+    return hasParametersInCommon(agent_hmpd_);
 }
 
 bool Mmdp::readMdp(string fileName, bool rewrite) {
@@ -855,43 +874,59 @@ bool Mmdp::readMdp(string fileName, bool rewrite) {
 }
 
 pair<string, set<string> > Mmdp::getSubMdpName(string action) {
-    pair<string, std::set<string> > result;
-    if (hierarchy_map_.find(action) != hierarchy_map_.end()) {
-        result.first = action;
-        for (auto agent : agent_hmpd_) {
-            result.second.insert(agent.first);
-        }
-        return result;
-        //        return hierarchy_map_[action]; //if there is a specific mdp use that one
-    }
-    //else find the generic one
     string module_name = "";
+
+    string specific_name;
+    string generic_name;
+
+    set<string> changed_mdps;
+
+    pair<string, set<string> > result;
+    int action_index = 0;
     vector<string> single_actions = StringOperations::stringSplit(action, '-');
-    int i = 0;
+
+    string depar_action = getDeparametrizedAction(action);
+    vector<string> depar_single_actions = StringOperations::stringSplit(depar_action, '-');
+    map<string, Hmdp*> agent_hmdps;
+
     bool is_hierarchical = false;
-    for (auto agent : agent_hmpd_) {
-        string sub_action = convertToSingleMdpAction(agent.second, i, single_actions[i]);
-        if (sub_action == "agent_wait") {
-            module_name = StringOperations::addToString(module_name, single_actions[i], '-');
-            result.second.insert(agent.first);
-        } else if (agent.second->hierarchy_map_.find(sub_action) != agent.second->hierarchy_map_.end()) {
-            module_name = StringOperations::addToString(module_name, agent.second->hierarchy_map_[sub_action]->name, '-');
-            is_hierarchical = true;
-            result.second.insert(agent.first);
+    for (auto mdp_agent : agent_hmpd_) {
+        vector<string> action_parts = StringOperations::stringSplit(single_actions[action_index], '_');
+
+        if (action_parts[1] == "wait") {
+            //
+            specific_name = StringOperations::addToString(specific_name, mdp_agent.first + "_wait", '-');
+            generic_name = StringOperations::addToString(generic_name, mdp_agent.first + "_wait", '-');
         } else {
-            module_name = StringOperations::addToString(module_name, agent.second->name, '-');
+            string sub_action = convertToSingleMdpAction(mdp_agent.second, action_index, single_actions[action_index]);
+
+            Hmdp *this_agent_hmdp = mdp_agent.second;
+            if (this_agent_hmdp->hierarchy_map_.find(sub_action) != this_agent_hmdp->hierarchy_map_.end()) {
+                this_agent_hmdp->hierarchy_map_[sub_action]->assignParametersFromActionName(depar_single_actions[action_index]);
+                is_hierarchical = true;
+                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name, '-');
+                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name, '-');
+                agent_hmdps[mdp_agent.first] = this_agent_hmdp->hierarchy_map_[sub_action];
+                changed_mdps.insert(mdp_agent.first);
+            } else {
+                //this_agent_hmdp->assignParametersFromActionName(depar_single_actions[action_index]);
+                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name, '-');
+                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name, '-');
+                agent_hmdps[mdp_agent.first] = this_agent_hmdp;
+            }
         }
-        i++;
+        action_index++;
     }
-    if (is_hierarchical) {
-        result.first = module_name;
-        //        return module_name;
-        //        return hierarchy_map_[module_name];
+
+    if (!is_hierarchical) {
+        module_name = "this";
     } else {
-        result.first = "this";
-        //        return "this";
+        module_name = hasParametersInCommon(agent_hmdps) ? specific_name : generic_name;
     }
+    result.first = module_name;
+    result.second = changed_mdps;
     return result;
+
 }
 
 string Mmdp::chooseHierarchicAction(VariableSet state) {

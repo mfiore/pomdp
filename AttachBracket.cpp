@@ -33,7 +33,7 @@ AttachBracket::AttachBracket() {
     this->varValues = var_values;
 
     actions.push_back(agent_name_ + "_move_" + surface_name_);
-    actions.push_back(agent_name_ + "_apply_" + surface_name_);
+    actions.push_back(agent_name_ + "_apply_" +bracket_name_+"_"+surface_name_);
     actions.push_back(agent_name_ + "_get_" + bracket_name_);
     hierarchy_map_[agent_name_ + "_get_" + bracket_name_] = new GetObject();
 

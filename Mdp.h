@@ -90,6 +90,7 @@ public:
     std::map<PairStateAction, double> qValue; //human action values
 
     string name;
+    string parametrized_name;
 
 
     double getTransitionProb(int s, string a, int s_new);

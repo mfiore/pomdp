@@ -88,8 +88,8 @@ public:
     int convertHierarchicState(VariableSet state);
 
     //loads and write hierarchical mdp files
-    void readHierarchical();
-    void writeHierarchical();
+    void readHierarchical(string fileName);
+    void writeHierarchical(string fileName);
 
     //contains the hierarchic transition and reward
     std::map<pair<int, int>, double> hierarchic_transition_;
