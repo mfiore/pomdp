@@ -123,8 +123,7 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
 
         if (hasParametersInCommon()) {
             name = action_name;
-        }
-        else {
+        } else {
             for (auto a : agent_hmpd_) {
                 name = StringOperations::addToString(name, a.second->name, '-');
             }
@@ -783,6 +782,7 @@ bool Mmdp::hasParametersInCommon() {
             if (agent1.first != agent2.first) {
                 map<string, string> this_instance = agent1.second->parameter_instances;
                 map<string, string> other_instance = agent2.second->parameter_instances;
+                //if they have a parameter in common 
                 for (auto s : this_instance) {
                     if (other_instance.find(s.first) != other_instance.end()) {
                         if (other_instance[s.first] == s.second) {
@@ -791,6 +791,16 @@ bool Mmdp::hasParametersInCommon() {
                         }
                     }
                 }
+                //but also if a parameter is assigned to a variable of the other submmdps
+                if (!parameters_in_common) {
+                    for (auto original : agent1.second->parametrized_to_original) {
+                        if (std::find(agent2.second->variables.begin(), agent2.second->variables.end(), original.second) != agent2.second->variables.end()) {
+                            parameters_in_common = true;
+                            break;
+                        }
+                    }
+                }
+
                 if (parameters_in_common) break;
             }
         }
