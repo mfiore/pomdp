@@ -61,8 +61,7 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
  This procedure does value iteration and computes the Q-Values for the actions. At the moment we don't use the policy learnt through here,
  * preferring to use the one with sarsop. The algorithm works on enumerations of states
  */
-void Mdp::valueIteration(bool rewrite) {
-    string fileName = name + ".policy";
+void Mdp::valueIteration(string fileName, bool rewrite) {
     ifstream inputFile(fileName);
 
     std::vector<double> vhi(vecStateEnum.size(), 0); //vhi mantains the predicted reward in a state following the optimal policy
@@ -366,6 +365,8 @@ void Mdp::create(string name, bool rewrite) {
     if (!read_mdp) {
         enumerateFunctions(fileName);
     }
+
+    valueIteration(name + ".policy", rewrite);
 }
 
 string Mdp::chooseAction(int s) {
@@ -506,20 +507,19 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set) {
         if (parametrized_to_original.find(s.second) != parametrized_to_original.end()) {
             actual_value = parametrized_to_original[s.second];
         }
-        if (set.set.find(actual_key)!=set.set.end()) {
-            if (set.set[actual_key]=="other") {
-                set.set[actual_key]=actual_value;
+        if (set.set.find(actual_key) != set.set.end()) {
+            if (set.set[actual_key] == "other") {
+                set.set[actual_key] = actual_value;
             }
-        }
-        else {
-            set.set[actual_key]=actual_value;
+        } else {
+            set.set[actual_key] = actual_value;
         }
     }
     return set;
 }
 
 string Mdp::getDeparametrizedAction(string action_name) {
-    
+
     vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
     stringstream depar_action_name;
     for (int i = 0; i < action_parts.size() - 1; i++) {

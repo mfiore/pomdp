@@ -73,7 +73,7 @@ public:
     void createSubMdpNames(string name);
     //    void printMmdpHierarchy();
 
-    pair<string, set<string> > getSubMdpName(string action);
+    pair<vector<string>, set<string> > getSubMdpName(string action);
 
 
     string findValue(string variable, vector<string> possible_values);

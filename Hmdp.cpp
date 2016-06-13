@@ -320,7 +320,7 @@ void Hmdp::create(string name, bool rewrite, bool first) {
 
         enumerateGoalAndStartStates();
 
-        valueIteration(rewrite);
+        valueIteration(name+".policy",rewrite);
 
         if (!first) {
             ifstream i_file(name + ".hmdp");
