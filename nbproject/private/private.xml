@@ -9,9 +9,8 @@
         <group>
             <file>file:/home/mfiore/workspace/pomdp/Mmdp.cpp</file>
             <file>file:/home/mfiore/workspace/pomdp/Hmdp.cpp</file>
+            <file>file:/home/mfiore/workspace/pomdp/Hmdp.h</file>
             <file>file:/home/mfiore/workspace/pomdp/Mdp.cpp</file>
-            <file>file:/home/mfiore/workspace/pomdp/Mdp.h</file>
-            <file>file:/home/mfiore/workspace/pomdp/Mmdp.h</file>
         </group>
     </open-files>
 </project-private>

@@ -463,40 +463,51 @@ void Mdp::assignParameters(std::map<string, string> instance) {
     }
 }
 
+string Mdp::findValue(string variable, vector<string> possible_values) {
+    for (string v : possible_values) {
+        if (std::find(varValues[variable].begin(), varValues[variable].end(), v) != varValues[variable].end()) {
+            return v;
+        }
+    }
+    return "other";
+}
+
+
+//converts to parametrized set. Automatically removes variables that are not present
 VariableSet Mdp::convertToParametrizedState(VariableSet s) {
     VariableSet vs_new;
+    //for each variable in the set
     for (auto el : s.set) {
-        bool found = false;
-
-        vector<string> actual_key;
-        actual_key.push_back(el.first);
-        vector<string> actual_value;
-        actual_value.push_back(el.second);
+        vector<string> par_key;
+        vector<string> possible_values;
 
         if (original_to_parametrized.find(el.first) != original_to_parametrized.end()) {
-            actual_key = original_to_parametrized[el.first];
-            found = true;
+            par_key = original_to_parametrized[el.first];
         }
         if (original_to_parametrized.find(el.second) != original_to_parametrized.end()) {
-            actual_value = original_to_parametrized[el.second];
+            possible_values = original_to_parametrized[el.second];
         }
-        if (!found) { //not a paramater. Then it must be a variable, if not it's not relevant to this mdp
-            if (std::find(variables.begin(), variables.end(), actual_key[0]) != variables.end()) {
-                found = true;
-            }
-        }
-        if (found) { //true if the variable in the set was either a parameter instance or a variable in the mdp.
-            for (string key : actual_key) { //do the product between all possible parameters
-                for (string value : actual_value) {
+        possible_values.push_back(el.second);
+        //if it's a parameter variable
+        if (par_key.size() > 0) {
+            for (string key : par_key) {
+                if (vs_new.set.find(key) == vs_new.set.end()) {
+                    string value = findValue(key, possible_values);
                     vs_new.set[key] = value;
                 }
+            }
+        }
+        if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
+            if (vs_new.set.find(el.first) == vs_new.set.end()) {
+                string value = findValue(el.first, possible_values);
+                vs_new.set[el.first] = value;
             }
         }
     }
     return vs_new;
 }
 
-VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set) {
+VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, VariableSet full_state) {
     VariableSet set;
     for (auto s : parameter_set.set) {
         string actual_key = s.first;
@@ -515,6 +526,16 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set) {
             set.set[actual_key] = actual_value;
         }
     }
+    //we change "other" values with the full state versions and reintroduce missing variables
+    for (auto s:full_state.set) {
+        if (set.set.find(s.first)!=set.set.end() && set.set.at(s.first)=="other") {
+            set.set[s.first]=s.second;
+        }
+        else if (set.set.find(s.first)==set.set.end()) {
+            set.set[s.first]=s.second;
+        }
+    }
+
     return set;
 }
 

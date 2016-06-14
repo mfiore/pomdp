@@ -27,7 +27,7 @@ public:
     virtual void create(string name, bool rewrite, bool first);
 
     std::map<string, Hmdp*> agent_hmpd_;
-    VariableSet convertToParametrizedState(VariableSet s);
+//    VariableSet convertToParametrizedState(VariableSet s);
 
     void createJointMdpVariables();
     virtual void enumerateGoalAndStartStates();
@@ -76,7 +76,6 @@ public:
     pair<vector<string>, set<string> > getSubMdpName(string action);
 
 
-    string findValue(string variable, vector<string> possible_values);
 
     //transitions can make a state set not congruent when there is a resource conflict between two mdps. This procedure
     //checks the values and make them congruent. 
@@ -88,6 +87,8 @@ public:
     bool hasParametersInCommon();
 
     bool hasParametersInCommon(map<string, Hmdp*> agents);
+    
+    VariableSet fixAbstractStates(VariableSet sub_set, VariableSet super_set, Hmdp* sub_mmdp);
 
     };
 

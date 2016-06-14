@@ -34,14 +34,15 @@ public:
 
     //gets the hierarchic reward from a certain state. The "i" version is not actually needed
     double getHierarchicReward(int i);
-    double getHierarchicReward(VariableSet state);
+    double getHierarchicReward(VariableSet state, Hmdp* super_hmdp);
     
     //gets the hierarchic transition from a certain state. As before, the i version is not needed.
     //the version including an action is used for simulation purposes, when we want to know the resulting state of
-    //applying an action in a hierarchical mdp setting.
+    //applying an action in a hierarchical mdp setting. The VariableSet state is in the original space and is returned
+    //in the original space again.
     std::map<int, double> getHierarchicTransition(int s);
-    std::map<VariableSet, double> getHierarchicTransition(VariableSet s);
-    std::map<VariableSet, double> getHierarchicTransition(VariableSet set, string action);
+    std::map<VariableSet, double> getHierarchicTransition(VariableSet s, Hmdp* super_hmdp);
+    std::map<VariableSet, double> getHierarchicTransition(VariableSet set, string action, Hmdp* super_hmdp);
     
     //converts the current state space to the one of the caller (meaning the mdp at the higher level of hierarchy which called
     //the current mdp). original_set is the higher level original state space (needed because some variables might not exist
@@ -85,7 +86,7 @@ public:
 
     //converts a state (already parametrized! so we need to call the convertToParametrizedState before) to the current state
     //in practice it just eliminates variables that are not needed in the current mdp
-    int convertHierarchicState(VariableSet state);
+//    int convertHierarchicState(VariableSet state);
 
     //loads and write hierarchical mdp files
     void readHierarchical(string fileName);
@@ -103,7 +104,7 @@ public:
     vector<int> goal_states_;
 
     
-    virtual void enumerateFunctions(string fileName);
+    virtual void enumerateFunctions(string fileName) override;
     virtual void enumerateGoalAndStartStates();
 
     bool isAlreadyCreated();
@@ -114,8 +115,14 @@ public:
 
     void printHierarchy();
 
-    string getDeparametrizedAction(string action_name);
+    string getDeparametrizedAction(string action_name) override;
 
+    VariableSet fixAbstractStates(VariableSet sub_set, Hmdp* sub_mmdp);
+    
+    virtual VariableSet convertToParametrizedState(VariableSet parameter_set) override; //converts a state space to it's parametrized version
+    virtual VariableSet convertToParametrizedState(VariableSet parameter_set, Hmdp* super_mdp); //converts a state space to it's parametrized version
+
+    
 };
 
 #endif	/* HMDP_H */

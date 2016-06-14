@@ -17,7 +17,7 @@
 
 #ifndef MDP_H
 
-#define	MDP_H
+#define MDP_H
 
 #include <vector>
 #include<map>
@@ -58,7 +58,7 @@ public:
 
     virtual string getDeparametrizedAction(string action_name);
     virtual string getParametrizedAction(string action_name);
-    
+
     //private:
 
     //protected:
@@ -77,7 +77,7 @@ public:
 
     /*position of the parameters in an action. Ex. human_take_bottle: agent -> 1, object ->3
      */
-    std::map<int,string> parameter_action_place; 
+    std::map<int, string> parameter_action_place;
     //Variables
 
     //the system state enumeration is kept both way (from enumeration number to system state and other way)
@@ -112,7 +112,7 @@ public:
 
 
     virtual VariableSet convertToParametrizedState(VariableSet parameter_set); //converts a state space to it's parametrized version
-    VariableSet convertToDeparametrizedState(VariableSet parameter_set); //opposite
+    VariableSet convertToDeparametrizedState(VariableSet parameter_set,VariableSet full_state); //opposite
 
 
     virtual void enumerateStates();
@@ -123,8 +123,10 @@ public:
 
     void printParameters();
 
+    string findValue(string variable, vector<string> possible_values);
+
 
 };
 
-#endif	/* MDP_H */
+#endif /* MDP_H */
 
