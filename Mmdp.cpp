@@ -265,8 +265,11 @@ string Mmdp::convertToMultiParameter(Mdp* mdp, string var_name, int i) {
 
 VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStateProb cumulative_future_state,
         VariableSet mmdp_instance_state, Hmdp *mdp, int index, bool *no_incongruences,
-        std::set<string> new_not_present_variables) {
+        std::set<string> new_not_present_variables, VariableSet old_single_agent_state) {
     VarStateProb result;
+
+    VariableSet old_single_agent_depar = mdp->convertToDeparametrizedState(old_single_agent_state, VariableSet());
+
 
     //if one of the two states is empty we return the other
     if (mdp_future_state.empty()) {
@@ -283,6 +286,7 @@ VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStatePr
     //if both states aren't empty we mix them
     for (auto state : mdp_future_state) {
         VariableSet instance_state = mdp->convertToDeparametrizedState(state.first, VariableSet());
+
         for (auto cumulative_state : cumulative_future_state) {
             VariableSet new_cumulative_state = cumulative_state.first;
 
@@ -291,6 +295,7 @@ VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStatePr
                 if (new_not_present_variables.find(var.first) == new_not_present_variables.end()) {
                     //value of the variable before the transition (original mmdp space)
                     string original_value = mmdp_instance_state.set[var.first];
+                    string old_this_value = old_single_agent_depar.set[var.first];
                     //if the variable is not present in the cumulative state we just add it
                     if (new_cumulative_state.set.find(var.first) == new_cumulative_state.set.end()) {
                         new_cumulative_state.set[var.first] = var.second;
@@ -299,11 +304,11 @@ VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStatePr
                         //case 1: if one of the two values is different from original we take the other value
                         //we only consider the case where the new one is different. If not we just keep the old one
                         if (new_cumulative_state.set[var.first] == original_value &&
-                                var.second != original_value) {
+                                var.second != original_value && var.second != old_this_value) {
                             new_cumulative_state.set[var.first] = var.second;
                         }//case 2: the values are different from themselves and from original. It's an incongruency and we quit
                         else if (new_cumulative_state.set[var.first] != original_value &&
-                                var.second != original_value) {
+                                var.second != original_value && var.second != old_this_value) {
                             *no_incongruences = false;
                             return result;
                         }
@@ -327,14 +332,18 @@ void Mmdp::enumerateFunctions(string fileName) {
 
     for (int i = 0; i < vecStateEnum.size(); i++) {
 
-
+        if (i==40 &&
+                fileName == "agent_glue_surface-agent_glue_surface.pomdp") {
+            cout<<"";
+        }
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
-            if (i == 29 && action == "agentp0_move_surfacep0-agentp1_wait")
-                //                    fileName=="agent_glue_surface-agent_apply_bracket_surface.pomdp") {
-            {
+
+            if (i == 28 && action == "agentp0_glue_surfacep0-agentp1_wait" &&
+                    fileName == "agent_glue_surface-agent_glue_surface.pomdp") {
                 cout << "";
             }
+
             double r = 0;
             StateProb future_beliefs;
 
@@ -365,10 +374,10 @@ void Mmdp::enumerateFunctions(string fileName) {
                     } else {
                         string mdp_action = convertToSingleMdpAction(mdp.second, index, single_actions[index]);
                         mdp_future_states = mdp.second->transitionFunction(mdp_state, mdp_action);
-                        r = r + mdp.second->rewardFunction(mdp_state, mdp_action);
+                        //                        r = r + mdp.second->rewardFunction(mdp_state, mdp_action);
                     }
                     cumulative_future_mdp_states = joinMdpFutureStates(mdp_future_states, cumulative_future_mdp_states,
-                            mmdp_instance_state, mdp.second, index, &no_incongruences, not_present_variables);
+                            mmdp_instance_state, mdp.second, index, &no_incongruences, not_present_variables, mdp_state);
 
                     if (!no_incongruences) {
                         break;
@@ -381,6 +390,7 @@ void Mmdp::enumerateFunctions(string fileName) {
                     for (auto state : cumulative_future_mdp_states) {
                         VariableSet converted_state = convertToParametrizedState(state.first);
                         //                        cout << converted_state.toString() << endl;
+                        int i = mapStateEnum.at(converted_state);
                         future_beliefs[mapStateEnum.at(converted_state)] = state.second;
                     }
                 } else {
@@ -399,25 +409,29 @@ void Mmdp::enumerateFunctions(string fileName) {
                 //                VariableSet v_param = h->convertToParametrizedState(vecStateEnum[i]);
                 VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
 
-//                v_param = fixAbstractStates(v_param, v_deparam, h);
+                //                v_param = fixAbstractStates(v_param, v_deparam, h);
 
-                    VarStateProb temp_future_beliefs = h->getHierarchicTransition(v_deparam,this);
 
-                    for (auto temp_b : temp_future_beliefs) {
-                        VariableSet fb = temp_b.first;
-                        VariableSet param_fb = convertToParametrizedState(fb);
-                        for (auto v : vecStateEnum[i].set) {
-                            if (param_fb.set.find(v.first) == param_fb.set.end()) {
-                                param_fb.set[v.first] = v.second;
-                            }
+
+                VarStateProb temp_future_beliefs = h->getHierarchicTransition(v_deparam, this);
+
+                for (auto temp_b : temp_future_beliefs) {
+                    VariableSet fb = temp_b.first;
+                    VariableSet param_fb = convertToParametrizedState(fb);
+                    for (auto v : vecStateEnum[i].set) {
+                        if (param_fb.set.find(v.first) == param_fb.set.end()) {
+                            param_fb.set[v.first] = v.second;
                         }
-
-                        future_beliefs[mapStateEnum.at(param_fb)] = temp_b.second;
                     }
-                    VariableSet vstry = vecStateEnum[i];
 
-                    r = rewardFunction(vecStateEnum[i], action);
+                    future_beliefs[mapStateEnum.at(param_fb)] = temp_b.second;
+                }
+                VariableSet vstry = vecStateEnum[i];
+
+                //                r = rewardFunction(vecStateEnum[i], action);
             }
+
+            r = rewardFunction(vecStateEnum[i], action);
 
             PairStateAction transitionInput{i, action};
             for (auto belief : future_beliefs) {
@@ -481,7 +495,7 @@ int Mmdp::rewardFunction(VariableSet state, string action) {
     return reward;
 
     //    
-    //    if (isGoalState(state)) return 1000;
+    //        if (isGoalState(state)) return 1000;
     //    return 0;
     //        int index=0;
     //    int r=0;
@@ -885,7 +899,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-        printQValues(this_state);
+//        printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];

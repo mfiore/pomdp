@@ -56,7 +56,8 @@ public:
     void assignParametersToMdp(Hmdp* mdp, int index);
 
     VarStateProb joinMdpFutureStates(VarStateProb mdp_future_state, VarStateProb cumulative_future_state,
-            VariableSet mmdp_state, Hmdp *mdp, int index, bool *no_incongruences, std::set<string> new_not_present_variables);
+            VariableSet mmdp_state, Hmdp *mdp, int index, bool *no_incongruences, std::set<string> new_not_present_variables,
+            VariableSet old_single_agent_state);
 
     bool isMmdpStateCongruent(VariableSet state);
 

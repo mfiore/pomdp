@@ -27,7 +27,7 @@ double Hmdp::getHierarchicReward(int i) {
 
 double Hmdp::getHierarchicReward(VariableSet set, Hmdp* super_hmdp) {
 
-    VariableSet parametrized_set = convertToParametrizedState(set,super_hmdp);
+    VariableSet parametrized_set = convertToParametrizedState(set, super_hmdp);
     int i = mapStateEnum.at(parametrized_set);
 
     //    int i = convertHierarchicState(parametrized_set);
@@ -96,7 +96,7 @@ std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet original
     std::map<VariableSet, double> temp_result;
 
 
-    VariableSet v_param = convertToParametrizedState(original_set,super_hmdp);
+    VariableSet v_param = convertToParametrizedState(original_set, super_hmdp);
     //        cout<<"Param in hierarchic transition\n";
     //        cout<<v_param.toString()<<"\n";
     //        printParameters();
@@ -123,7 +123,7 @@ std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet original
 
     if (active_module != "this") {
         //        hierarchy_map_[active_module]->assignParametersFromActionName(action);
-        temp_result = hierarchy_map_[active_module]->getHierarchicTransition(original_set, action,this);
+        temp_result = hierarchy_map_[active_module]->getHierarchicTransition(original_set, action, this);
     } else {
         //                printParameters();
         VariableSet v_param = convertToParametrizedState(original_set);
@@ -261,14 +261,14 @@ void Hmdp::enumerateFunctions(string fileName) {
 
                 VariableSet depar_set = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
                 //                VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
-                VarStateProb temp_future_beliefs = h->getHierarchicTransition(depar_set,this);
+                VarStateProb temp_future_beliefs = h->getHierarchicTransition(depar_set, this);
                 for (auto temp_b : temp_future_beliefs) {
                     VariableSet par_set = convertToParametrizedState(temp_b.first);
                     future_beliefs[mapStateEnum.at(par_set)] = temp_b.second;
                 }
                 VariableSet vstry = vecStateEnum[i];
 
-                r = h->getHierarchicReward(vstry,this) * rewardFunction(vecStateEnum[i], action);
+                r = h->getHierarchicReward(vstry, this) * rewardFunction(vecStateEnum[i], action);
             }
 
             PairStateAction transitionInput{i, action};
@@ -557,8 +557,7 @@ Hmdp* Hmdp::getLowestActiveModule() {
 VariableSet Hmdp::fixAbstractStates(VariableSet sub_set, Hmdp* super_mmdp) {
     VariableSet result;
     for (auto v : sub_set.set) {
-        if (v.second == "other" &&
-                std::find(varValues[v.first].begin(), varValues[v.first].end(), v.second) == varValues[v.first].end()) {
+        if (v.second == "other") {
             vector<string> sub_values = varValues[v.first];
 
             string actual_key = v.first;
@@ -572,7 +571,7 @@ VariableSet Hmdp::fixAbstractStates(VariableSet sub_set, Hmdp* super_mmdp) {
             vector<string> super_values = super_mmdp->varValues[super_keys[0]];
 
             for (string value : sub_values) {
-                if (std::find(super_values.begin(), super_values.end(), value) != super_values.end()) {
+                if (std::find(super_values.begin(), super_values.end(), value) == super_values.end()) {
                     result.set[v.first] = value;
                     break;
                 }
@@ -584,10 +583,64 @@ VariableSet Hmdp::fixAbstractStates(VariableSet sub_set, Hmdp* super_mmdp) {
     return result;
 }
 
-VariableSet Hmdp::convertToParametrizedState(VariableSet original_set, Hmdp* super_mdp) {
-    VariableSet parametrized_set = convertToParametrizedState(original_set);
-    return fixAbstractStates(parametrized_set, super_mdp);
+VariableSet Hmdp::convertToParametrizedState(VariableSet s, Hmdp* super_mdp) {
+    VariableSet vs_new;
+    //for each variable in the set
+    for (auto el : s.set) {
 
+        vector<string> par_key;
+        vector<string> possible_values;
+        vector<string> super_values;
+        bool is_abstract = false;
+
+        if (original_to_parametrized.find(el.first) != original_to_parametrized.end()) {
+            par_key = original_to_parametrized[el.first];
+        }
+        if (el.second == "other") {
+            super_values = super_mdp->varValues[el.first];
+            is_abstract = true;
+        } else if (original_to_parametrized.find(el.second) != original_to_parametrized.end()) {
+            possible_values = original_to_parametrized[el.second];
+        }
+        possible_values.push_back(el.second);
+        //if it's a parameter variable
+        if (par_key.size() > 0) {
+            for (string key : par_key) {
+                if (vs_new.set.find(key) == vs_new.set.end()) {
+                    if (is_abstract) { //if the super_mdp state is abstract we set this var to any value not present in the super_mdp varValues
+                        possible_values = varValues[key];
+                        for (string v : possible_values) {
+                            if (std::find(super_values.begin(), super_values.end(), v) == super_values.end()) {
+                                vs_new.set[key] = v;
+                                break;
+                            }
+                        }
+                    } else {
+                        string value = findValue(key, possible_values);
+                        vs_new.set[key] = value;
+                    }
+                }
+            }
+        }
+        //possibele incongruence in var-parameter situation
+        if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
+            if (vs_new.set.find(el.first) == vs_new.set.end()) {
+                if (is_abstract) {
+                    possible_values = varValues[el.first];
+                    for (string v : possible_values) {
+                        if (std::find(super_values.begin(), super_values.end(), v) == super_values.end()) {
+                            vs_new.set[el.first] = v;
+                            break;
+                        }
+                    }
+                } else {
+                    string value = findValue(el.first, possible_values);
+                    vs_new.set[el.first] = value;
+                }
+            }
+        }
+    }
+    return vs_new;
 }
 
 VariableSet Hmdp::convertToParametrizedState(VariableSet parameter_set) {

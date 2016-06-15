@@ -64,6 +64,9 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
 void Mdp::valueIteration(string fileName, bool rewrite) {
     ifstream inputFile(fileName);
 
+    if (fileName=="agent_glue_surface-agent_glue_surface.policy") {
+        cout<<"";
+    }
     std::vector<double> vhi(vecStateEnum.size(), 0); //vhi mantains the predicted reward in a state following the optimal policy
     std::vector<double> vhiOld(vecStateEnum.size(), 0);
 
