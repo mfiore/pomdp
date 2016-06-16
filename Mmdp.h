@@ -14,13 +14,13 @@
 #include <boost/lexical_cast.hpp>
 #include "Wait.h"
 #include <set>
-
+#include "MmdpManager.h"
 
 using namespace std;
 
 class Mmdp : public Hmdp {
 public:
-    Mmdp();
+    Mmdp(MmdpManager* mmdp_manager);
     Mmdp(const Mmdp& orig);
     virtual ~Mmdp();
 
@@ -91,6 +91,8 @@ public:
     
     VariableSet fixAbstractStates(VariableSet sub_set, VariableSet super_set, Hmdp* sub_mmdp);
 
+    MmdpManager* mmdp_manager_;
+    
     };
 
 #endif /* MMDP_H */

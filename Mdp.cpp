@@ -256,7 +256,7 @@ void Mdp::enumerateStates() {
     std::vector<std::vector<int>> enumInput;
     for (string variable : variables) {
         std::vector<int> valValues;
-        for (int i = 0; i < varValues[variable].size(); i++) {
+        for (int i = 0; i < varValues.at(variable).size(); i++) {
             valValues.push_back(i);
         }
 
@@ -269,7 +269,7 @@ void Mdp::enumerateStates() {
         VariableSet v;
         for (int j = 0; j < enumOutput[i].size(); j++) {
             string name = variables[j];
-            std::vector<string> values = varValues[name];
+            std::vector<string> values = varValues.at(name);
             v.set[name] = values[enumOutput[i][j]];
         }
 
@@ -468,7 +468,7 @@ void Mdp::assignParameters(std::map<string, string> instance) {
 
 string Mdp::findValue(string variable, vector<string> possible_values) {
     for (string v : possible_values) {
-        if (std::find(varValues[variable].begin(), varValues[variable].end(), v) != varValues[variable].end()) {
+        if (std::find(varValues.at(variable).begin(), varValues.at(variable).end(), v) != varValues.at(variable).end()) {
             return v;
         }
     }

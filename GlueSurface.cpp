@@ -19,7 +19,7 @@ GlueSurface::GlueSurface() {
     glue_name_ = "gluebottle";
 
     std::vector<string> locations{"other", "surface"};
-    std::vector<string> statuses{"cleaned", "glued"};
+    std::vector<string> statuses{"other", "cleaned", "glued"};
 
     agent_loc_var_ = agent_name_ + "_isAt";
     surface_status_var_ = surface_name_ + "_status";
@@ -34,7 +34,7 @@ GlueSurface::GlueSurface() {
     var_values[surface_status_var_] = statuses;
     var_values[glue_loc_var_].push_back("other");
     var_values[glue_loc_var_].push_back(agent_name_);
-//    var_values[glue_loc_var_].push_back("other");
+    //    var_values[glue_loc_var_].push_back("other");
 
     this->varValues = var_values;
 
@@ -71,7 +71,7 @@ GlueSurface::GlueSurface(const GlueSurface& orig) {
 }
 
 GlueSurface::~GlueSurface() {
-
+    delete hierarchy_map_[agent_name_ + "_get_" + glue_name_];
 }
 
 //void GlueSurface::assignParametersFromActionName(string action_name) {

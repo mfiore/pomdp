@@ -17,8 +17,8 @@ CleanSurface::CleanSurface() {
     agent_name_ = "agent";
     surface_name_ = "surface";
 
-    std::vector<string> locations{"table", "surface1", "surface2", "surface3", "surface"};
-    std::vector<string> statuses{"none", "cleaned", "glued", "completed"};
+    std::vector<string> locations{"other", "surface"};
+    std::vector<string> statuses{"none", "cleaned","other"};
 
     agent_loc_var_ = agent_name_ + "_isAt";
     surface_status_var_ = surface_name_ + "_status";

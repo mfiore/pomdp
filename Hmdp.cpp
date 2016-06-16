@@ -454,6 +454,7 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
                 VarStateProb var_output = sub_mdp->getHierarchicTransition(depar_s, action, this);
 
                 for (auto o : var_output) {
+                    previous_orig_state=o.first;
                     VariableSet par_o = convertToParametrizedState(o.first);
                     output[mapStateEnum.at(par_o)] = o.second;
                 }
@@ -558,7 +559,7 @@ VariableSet Hmdp::fixAbstractStates(VariableSet sub_set, Hmdp* super_mmdp) {
     VariableSet result;
     for (auto v : sub_set.set) {
         if (v.second == "other") {
-            vector<string> sub_values = varValues[v.first];
+            vector<string> sub_values = varValues.at(v.first);
 
             string actual_key = v.first;
             vector<string> super_keys;
@@ -568,7 +569,7 @@ VariableSet Hmdp::fixAbstractStates(VariableSet sub_set, Hmdp* super_mmdp) {
                 super_keys = super_mmdp->original_to_parametrized[actual_key];
             }
 
-            vector<string> super_values = super_mmdp->varValues[super_keys[0]];
+            vector<string> super_values = super_mmdp->varValues.at(super_keys[0]);
 
             for (string value : sub_values) {
                 if (std::find(super_values.begin(), super_values.end(), value) == super_values.end()) {
@@ -597,7 +598,14 @@ VariableSet Hmdp::convertToParametrizedState(VariableSet s, Hmdp* super_mdp) {
             par_key = original_to_parametrized[el.first];
         }
         if (el.second == "other") {
-            super_values = super_mdp->varValues[el.first];
+            string super_key;
+            if (std::find(super_mdp->variables.begin(),super_mdp->variables.end(),el.first)!=super_mdp->variables.end()) {
+                super_key=el.first;
+            }
+            else {
+                super_key=super_mdp->original_to_parametrized.at(el.first)[0]; //possible problem if there is more than one.
+            }
+            super_values = super_mdp->varValues.at(super_key);
             is_abstract = true;
         } else if (original_to_parametrized.find(el.second) != original_to_parametrized.end()) {
             possible_values = original_to_parametrized[el.second];
@@ -608,7 +616,7 @@ VariableSet Hmdp::convertToParametrizedState(VariableSet s, Hmdp* super_mdp) {
             for (string key : par_key) {
                 if (vs_new.set.find(key) == vs_new.set.end()) {
                     if (is_abstract) { //if the super_mdp state is abstract we set this var to any value not present in the super_mdp varValues
-                        possible_values = varValues[key];
+                        possible_values = varValues.at(key);
                         for (string v : possible_values) {
                             if (std::find(super_values.begin(), super_values.end(), v) == super_values.end()) {
                                 vs_new.set[key] = v;
@@ -626,7 +634,7 @@ VariableSet Hmdp::convertToParametrizedState(VariableSet s, Hmdp* super_mdp) {
         if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
             if (vs_new.set.find(el.first) == vs_new.set.end()) {
                 if (is_abstract) {
-                    possible_values = varValues[el.first];
+                    possible_values = varValues.at(el.first);
                     for (string v : possible_values) {
                         if (std::find(super_values.begin(), super_values.end(), v) == super_values.end()) {
                             vs_new.set[el.first] = v;
@@ -638,6 +646,11 @@ VariableSet Hmdp::convertToParametrizedState(VariableSet s, Hmdp* super_mdp) {
                     vs_new.set[el.first] = value;
                 }
             }
+        }
+    }
+    for (string var:variables) {
+        if (vs_new.set.find(var)==vs_new.set.end()) {
+            vs_new.set[var]=varValues.at(var)[0];
         }
     }
     return vs_new;

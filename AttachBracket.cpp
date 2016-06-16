@@ -12,8 +12,8 @@ AttachBracket::AttachBracket() {
     surface_name_ = "surface";
     bracket_name_ = "bracket";
 
-    std::vector<string> locations{"table", "surface1", "surface2", "surface3", "surface"};
-    std::vector<string> statuses{"none", "cleaned", "glued", "completed"};
+    std::vector<string> locations{"other", "surface"};
+    std::vector<string> statuses{"other", "glued", "completed"};
 
     agent_loc_var_ = agent_name_ + "_isAt";
     surface_status_var_ = surface_name_ + "_status";
@@ -26,7 +26,7 @@ AttachBracket::AttachBracket() {
     std::map<string, std::vector < string>> var_values;
     var_values[agent_loc_var_] = locations;
     var_values[surface_status_var_] = statuses;
-    var_values[bracket_loc_var_] = locations;
+//    var_values[bracket_loc_var_] = locations;
     var_values[bracket_loc_var_].push_back(agent_name_);
     var_values[bracket_loc_var_].push_back("other");
 
@@ -74,6 +74,7 @@ AttachBracket::AttachBracket(const AttachBracket& orig) {
 }
 
 AttachBracket::~AttachBracket() {
+    delete hierarchy_map_[agent_name_ + "_get_" + bracket_name_];
 
 }
 

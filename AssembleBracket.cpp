@@ -20,25 +20,25 @@ AssembleBracket::AssembleBracket() {
     glue_name_ = "gluebottle";
     surface_name_ = "surface";
 
-    std::vector<string> locations{"table", "surface1", "surface2", "surface3","surface"};
+//    std::vector<string> locations{"table", "surface1", "surface2", "surface3","surface"};
     std::vector<string> statuses{"none","cleaned","glued","completed"};
     
-    agent_loc_var_ = agent_name_+"_isAt";
+//    agent_loc_var_ = agent_name_+"_isAt";
     bracket_loc_var_=bracket_name_+"_isAt";
     glue_loc_var_=glue_name_+"_isAt";
     surface_status_var_=surface_name_+"_status";
 
-    variables.push_back(agent_loc_var_);
+//    variables.push_back(agent_loc_var_);
     variables.push_back(bracket_loc_var_);
     variables.push_back(surface_status_var_);
     variables.push_back(glue_loc_var_);
     
     std::map<string, std::vector < string>> var_values;
-    var_values[agent_loc_var_] = locations;
-    var_values[glue_loc_var_] = locations;
+//    var_values[agent_loc_var_] = locations;
+//    var_values[glue_loc_var_] = locations;
     var_values[glue_loc_var_].push_back(agent_name_);
     var_values[glue_loc_var_].push_back("other");
-    var_values[bracket_loc_var_]=locations;
+//    var_values[bracket_loc_var_]=locations;
     var_values[bracket_loc_var_].push_back(agent_name_);
     var_values[bracket_loc_var_].push_back("other");
     var_values[surface_status_var_]=statuses;
@@ -64,9 +64,9 @@ AssembleBracket::AssembleBracket() {
     parameter_action_place[3]=surface_name_;
     
     vector<string> par_var;
-    par_var.push_back(agent_loc_var_);
-    parameter_variables[agent_name_] = par_var;
-    variable_parameter[par_var[0]] = agent_name_;
+//    par_var.push_back(agent_loc_var_);
+//    parameter_variables[agent_name_] = par_var;
+//    variable_parameter[par_var[0]] = agent_name_;
     
     par_var.clear();
     par_var.push_back(bracket_loc_var_);
@@ -86,6 +86,9 @@ AssembleBracket::AssembleBracket(const AssembleBracket& orig) {
 }
 
 AssembleBracket::~AssembleBracket() {
+    delete hierarchy_map_[agent_name_ + "_clean_" + surface_name_];
+    delete hierarchy_map_[agent_name_ + "_glue_" + surface_name_];
+    delete hierarchy_map_[agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_];
 
 }
 

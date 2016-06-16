@@ -44,6 +44,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Hmdp.o \
 	${OBJECTDIR}/Mdp.o \
 	${OBJECTDIR}/Mmdp.o \
+	${OBJECTDIR}/MmdpManager.o \
 	${OBJECTDIR}/NestedLoop.o \
 	${OBJECTDIR}/PlaceObject.o \
 	${OBJECTDIR}/Pomdp.o \
@@ -128,6 +129,11 @@ ${OBJECTDIR}/Mmdp.o: Mmdp.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
+
+${OBJECTDIR}/MmdpManager.o: MmdpManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MmdpManager.o MmdpManager.cpp
 
 ${OBJECTDIR}/NestedLoop.o: NestedLoop.cpp 
 	${MKDIR} -p ${OBJECTDIR}

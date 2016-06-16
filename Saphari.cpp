@@ -31,14 +31,14 @@ Saphari::Saphari() {
 
     glue_loc_var_ = glue_name_ + "_isAt";
 
-    variables.push_back(glue_loc_var_);
-    variables.push_back(agent_loc_var_);
+//    variables.push_back(glue_loc_var_);
+//    variables.push_back(agent_loc_var_);
 
     std::map<string, std::vector < string>> var_values;
-    var_values[agent_loc_var_] = locations;
-    var_values[glue_loc_var_] = locations;
-    var_values[glue_loc_var_].push_back(agent_name_);
-    var_values[glue_loc_var_].push_back("other");
+//    var_values[agent_loc_var_] = locations;
+//    var_values[glue_loc_var_] = locations;
+//    var_values[glue_loc_var_].push_back(agent_name_);
+//    var_values[glue_loc_var_].push_back("other");
     for (int i = 0; i < 3; i++) {
         variables.push_back(bracket_loc_var_[i]);
         var_values[bracket_loc_var_[i]] = locations;
@@ -63,9 +63,9 @@ Saphari::Saphari() {
 
     parameters.push_back(agent_name_);
     vector<string> par_var;
-    par_var.push_back(agent_loc_var_);
-    parameter_variables[agent_name_] = par_var;
-    variable_parameter[par_var[0]] = agent_name_;
+//    par_var.push_back(agent_loc_var_);
+//    parameter_variables[agent_name_] = par_var;
+//    variable_parameter[par_var[0]] = agent_name_;
 
     parameter_action_place[0] = agent_name_;
     
