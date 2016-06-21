@@ -7,11 +7,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/mfiore/workspace/pomdp/Mmdp.cpp</file>
-            <file>file:/home/mfiore/workspace/pomdp/Hmdp.cpp</file>
-            <file>file:/home/mfiore/workspace/pomdp/Hmdp.h</file>
-            <file>file:/home/mfiore/workspace/pomdp/MmdpManager.h</file>
-            <file>file:/home/mfiore/workspace/pomdp/MmdpManager.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/Hmdp.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/AssembleBracket.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/Mmdp.cpp</file>
         </group>
     </open-files>
 </project-private>

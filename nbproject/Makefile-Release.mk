@@ -41,6 +41,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/GetLaundry.o \
 	${OBJECTDIR}/GetObject.o \
 	${OBJECTDIR}/GlueSurface.o \
+	${OBJECTDIR}/Handover.o \
 	${OBJECTDIR}/Hmdp.o \
 	${OBJECTDIR}/Mdp.o \
 	${OBJECTDIR}/Mmdp.o \
@@ -114,6 +115,11 @@ ${OBJECTDIR}/GlueSurface.o: GlueSurface.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GlueSurface.o GlueSurface.cpp
+
+${OBJECTDIR}/Handover.o: Handover.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Handover.o Handover.cpp
 
 ${OBJECTDIR}/Hmdp.o: Hmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}

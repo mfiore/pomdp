@@ -23,6 +23,8 @@
           <itemPath>GetObject.h</itemPath>
           <itemPath>GlueSurface.cpp</itemPath>
           <itemPath>GlueSurface.h</itemPath>
+          <itemPath>Handover.cpp</itemPath>
+          <itemPath>Handover.h</itemPath>
           <itemPath>Saphari.cpp</itemPath>
           <itemPath>Saphari.h</itemPath>
         </logicalFolder>
@@ -117,6 +119,10 @@
       <item path="GlueSurface.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GlueSurface.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Handover.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Handover.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -236,6 +242,10 @@
       <item path="GlueSurface.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GlueSurface.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Handover.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Handover.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
