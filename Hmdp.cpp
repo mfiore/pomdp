@@ -445,6 +445,11 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
             }
             cout << "State: \n";
             cout << depar_s.toString();
+            cout<<"Q- Values:\n";
+            printQValues(vecStateEnum[s.first]);
+            if (i==7) {
+                cout<<"";
+            }
             string action = chooseHierarchicAction(depar_s);
 
             StateProb output;

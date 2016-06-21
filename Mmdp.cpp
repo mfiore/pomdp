@@ -133,9 +133,6 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
             name = StringOperations::addToString(name, a.second->name, '-');
         }
 
-        if (name == "agent_glue_surface-agent_apply_bracket_surface") {
-            cout << "";
-        }
 
         parametrized_name = action_name;
 
@@ -155,9 +152,6 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
 
         enumerateStates();
 
-        //        for (auto h : hierarchy_map_) {
-        //            h.second->create(h.first, rewrite, false);
-        //        }
 
  
         for (string a : actions) {
@@ -347,8 +341,10 @@ void Mmdp::enumerateFunctions(string fileName) {
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
 
-            if (i == 0 && action =="agentp0_move_surface1-agentp1_get_gluebottle" &&
-                    fileName == "agent1_get_gluebottle-agent2_glue_surface1.pomdp") {
+            if (i == 0 && action =="agentp0_assemble_bracket1_surface1-agentp1_wait"
+//                    &&
+//                    fileName == "agent1_get_gluebottle-agent2_glue_surface1.pomdp"
+                    ) {
                 cout << "";
             }
 
@@ -382,7 +378,7 @@ void Mmdp::enumerateFunctions(string fileName) {
                     } else {
                         string mdp_action = convertToSingleMdpAction(mdp.second, index, single_actions[index]);
                         mdp_future_states = mdp.second->transitionFunction(mdp_state, mdp_action);
-                        //                        r = r + mdp.second->rewardFunction(mdp_state, mdp_action);
+//                                                r = r + mdp.second->rewardFunction(mdp_state, mdp_action);
                     }
                     cumulative_future_mdp_states = joinMdpFutureStates(mdp_future_states, cumulative_future_mdp_states,
                             mmdp_instance_state, mdp.second, index, &no_incongruences, not_present_variables, mdp_state);
@@ -492,32 +488,32 @@ VarStateProb Mmdp::transitionFunction(VariableSet state, string action) {
 int Mmdp::rewardFunction(VariableSet state, string action) {
     vector<bool> is_goal_state_for_agent;
 
-    int index = 0;
-    double reward = 0;
-    for (auto a : agent_hmpd_) {
-        pair<VariableSet, set<string> > mdp_state = convertToMdpState(a.second, index, state);
-        if (a.second->isGoalState(mdp_state.first)) {
-            reward = reward + 500;
-        }
-    }
-    return reward;
+//    int index = 0;
+//    double reward = 0;
+//    for (auto a : agent_hmpd_) {
+//        pair<VariableSet, set<string> > mdp_state = convertToMdpState(a.second, index, state);
+//        if (a.second->isGoalState(mdp_state.first)) {
+//            reward = reward + 500;
+//        }
+//    }
+//    return reward;
 
     //    
-    //        if (isGoalState(state)) return 1000;
-    //    return 0;
-    //        int index=0;
-    //    int r=0;
-    //    vector<string> single_actions=StringOperations::stringSplit(action,'-');
-    //    for (auto mdp:agent_hmpd_) {
-    //        string mdp_action=convertToSingleMdpAction(mdp.second,index,single_actions[index]);
-    //        VariableSet mdp_state=convertToMdpState(mdp.second,index,state);
-    //        r=r+mdp.second->rewardFunction(mdp_state,mdp_action);
-    //        index++;
+            if (isGoalState(state)) return 1000;
+        return 0;
+            int index=0;
+        int r=0;
+        vector<string> single_actions=StringOperations::stringSplit(action,'-');
+        for (auto mdp:agent_hmpd_) {
+            string mdp_action=convertToSingleMdpAction(mdp.second,index,single_actions[index]);
+            pair<VariableSet,set<string> > mdp_state=convertToMdpState(mdp.second,index,state);
+            r=r+mdp.second->rewardFunction(mdp_state.first,mdp_action);
+            index++;
+        }
+    //    if (r>0) {
+    //        cout<<"ah";
     //    }
-    ////    if (r>0) {
-    ////        cout<<"ah";
-    ////    }
-    //    return r;
+        return r;
 }
 
 bool Mmdp::isStartingState(VariableSet state) {

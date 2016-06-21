@@ -12,8 +12,8 @@
             <file>file:/home/mfiore/workspace/pomdp/Saphari.cpp</file>
             <file>file:/home/mfiore/workspace/pomdp/Hmdp.cpp</file>
             <file>file:/home/mfiore/workspace/pomdp/Hmdp.h</file>
-            <file>file:/home/mfiore/workspace/pomdp/Mdp.cpp</file>
-            <file>file:/home/mfiore/workspace/pomdp/AttachBracket.cpp</file>
+            <file>file:/home/mfiore/workspace/pomdp/MmdpManager.h</file>
+            <file>file:/home/mfiore/workspace/pomdp/MmdpManager.cpp</file>
         </group>
     </open-files>
 </project-private>
