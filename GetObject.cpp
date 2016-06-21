@@ -19,6 +19,7 @@ GetObject::GetObject() {
   
     std::map<string,std::vector<string> > var_values;
     var_values[agent_loc_var_] = locations;
+    var_values[agent_loc_var_].push_back("other");
     var_values[object_loc_var_] = locations;
     var_values[object_loc_var_].push_back(agent_name_);
     var_values[object_loc_var_].push_back("other");

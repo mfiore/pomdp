@@ -23,14 +23,14 @@ using namespace std;
 
 class MmdpManager {
 public:
-    MmdpManager(map<string, Hmdp*> hmdp_map);
+    MmdpManager(vector<map<string, Hmdp*> > hmdp_map);
     MmdpManager(const MmdpManager& orig);
     virtual ~MmdpManager();
 
 
     Hmdp* getMmdp(string name, string action_name, bool rewrite, bool first);
 private:
-    map<string, Hmdp*> hmdp_map_;
+    vector<map<string, Hmdp*> > hmdp_map_;
     map<string, Hmdp*> mmdp_map_;
     
 

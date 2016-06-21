@@ -13,7 +13,7 @@
 
 #include "MmdpManager.h"
 
-MmdpManager::MmdpManager(map<string, Hmdp*> hmdp_map) : hmdp_map_(hmdp_map) {
+MmdpManager::MmdpManager(vector<map<string, Hmdp*>> hmdp_map) : hmdp_map_(hmdp_map) {
 }
 
 MmdpManager::MmdpManager(const MmdpManager& orig) {
@@ -32,8 +32,8 @@ Hmdp* MmdpManager::getMmdp(string name, string action_name, bool rewrite, bool f
         for (string a : single_actions) {
             string agent_name="agent"+to_string(i);
             vector<string> action_parts = StringOperations::stringSplit(single_actions[i], '_');
-            if (hmdp_map_.find(action_parts[1]) != hmdp_map_.end()) {
-                sub_mmdp->agent_hmpd_[agent_name] =hmdp_map_[action_parts[1]];
+            if (hmdp_map_[i].find(action_parts[1]) != hmdp_map_[i].end()) {
+                sub_mmdp->agent_hmpd_[agent_name] =hmdp_map_[i][action_parts[1]];
             }
             else {
                 cout<<"ERROR - CAN'T FIND ACTION\n";

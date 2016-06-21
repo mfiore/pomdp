@@ -41,6 +41,7 @@ AssembleBracket::AssembleBracket() {
 //    var_values[bracket_loc_var_]=locations;
     var_values[bracket_loc_var_].push_back(agent_name_);
     var_values[bracket_loc_var_].push_back("other");
+    var_values[bracket_loc_var_].push_back(surface_name_);
     var_values[surface_status_var_]=statuses;
 
     

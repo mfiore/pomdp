@@ -26,9 +26,9 @@ AttachBracket::AttachBracket() {
     std::map<string, std::vector < string>> var_values;
     var_values[agent_loc_var_] = locations;
     var_values[surface_status_var_] = statuses;
-//    var_values[bracket_loc_var_] = locations;
+    var_values[bracket_loc_var_] = locations;
     var_values[bracket_loc_var_].push_back(agent_name_);
-    var_values[bracket_loc_var_].push_back("other");
+//    var_values[bracket_loc_var_].push_back("other");
 
     this->varValues = var_values;
 
@@ -106,6 +106,7 @@ std::map<VariableSet, double> AttachBracket::transitionFunction(VariableSet stat
             && state.set[agent_loc_var_] == surface_name_
             && state.set[bracket_loc_var_] == agent_name_) {
         state.set[surface_status_var_] = "completed";
+        state.set[bracket_loc_var_]=surface_name_;
         future_beliefs[state] = 1;
     } else if (action_name == "move") {
         future_beliefs = MdpBasicActions::applyMove(agent_loc_var_, action_parameters[2], state);

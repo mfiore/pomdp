@@ -261,6 +261,7 @@ void Hmdp::enumerateFunctions(string fileName) {
 
                 VariableSet depar_set = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
                 //                VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
+    
                 VarStateProb temp_future_beliefs = h->getHierarchicTransition(depar_set, this);
                 for (auto temp_b : temp_future_beliefs) {
                     VariableSet par_set = convertToParametrizedState(temp_b.first);
@@ -439,8 +440,10 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
             VariableSet depar_s = convertToDeparametrizedState(vecStateEnum[s.first], previous_orig_state);
             previous_orig_state = depar_s;
 
+            if (i==7) {
+                cout<<"";
+            }
             cout << "State: \n";
-            //            cout << vecStateEnum[s.first].toString();
             cout << depar_s.toString();
             string action = chooseHierarchicAction(depar_s);
 

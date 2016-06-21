@@ -909,7 +909,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-        //        printQValues(this_state);
+//                printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];

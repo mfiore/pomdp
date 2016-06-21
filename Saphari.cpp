@@ -69,7 +69,7 @@ Saphari::Saphari() {
 
     parameter_action_place[0] = agent_name_;
     
-    name="saphari";
+    name="agent_saphari";
 
 }
 
