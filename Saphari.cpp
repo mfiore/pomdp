@@ -134,6 +134,19 @@ bool Saphari::isGoalState(VariableSet state) {
             return false;
         }
     }
+    for (int i=0; i<3; i++) {
+        if (state.set[bracket_loc_var_[i]]=="table"){
+            return false;
+        }
+    }
+    
+    for (int i=0; i<3; i++) {
+        for (int j=0; j<3; j++) {
+            if (i!=j && state.set[bracket_loc_var_[i]]==state.set[bracket_loc_var_[j]]) {
+                return false;
+            }
+        }
+    }
     return true;
 
 }

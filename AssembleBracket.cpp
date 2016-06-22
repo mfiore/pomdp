@@ -42,6 +42,7 @@ AssembleBracket::AssembleBracket() {
     var_values[bracket_loc_var_].push_back(agent_name_);
     var_values[bracket_loc_var_].push_back("other");
     var_values[bracket_loc_var_].push_back(surface_name_);
+    var_values[bracket_loc_var_].push_back("table");
     var_values[surface_status_var_]=statuses;
 
     
@@ -121,7 +122,7 @@ std::map<VariableSet, double> AssembleBracket::transitionFunction(VariableSet st
 }
 
 bool AssembleBracket::isStartingState(VariableSet state) {
-    return state.set[surface_status_var_]!="completed";
+    return state.set[surface_status_var_]!="completed" && state.set[bracket_loc_var_]=="table";
 
 }
 

@@ -10,7 +10,7 @@
 
 #include "Mmdp.h"
 
-Mmdp::Mmdp(MmdpManager *mmdp_manager):mmdp_manager_(mmdp_manager) {
+Mmdp::Mmdp(MmdpManager *mmdp_manager) : mmdp_manager_(mmdp_manager) {
     is_created_ = false;
 }
 
@@ -148,21 +148,21 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
 
 
 
-//        createSubMmdps();
+        //        createSubMmdps();
 
         enumerateStates();
 
 
- 
+
         for (string a : actions) {
-      
+
             pair<vector<string>, set<string> > sub_mdp_result = getSubMdpName(a);
             string module_name = sub_mdp_result.first[0];
             if (module_name != "this") {
-                hierarchy_map_[module_name]=mmdp_manager_->getMmdp(module_name,sub_mdp_result.first[2],rewrite,false);
-//                if (hierarchy_map_[module_name]->is_created_ == false) {
-//                    hierarchy_map_[module_name]->create(sub_mdp_result.first[2], rewrite, false);
-//                }
+                hierarchy_map_[module_name] = mmdp_manager_->getMmdp(module_name, sub_mdp_result.first[2], rewrite, false);
+                //                if (hierarchy_map_[module_name]->is_created_ == false) {
+                //                    hierarchy_map_[module_name]->create(sub_mdp_result.first[2], rewrite, false);
+                //                }
             }
         }
 
@@ -341,9 +341,9 @@ void Mmdp::enumerateFunctions(string fileName) {
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
 
-            if (i == 0 && action =="agentp0_assemble_bracket1_surface1-agentp1_wait"
-//                    &&
-//                    fileName == "agent1_get_gluebottle-agent2_glue_surface1.pomdp"
+            if (i == 0 && action == "agentp0_assemble_bracket1_surface1-agentp1_wait"
+                    //                    &&
+                    //                    fileName == "agent1_get_gluebottle-agent2_glue_surface1.pomdp"
                     ) {
                 cout << "";
             }
@@ -378,7 +378,7 @@ void Mmdp::enumerateFunctions(string fileName) {
                     } else {
                         string mdp_action = convertToSingleMdpAction(mdp.second, index, single_actions[index]);
                         mdp_future_states = mdp.second->transitionFunction(mdp_state, mdp_action);
-//                                                r = r + mdp.second->rewardFunction(mdp_state, mdp_action);
+                        //                                                r = r + mdp.second->rewardFunction(mdp_state, mdp_action);
                     }
                     cumulative_future_mdp_states = joinMdpFutureStates(mdp_future_states, cumulative_future_mdp_states,
                             mmdp_instance_state, mdp.second, index, &no_incongruences, not_present_variables, mdp_state);
@@ -397,6 +397,7 @@ void Mmdp::enumerateFunctions(string fileName) {
                         int i = mapStateEnum.at(converted_state);
                         future_beliefs[mapStateEnum.at(converted_state)] = state.second;
                     }
+                    r = rewardFunction(vecStateEnum[i], action);
                 } else {
                     r = 0;
                 }
@@ -407,7 +408,6 @@ void Mmdp::enumerateFunctions(string fileName) {
                 string depar_action = getDeparametrizedAction(action);
                 h->assignParametersFromActionName(getDeparametrizedAction(action), changed_mdps, parameter_instances);
                 //                h->printParameters();
-
 
 
                 //                VariableSet v_param = h->convertToParametrizedState(vecStateEnum[i]);
@@ -433,9 +433,11 @@ void Mmdp::enumerateFunctions(string fileName) {
                 VariableSet vstry = vecStateEnum[i];
 
                 //                r = rewardFunction(vecStateEnum[i], action);
+                r = h->getHierarchicReward(v_deparam, this);
+
             }
 
-            r = rewardFunction(vecStateEnum[i], action);
+            //            r = rewardFunction(vecStateEnum[i], action);
 
             PairStateAction transitionInput{i, action};
             for (auto belief : future_beliefs) {
@@ -486,34 +488,26 @@ VarStateProb Mmdp::transitionFunction(VariableSet state, string action) {
 }
 
 int Mmdp::rewardFunction(VariableSet state, string action) {
-    vector<bool> is_goal_state_for_agent;
+    //    vector<bool> is_goal_state_for_agent;
 
-//    int index = 0;
-//    double reward = 0;
-//    for (auto a : agent_hmpd_) {
-//        pair<VariableSet, set<string> > mdp_state = convertToMdpState(a.second, index, state);
-//        if (a.second->isGoalState(mdp_state.first)) {
-//            reward = reward + 500;
-//        }
-//    }
-//    return reward;
+    //    int index = 0;
+    //    double reward = 0;
+    //    for (auto a : agent_hmpd_) {
+    //        pair<VariableSet, set<string> > mdp_state = convertToMdpState(a.second, index, state);
+    //        if (a.second->isGoalState(mdp_state.first)) {
+    //            reward = reward + 500;
+    //        }
+    //    }
+    //    return reward;
 
     //    
-            if (isGoalState(state)) return 1000;
-        return 0;
-            int index=0;
-        int r=0;
-        vector<string> single_actions=StringOperations::stringSplit(action,'-');
-        for (auto mdp:agent_hmpd_) {
-            string mdp_action=convertToSingleMdpAction(mdp.second,index,single_actions[index]);
-            pair<VariableSet,set<string> > mdp_state=convertToMdpState(mdp.second,index,state);
-            r=r+mdp.second->rewardFunction(mdp_state.first,mdp_action);
-            index++;
-        }
-    //    if (r>0) {
-    //        cout<<"ah";
-    //    }
-        return r;
+    PairStateAction p{mapStateEnum.at(state), action};
+    StateProb new_states=transition[p];
+    for (auto s:new_states){
+        if (isGoalState(vecStateEnum[s.first])) return 1000; 
+    }
+    return 0;
+    //    if (isGoalState(state)) return 1000;
 }
 
 bool Mmdp::isStartingState(VariableSet state) {
@@ -855,7 +849,7 @@ pair<vector<string>, set<string> > Mmdp::getSubMdpName(string action) {
 
     string depar_action = getDeparametrizedAction(action);
     vector<string> depar_single_actions = StringOperations::stringSplit(depar_action, '-');
-    vector<string> parametrized_this_name=StringOperations::stringSplit(parametrized_name,'-');
+    vector<string> parametrized_this_name = StringOperations::stringSplit(parametrized_name, '-');
     map<string, Hmdp*> agent_hmdps;
 
     bool is_hierarchical = false;
@@ -905,7 +899,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-//                printQValues(this_state);
+        //                printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];
