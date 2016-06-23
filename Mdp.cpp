@@ -225,6 +225,10 @@ void Mdp::printRewardFunction() {
 
                 cout << s.first << " " << s.second << "\n";
             }
+            if (state.set["bracket2_isAt"]=="agentp0" && state.set["surface1_status"]=="completed"
+                    && state.set["surface2_status"]=="completed" && state.set["surface3_status"]=="glued"){
+                cout<<"";
+            }
             cout << el.first.second << " " << el.second << "\n";
         }
     }

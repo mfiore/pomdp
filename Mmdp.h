@@ -93,6 +93,8 @@ public:
 
     MmdpManager* mmdp_manager_;
     
+    vector<string> forbidden_actions_;
+    
     };
 
 #endif /* MMDP_H */

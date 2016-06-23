@@ -109,7 +109,9 @@ void Mmdp::createJointMdpVariables() {
                 action_name = action_matrix[i][j];
             }
         }
-        actions.push_back(action_name);
+        if (std::find(forbidden_actions_.begin(), forbidden_actions_.end(), action_name) == forbidden_actions_.end()) {
+            actions.push_back(action_name);
+        }
     }
 
 }
@@ -397,7 +399,7 @@ void Mmdp::enumerateFunctions(string fileName) {
                         int i = mapStateEnum.at(converted_state);
                         future_beliefs[mapStateEnum.at(converted_state)] = state.second;
                     }
-                    r = rewardFunction(vecStateEnum[i], action);
+                    //                    r = rewardFunction(vecStateEnum[i], action);
                 } else {
                     r = 0;
                 }
@@ -433,11 +435,11 @@ void Mmdp::enumerateFunctions(string fileName) {
                 VariableSet vstry = vecStateEnum[i];
 
                 //                r = rewardFunction(vecStateEnum[i], action);
-                r = h->getHierarchicReward(v_deparam, this);
+                //                r = h->getHierarchicReward(v_deparam, this);
 
             }
 
-            //            r = rewardFunction(vecStateEnum[i], action);
+            r = rewardFunction(vecStateEnum[i], action);
 
             PairStateAction transitionInput{i, action};
             for (auto belief : future_beliefs) {
@@ -488,25 +490,54 @@ VarStateProb Mmdp::transitionFunction(VariableSet state, string action) {
 }
 
 int Mmdp::rewardFunction(VariableSet state, string action) {
-    //    vector<bool> is_goal_state_for_agent;
+    vector<bool> is_goal_state_for_agent;
 
-    //    int index = 0;
-    //    double reward = 0;
-    //    for (auto a : agent_hmpd_) {
-    //        pair<VariableSet, set<string> > mdp_state = convertToMdpState(a.second, index, state);
-    //        if (a.second->isGoalState(mdp_state.first)) {
-    //            reward = reward + 500;
+    int index = 0;
+    double reward = 0;
+    //        for (auto a : agent_hmpd_) {
+    //            pair<VariableSet, set<string> > mdp_state = convertToMdpState(a.second, index, state);
+    //            if (a.second->isGoalState(mdp_state.first)) {
+    //                reward = reward + 500;
+    //            }
     //        }
-    //    }
-    //    return reward;
+    //        return reward;
 
     //    
-    PairStateAction p{mapStateEnum.at(state), action};
-    StateProb new_states=transition[p];
-    for (auto s:new_states){
-        if (isGoalState(vecStateEnum[s.first])) return 1000; 
+    pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
+    if (sub_mdp_details.first[0] == "this") {
+        StateProb new_states;
+
+        PairStateAction p{mapStateEnum.at(state), action};
+        new_states = transition[p];
+        for (auto s : new_states) {
+            for (auto a : agent_hmpd_) {
+                pair<VariableSet, set<string> > mdp_state = convertToMdpState(a.second, index, vecStateEnum[s.first]);
+                if (a.second->isGoalState(mdp_state.first)) {
+                    reward = reward + 500;
+                }
+            }
+            //            if (isGoalState(vecStateEnum[s.first])) {
+            //                return 100000000;
+            //            }
+        }
+    } else {
+        map<VariableSet, double> new_states = hierarchy_map_[sub_mdp_details.first[0]]->getHierarchicTransition(convertToDeparametrizedState(state, VariableSet()), this);
+        for (auto s : new_states) {
+            VariableSet param_vs = convertToParametrizedState(s.first);
+            for (auto a : agent_hmpd_) {
+                pair<VariableSet, set<string> > mdp_state = convertToMdpState(a.second, index, param_vs);
+                if (a.second->isGoalState(mdp_state.first)) {
+                    reward = reward + 500;
+                }
+
+                //            if (isGoalState(convertToParametrizedState(s.first))) {
+                //                return 100000000;
+                //            }
+            }
+        }
     }
-    return 0;
+
+    return reward;
     //    if (isGoalState(state)) return 1000;
 }
 
@@ -520,7 +551,7 @@ bool Mmdp::isGoalState(VariableSet state) {
     return std::find(goal_states_.begin(), goal_states_.end(), i_state) != goal_states_.end();
 }
 
-pair<VariableSet, set<string >> Mmdp::convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state) {
+pair<VariableSet, set < string >> Mmdp::convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state) {
     pair<VariableSet, set<string> > result;
     set<string> not_present_variables;
     VariableSet mdp_state;
@@ -899,7 +930,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-        //                printQValues(this_state);
+        //        printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];
