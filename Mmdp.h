@@ -85,9 +85,9 @@ public:
 
     string original_action_;
 
-    bool hasParametersInCommon();
+    vector<string> hasParametersInCommon();
 
-    bool hasParametersInCommon(map<string, Hmdp*> agents);
+    vector<string> hasParametersInCommon(map<string, Hmdp*> agents);
     
     VariableSet fixAbstractStates(VariableSet sub_set, VariableSet super_set, Hmdp* sub_mmdp);
 

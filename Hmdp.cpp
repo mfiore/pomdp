@@ -452,15 +452,12 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
             VariableSet depar_s = convertToDeparametrizedState(vecStateEnum[s.first], previous_orig_state);
             previous_orig_state = depar_s;
 
-            if (i == 7) {
-                cout << "";
-            }
-
+     
             //            cout<<"Q- Values:\n";
             //            printQValues(vecStateEnum[s.first]);
             cout << "State: \n";
             cout << depar_s.toString();
-            if (i == 10) {
+            if (i == 8) {
                 cout << "";
             }
             string action = chooseHierarchicAction(depar_s);

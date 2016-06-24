@@ -155,9 +155,10 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
         enumerateStates();
 
 
-
+        if (name == "agent_glue_surface-agent_glue_surface") {
+            cout << "";
+        }
         for (string a : actions) {
-
             pair<vector<string>, set<string> > sub_mdp_result = getSubMdpName(a);
             string module_name = sub_mdp_result.first[0];
             if (module_name != "this") {
@@ -171,7 +172,7 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
 
 
         string fileName;
-        if (hasParametersInCommon()) {
+        if (hasParametersInCommon().size() > 0) {
             fileName = parametrized_name;
         } else {
             fileName = name;
@@ -228,7 +229,7 @@ void Mmdp::assignParametersFromActionName(string action_name, set<string> change
         i++;
     }
 
-    parametrized_name=action_name;
+    parametrized_name = action_name;
     assignParameters(instance);
     i = 0;
     for (auto mdp : agent_hmpd_) {
@@ -361,7 +362,7 @@ void Mmdp::enumerateFunctions(string fileName) {
             set<string> changed_mdps = sub_mdp_details.second;
             bool no_incongruences = true; //this will become false if 2 mdp states in the instance space have a different value (and different from the original too)
             Mmdp * h;
-                            VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
+            VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
 
             if (module_name == "this") {
                 //if it's not a hierarchical action we have to check the state from each mdp, and look 
@@ -457,13 +458,12 @@ void Mmdp::enumerateFunctions(string fileName) {
             transition[transitionInput] = future_beliefs;
 
             if (module_name != "this") {
-//                r = use_cost_ ? h->getHierarchicReward(v_deparam, this) : rewardFunction(vecStateEnum[i], action);
+                //                r = use_cost_ ? h->getHierarchicReward(v_deparam, this) : rewardFunction(vecStateEnum[i], action);
                 r = h->getHierarchicReward(v_deparam, this);
             } else if (no_incongruences) {
                 r = use_cost_ ? 1 : rewardFunction(vecStateEnum[i], action);
 
-            }
-            else {
+            } else {
                 r = use_cost_ ? 1000 : 0;
 
             }
@@ -786,15 +786,15 @@ void Mmdp::createSubMmdps() {
             }
             //check if the subactions have parameters in common
             //when the actions have parameters in common it's necessary to create a new submmdp
-            bool parameters_in_common = sub_mmdp->hasParametersInCommon();
+            //            bool parameters_in_common = sub_mmdp->hasParametersInCommon();
 
-            if (parameters_in_common) {
-                hierarchy_map_[specific_name] = sub_mmdp;
-            } else if (already_exists) {
-                delete sub_mmdp;
-            } else {
-                hierarchy_map_[generic_name] = sub_mmdp;
-            }
+            //            if (parameters_in_common) {
+            //                hierarchy_map_[specific_name] = sub_mmdp;
+            //            } else if (already_exists) {
+            //                delete sub_mmdp;
+            //            } else {
+            //                hierarchy_map_[generic_name] = sub_mmdp;
+            //            }
 
         } else {
             delete sub_mmdp;
@@ -803,8 +803,8 @@ void Mmdp::createSubMmdps() {
     //    printHierarchy();
 }
 
-bool Mmdp::hasParametersInCommon(map<string, Hmdp*> agents) {
-    bool parameters_in_common = false;
+vector<string> Mmdp::hasParametersInCommon(map<string, Hmdp*> agents) {
+    vector<string> parameters_in_common;
     for (auto agent1 : agents) {
         for (auto agent2 : agents) {
             if (agent1.first != agent2.first) {
@@ -814,37 +814,35 @@ bool Mmdp::hasParametersInCommon(map<string, Hmdp*> agents) {
                 for (auto s : this_instance) {
                     if (other_instance.find(s.first) != other_instance.end()) {
                         if (other_instance[s.first] == s.second) {
-                            parameters_in_common = true;
-                            break;
+                            parameters_in_common.push_back(s.first);
                         }
                     }
                 }
                 //but also if a parameter is assigned to a variable of the other submmdps
-                if (!parameters_in_common) {
-                    for (auto original : agent1.second->parametrized_to_original) {
-                        if (std::find(agent2.second->variables.begin(), agent2.second->variables.end(), original.second) != agent2.second->variables.end()) {
-                            parameters_in_common = true;
-                            break;
+                for (auto original : agent1.second->parametrized_to_original) {
+                    if (std::find(agent2.second->variables.begin(), agent2.second->variables.end(), original.second) != agent2.second->variables.end()) {
+                        if (agent1.second->variable_parameter.find(original.first) != agent1.second->variable_parameter.end()) {
+                                parameters_in_common.push_back(agent1.second->variable_parameter.at(original.first));
+                            } else {
+
+                            parameters_in_common.push_back(original.first);
                         }
                     }
                 }
-
-                if (parameters_in_common) break;
             }
         }
-        if (parameters_in_common) break;
-
     }
     return parameters_in_common;
 }
 
-bool Mmdp::hasParametersInCommon() {
+vector<string> Mmdp::hasParametersInCommon() {
+
     return hasParametersInCommon(agent_hmpd_);
 }
 
 bool Mmdp::readMdp(string fileName, bool rewrite) {
     int nline = 0;
-    ifstream inputFile(fileName);
+            ifstream inputFile(fileName);
     if (inputFile.good() && !rewrite) {
         for (int i = 0; i < vecStateEnum.size(); i++) {
             if (!isMmdpStateCongruent(vecStateEnum[i])) {
@@ -853,35 +851,36 @@ bool Mmdp::readMdp(string fileName, bool rewrite) {
             for (string action : actions) {
                 vector<string> single_actions = StringOperations::stringSplit(action, '-');
 
-                PairStateAction transitionInput{i, action};
+                        PairStateAction transitionInput{i, action};
                 StateProb transitionOutput;
 
-                string line;
-                getline(inputFile, line);
-                nline++;
-                vector<string> transition_v = StringOperations::stringSplit(line, ' ');
-                int j = 0;
+                        string line;
+                        getline(inputFile, line);
+                        nline++;
+                        vector<string> transition_v = StringOperations::stringSplit(line, ' ');
+                        int j = 0;
 
-                PairStateAction bTransitionInput{i, action};
+                        PairStateAction bTransitionInput{i, action};
 
                 while (j < transition_v.size()) {
                     transitionOutput[stoi(transition_v[j])] = stod(transition_v[j + 1]);
-                    std::vector<int> previousBeliefs = predecessors[bTransitionInput];
-                    previousBeliefs.push_back(stoi(transition_v[j]));
-                    predecessors[bTransitionInput] = previousBeliefs;
+                            std::vector<int> previousBeliefs = predecessors[bTransitionInput];
+                            previousBeliefs.push_back(stoi(transition_v[j]));
+                            predecessors[bTransitionInput] = previousBeliefs;
 
-                    j = j + 2;
+                            j = j + 2;
                 }
 
                 transition[transitionInput] = transitionOutput;
 
-                getline(inputFile, line);
-                nline++;
-                PairStateAction rewardInput = {i, action};
+                        getline(inputFile, line);
+                        nline++;
+                        PairStateAction rewardInput = {i, action};
                 reward[rewardInput] = stoi(line);
             }
         }
         inputFile.close();
+
         return true;
     }
     return false;
@@ -890,59 +889,100 @@ bool Mmdp::readMdp(string fileName, bool rewrite) {
 pair<vector<string>, set<string> > Mmdp::getSubMdpName(string action) {
     string module_name = "";
 
-    string specific_name;
-    string generic_name;
+            string specific_name;
+            string generic_name;
 
-    set<string> changed_mdps;
+            set<string> changed_mdps;
 
-    pair<vector<string>, set<string> > result;
-    int action_index = 0;
-    vector<string> single_actions = StringOperations::stringSplit(action, '-');
+            pair<vector<string>, set<string> > result;
+            int action_index = 0;
+            vector<string> single_actions = StringOperations::stringSplit(action, '-');
 
-    string depar_action = getDeparametrizedAction(action);
-    vector<string> depar_single_actions = StringOperations::stringSplit(depar_action, '-');
-    vector<string> parametrized_this_name = StringOperations::stringSplit(parametrized_name, '-');
-    map<string, Hmdp*> agent_hmdps;
+            string depar_action = getDeparametrizedAction(action);
+            vector<string> depar_single_actions = StringOperations::stringSplit(depar_action, '-');
+            vector<string> parametrized_this_name = StringOperations::stringSplit(parametrized_name, '-');
+            map<string, Hmdp*> agent_hmdps;
 
-    bool is_hierarchical = false;
+            map<string, vector<string> > agent_single_actions;
+
+            bool is_hierarchical = false;
     for (auto mdp_agent : agent_hmpd_) {
         vector<string> action_parts = StringOperations::stringSplit(single_actions[action_index], '_');
-        vector<string> depar_action_parts = StringOperations::stringSplit(depar_single_actions[action_index], '_');
+                vector<string> depar_action_parts = StringOperations::stringSplit(depar_single_actions[action_index], '_');
 
         if (action_parts[1] == "wait") {
             //
             specific_name = StringOperations::addToString(specific_name, depar_action_parts[0] + "_wait", '-');
-            generic_name = StringOperations::addToString(generic_name, "agent_wait", '-');
+                    generic_name = StringOperations::addToString(generic_name, "agent_wait", '-');
         } else {
             string sub_action = convertToSingleMdpAction(mdp_agent.second, action_index, single_actions[action_index]);
 
-            Hmdp *this_agent_hmdp = mdp_agent.second;
+                    Hmdp *this_agent_hmdp = mdp_agent.second;
             if (this_agent_hmdp->hierarchy_map_.find(sub_action) != this_agent_hmdp->hierarchy_map_.end()) {
                 this_agent_hmdp->hierarchy_map_[sub_action]->assignParametersFromActionName(depar_single_actions[action_index]);
-                is_hierarchical = true;
-                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name, '-');
-                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name, '-');
-                agent_hmdps[mdp_agent.first] = this_agent_hmdp->hierarchy_map_[sub_action];
-                changed_mdps.insert(mdp_agent.first);
+                        is_hierarchical = true;
+                        specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name, '-');
+                        generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name, '-');
+                        agent_hmdps[mdp_agent.first] = this_agent_hmdp->hierarchy_map_[sub_action];
+                        changed_mdps.insert(mdp_agent.first);
             } else {
                 this_agent_hmdp->assignParametersFromActionName(parametrized_this_name[action_index]);
-                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name, '-');
-                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name, '-');
-                agent_hmdps[mdp_agent.first] = this_agent_hmdp;
+                        specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name, '-');
+                        generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name, '-');
+                        agent_hmdps[mdp_agent.first] = this_agent_hmdp;
             }
         }
         action_index++;
     }
-
     if (!is_hierarchical) {
         module_name = "this";
     } else {
-        module_name = hasParametersInCommon(agent_hmdps) ? specific_name : generic_name;
+        if (name == "agent_glue_surface-agent_glue_surface" &&
+                action == "agentp0_get_gluebottle-agentp1_move_surfacep1") {
+            cout << "";
+        }
+
+        vector<string> parameters_in_common = hasParametersInCommon(agent_hmdps);
+        if (parameters_in_common.size() > 0) {
+            vector<string> agents_generic_action = StringOperations::stringSplit(generic_name, '-');
+                    int index = 0;
+            for (auto a : agent_hmpd_) {
+                vector<string> action_parts = StringOperations::stringSplit(agents_generic_action[index], '_');
+                        agent_single_actions[a.first] = action_parts;
+                        index++;
+            }
+
+            module_name = "";
+            for (string p : parameters_in_common) {
+                for (auto a : agent_hmpd_) {
+                    for (auto place : agent_hmdps[a.first]->parameter_action_place) {
+                        if (place.second == p) {
+                            agent_single_actions[a.first][place.first] = agent_hmdps[a.first]->parameter_instances.at(p);
+                        }
+                    }
+                }
+            }
+            index = 0;
+            for (auto a : agent_hmpd_) {
+                if (index != 0) {
+                    module_name = module_name + "-";
+                }
+                for (int i = 0; i < agent_single_actions[a.first].size() - 1; i++) {
+                    module_name = module_name + agent_single_actions[a.first][i] + "_";
+                }
+                module_name = module_name + agent_single_actions[a.first][agent_single_actions[a.first].size() - 1];
+                        index++;
+            }
+        } else {
+            module_name = generic_name;
+        }
+
     }
     result.first.push_back(module_name);
-    result.first.push_back(generic_name);
-    result.first.push_back(specific_name);
-    result.second = changed_mdps;
+            result.first.push_back(generic_name);
+            result.first.push_back(specific_name);
+            result.second = changed_mdps;
+
     return result;
 
 }
@@ -950,31 +990,31 @@ pair<vector<string>, set<string> > Mmdp::getSubMdpName(string action) {
 string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
-    if (active_module == "this") {
-        //        printQValues(this_state);
-        string action = chooseAction(mapStateEnum.at(this_state));
-        pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
-        string module_name = sub_mdp_details.first[0];
-        set<string> changed_mdps = sub_mdp_details.second;
-        if (module_name != "this") {
-            active_module = module_name;
-            Mmdp *h = (Mmdp*) hierarchy_map_[active_module];
-            string dp = getDeparametrizedAction(action);
-            h->assignParametersFromActionName(dp, changed_mdps, parameter_instances);
-            //            h->printParameters();
-            return h->chooseHierarchicAction(state);
+        if (active_module == "this") {
+                    printQValues(this_state);
+            string action = chooseAction(mapStateEnum.at(this_state));
+                    pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
+                    string module_name = sub_mdp_details.first[0];
+                    set<string> changed_mdps = sub_mdp_details.second;
+            if (module_name != "this") {
+                active_module = module_name;
+                        Mmdp *h = (Mmdp*) hierarchy_map_[active_module];
+                        string dp = getDeparametrizedAction(action);
+                        h->assignParametersFromActionName(dp, changed_mdps, parameter_instances);
+                        //            h->printParameters();
+                return h->chooseHierarchicAction(state);
+            } else {
+                return action;
+            }
         } else {
-            return action;
+            string action = hierarchy_map_[active_module]->chooseHierarchicAction(state);
+            if (action != "") {
+                return action;
+            } else {
+                active_module = "this";
+                return chooseHierarchicAction(state);
+            }
         }
-    } else {
-        string action = hierarchy_map_[active_module]->chooseHierarchicAction(state);
-        if (action != "") {
-            return action;
-        } else {
-            active_module = "this";
-            return chooseHierarchicAction(state);
-        }
-    }
 }
 
 //VariableSet Mmdp::makeMmdpStateCongruent(VariableSet new_vs, VariableSet original_vs) {
