@@ -76,9 +76,7 @@ public:
     Hmdp* getLowestActiveModule();
     
 //private:
-    //to override. Returns true if the state is starting
-    virtual bool isStartingState(VariableSet state) = 0;
-    virtual bool isGoalState(VariableSet state) = 0;
+ 
 
     //calculates hierarchic reward and transition
     void calculateHierarchicReward();

@@ -112,7 +112,7 @@ public:
 
 
     virtual VariableSet convertToParametrizedState(VariableSet parameter_set); //converts a state space to it's parametrized version
-    VariableSet convertToDeparametrizedState(VariableSet parameter_set,VariableSet full_state); //opposite
+    VariableSet convertToDeparametrizedState(VariableSet parameter_set, VariableSet full_state); //opposite
 
 
     virtual void enumerateStates();
@@ -125,7 +125,12 @@ public:
 
     string findValue(string variable, vector<string> possible_values);
 
+    bool use_cost_;
 
+
+    //to override. Returns true if the state is starting
+    virtual bool isStartingState(VariableSet state) = 0;
+    virtual bool isGoalState(VariableSet state) = 0;
 };
 
 #endif /* MDP_H */

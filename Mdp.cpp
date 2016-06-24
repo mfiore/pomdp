@@ -14,6 +14,7 @@
 #include <algorithm>
 
 Mdp::Mdp() {
+    use_cost_ = false;
 }
 
 Mdp::Mdp(const Mdp& orig) {
@@ -27,7 +28,7 @@ Mdp::~Mdp() {
  * returns the new v values and updates the q values
  */
 int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
-    double maxValue = 0;
+    double maxValue =use_cost_?10000: 0;
     for (string action : actions) { //for every action
         PairStateAction rInput{i, action}; //calculate the reward of this state with this action
 
@@ -47,9 +48,16 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
             sum = sum + aBelief.second * vhi[aBelief.first]; //sum on the probabilities of the future states * the value of reaching that state
         }
         PairStateAction qInput{i, action};
-        double havNew = currentReward + 0.3 * sum; //0.3 weights the future rewards
+        double havNew;
+        if (use_cost_) {
+            havNew = 1 + sum;
+        } else {
+            havNew = currentReward + 0.3 * sum; //0.3 weights the future rewards
+        }
         qValue[qInput] = havNew; //update the human action value
-        if (qValue[qInput] > maxValue) {
+        if (qValue[qInput] > maxValue && !use_cost_) {
+            maxValue = qValue[qInput];
+        } else if (qValue[qInput] < maxValue && use_cost_) {
             maxValue = qValue[qInput];
         }
 
@@ -64,11 +72,12 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
 void Mdp::valueIteration(string fileName, bool rewrite) {
     ifstream inputFile(fileName);
 
-    if (fileName=="agent_glue_surface-agent_glue_surface.policy") {
-        cout<<"";
+    if (fileName == "agent_glue_surface-agent_glue_surface.policy") {
+        cout << "";
     }
-    std::vector<double> vhi(vecStateEnum.size(), 0); //vhi mantains the predicted reward in a state following the optimal policy
-    std::vector<double> vhiOld(vecStateEnum.size(), 0);
+    int starting_value=use_cost_?100000:0;
+    std::vector<double> vhi(vecStateEnum.size(), starting_value); //vhi mantains the predicted reward in a state following the optimal policy
+    std::vector<double> vhiOld(vecStateEnum.size(), starting_value);
 
     if (inputFile.good() && !rewrite) {
         string line;
@@ -93,7 +102,11 @@ void Mdp::valueIteration(string fileName, bool rewrite) {
             for (int s = 0; s < vecStateEnum.size(); s++) { //for each enumeration
                 vhiOld[s] = vhi[s];
 
-                vhi[s] = bellmanBackup(s, vhi);
+                if (use_cost_ && isGoalState(vecStateEnum[s])) {
+                    vhi[s] = 0;
+                } else {
+                    vhi[s] = bellmanBackup(s, vhi);
+                }
             }
             maxDiff = 0;
             for (int i = 0; i < vhi.size(); i++) { //calculate the maximum difference on the vhi (stopping parameter)
@@ -225,9 +238,9 @@ void Mdp::printRewardFunction() {
 
                 cout << s.first << " " << s.second << "\n";
             }
-            if (state.set["bracket2_isAt"]=="agentp0" && state.set["surface1_status"]=="completed"
-                    && state.set["surface2_status"]=="completed" && state.set["surface3_status"]=="glued"){
-                cout<<"";
+            if (state.set["bracket2_isAt"] == "agentp0" && state.set["surface1_status"] == "completed"
+                    && state.set["surface2_status"] == "completed" && state.set["surface3_status"] == "glued") {
+                cout << "";
             }
             cout << el.first.second << " " << el.second << "\n";
         }
@@ -377,11 +390,14 @@ void Mdp::create(string name, bool rewrite) {
 }
 
 string Mdp::chooseAction(int s) {
-    double max = -1;
+    double max =use_cost_?10000 :-1;
     string max_action;
     for (string a : actions) {
         double qv = getQValue(s, a);
-        if (qv > max) {
+        if (qv > max && !use_cost_) {
+            max = qv;
+            max_action = a;
+        } else if (qv < max && use_cost_) {
             max = qv;
             max_action = a;
         }
@@ -481,6 +497,7 @@ string Mdp::findValue(string variable, vector<string> possible_values) {
 
 
 //converts to parametrized set. Automatically removes variables that are not present
+
 VariableSet Mdp::convertToParametrizedState(VariableSet s) {
     VariableSet vs_new;
     //for each variable in the set
@@ -534,12 +551,11 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
         }
     }
     //we change "other" values with the full state versions and reintroduce missing variables
-    for (auto s:full_state.set) {
-        if (set.set.find(s.first)!=set.set.end() && set.set.at(s.first)=="other") {
-            set.set[s.first]=s.second;
-        }
-        else if (set.set.find(s.first)==set.set.end()) {
-            set.set[s.first]=s.second;
+    for (auto s : full_state.set) {
+        if (set.set.find(s.first) != set.set.end() && set.set.at(s.first) == "other") {
+            set.set[s.first] = s.second;
+        } else if (set.set.find(s.first) == set.set.end()) {
+            set.set[s.first] = s.second;
         }
     }
 

@@ -95,6 +95,7 @@ public:
     
     vector<string> forbidden_actions_;
     
+    
     };
 
 #endif /* MMDP_H */

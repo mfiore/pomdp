@@ -228,6 +228,7 @@ void Mmdp::assignParametersFromActionName(string action_name, set<string> change
         i++;
     }
 
+    parametrized_name=action_name;
     assignParameters(instance);
     i = 0;
     for (auto mdp : agent_hmpd_) {
@@ -358,6 +359,10 @@ void Mmdp::enumerateFunctions(string fileName) {
             pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
             string module_name = sub_mdp_details.first[0];
             set<string> changed_mdps = sub_mdp_details.second;
+            bool no_incongruences = true; //this will become false if 2 mdp states in the instance space have a different value (and different from the original too)
+            Mmdp * h;
+                            VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
+
             if (module_name == "this") {
                 //if it's not a hierarchical action we have to check the state from each mdp, and look 
                 //to see if the resulting state is not incongruent
@@ -365,7 +370,6 @@ void Mmdp::enumerateFunctions(string fileName) {
                 vector<string> single_actions = StringOperations::stringSplit(action, '-');
                 int index = 0;
                 VarStateProb cumulative_future_mdp_states; //this will hold the joint mdp future states in the instance space
-                bool no_incongruences = true; //this will become false if 2 mdp states in the instance space have a different value (and different from the original too)
                 VariableSet mmdp_instance_state = convertToDeparametrizedState(vecStateEnum[i], VariableSet()); //will need it to check for inconsistencies
 
                 for (auto mdp : agent_hmpd_) {
@@ -399,13 +403,11 @@ void Mmdp::enumerateFunctions(string fileName) {
                         int i = mapStateEnum.at(converted_state);
                         future_beliefs[mapStateEnum.at(converted_state)] = state.second;
                     }
-                    //                    r = rewardFunction(vecStateEnum[i], action);
                 } else {
-                    r = 0;
                 }
             } else {
                 //if it's a hierarchical action it's the same as an hmdp
-                Mmdp* h = (Mmdp*) hierarchy_map_[module_name];
+                h = (Mmdp*) hierarchy_map_[module_name];
 
                 string depar_action = getDeparametrizedAction(action);
                 h->assignParametersFromActionName(getDeparametrizedAction(action), changed_mdps, parameter_instances);
@@ -413,7 +415,6 @@ void Mmdp::enumerateFunctions(string fileName) {
 
 
                 //                VariableSet v_param = h->convertToParametrizedState(vecStateEnum[i]);
-                VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
 
                 //                v_param = fixAbstractStates(v_param, v_deparam, h);
 
@@ -434,12 +435,12 @@ void Mmdp::enumerateFunctions(string fileName) {
                 }
                 VariableSet vstry = vecStateEnum[i];
 
-                //                r = rewardFunction(vecStateEnum[i], action);
-                //                r = h->getHierarchicReward(v_deparam, this);
+                r = use_cost_ ? h->getHierarchicReward(v_deparam, this) : rewardFunction(vecStateEnum[i], action);
+                //                         r = ;
 
             }
 
-            r = rewardFunction(vecStateEnum[i], action);
+            //            r = rewardFunction(vecStateEnum[i], action);
 
             PairStateAction transitionInput{i, action};
             for (auto belief : future_beliefs) {
@@ -454,6 +455,18 @@ void Mmdp::enumerateFunctions(string fileName) {
             file << "\n";
             nline++;
             transition[transitionInput] = future_beliefs;
+
+            if (module_name != "this") {
+//                r = use_cost_ ? h->getHierarchicReward(v_deparam, this) : rewardFunction(vecStateEnum[i], action);
+                r = h->getHierarchicReward(v_deparam, this);
+            } else if (no_incongruences) {
+                r = use_cost_ ? 1 : rewardFunction(vecStateEnum[i], action);
+
+            }
+            else {
+                r = use_cost_ ? 1000 : 0;
+
+            }
 
             PairStateAction rewardInput{i, action};
             reward[rewardInput] = r;
@@ -503,6 +516,13 @@ int Mmdp::rewardFunction(VariableSet state, string action) {
     //        return reward;
 
     //    
+
+    //    for (auto a: agent_hmpd_) {
+    //        VariableSet mdp_state=convertToMdpState(a.second,index,state);
+    //        r=r+a.second->rewardFunction(mdp_state,)
+    //        i++;
+    //    }
+    //    
     pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
     if (sub_mdp_details.first[0] == "this") {
         StateProb new_states;
@@ -515,6 +535,7 @@ int Mmdp::rewardFunction(VariableSet state, string action) {
                 if (a.second->isGoalState(mdp_state.first)) {
                     reward = reward + 500;
                 }
+                index++;
             }
             //            if (isGoalState(vecStateEnum[s.first])) {
             //                return 100000000;
