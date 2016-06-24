@@ -27,6 +27,9 @@ Hmdp* MmdpManager::getMmdp(string name, string action_name, bool rewrite, bool f
         return mmdp_map_[name];
     } else {
         Mmdp* sub_mmdp = new Mmdp(this);
+        if (name=="agentp0_handover_object_agentp1") {
+        }
+        
         vector<string> single_actions = StringOperations::stringSplit(name, '-');
         int i = 0;
         for (string a : single_actions) {

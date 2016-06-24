@@ -113,6 +113,22 @@ void Mmdp::createJointMdpVariables() {
             actions.push_back(action_name);
         }
     }
+    vector<string> new_actions;
+    for (string a:actions) {
+        vector<string> agent_parts=StringOperations::stringSplit(a,'-');
+        for (string agent_action:agent_parts ) {
+            vector<string> action_parts=StringOperations::stringSplit(agent_action,'_');
+            if (action_parts[1]=="get") {
+                string handover_action="agentp0_handover_"+action_parts[2]+"_agentp1";
+                if (std::find(new_actions.begin(),new_actions.end(),handover_action)==new_actions.end()) {
+                    new_actions.push_back(handover_action);
+                }
+            }
+        }
+    }
+    for (string a:new_actions) {
+        actions.push_back(a);
+    }
 
 }
 

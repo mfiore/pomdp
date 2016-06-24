@@ -120,5 +120,5 @@ bool GetObject::isStartingState(VariableSet state) {
     string human_isAt = state.set[agent_loc_var_];
     string object_isAt = state.set[object_loc_var_];
 
-    return object_isAt != agent_name_;
+    return object_isAt != agent_name_ && object_isAt!="other";
 }
