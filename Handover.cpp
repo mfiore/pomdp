@@ -31,7 +31,6 @@ Handover::Handover() {
     var_values[agent2_loc_var_] = locations;
     var_values[object_loc_var_].push_back(agent1_name_);
     var_values[object_loc_var_].push_back(agent2_name_);
-    var_values[object_loc_var_].push_back("other");
 
     this->varValues = var_values;
 
@@ -86,17 +85,32 @@ Handover::~Handover() {
 //    assignParameters(instance);
 //}
 
-//string Handover::getDeparametrizedAction(string action_name) {
-//     vector<string> action_parameters=StringOperations::stringSplit(action_name,'_');
-//     string parametrized_action=parameter_instances[agent_name_]+"_"+action_parameters[1];
-//     if (action_parameters[1]=="take") {
-//        parametrized_action=parametrized_action+"_"+parameter_instances[object_name_];
-//     }
-//     else {
-//         parametrized_action=parameterized_action+"_"
-//     }
-//     return parametrized_action;
-//}
+string Handover::getDeparametrizedAction(string action_name) {
+    vector<string> single_actions = StringOperations::stringSplit(action_name, '-');
+    stringstream depar_action_name;
+
+    for (string action : single_actions) {
+        vector<string> action_parts = StringOperations::stringSplit(action, '_');
+        for (int i = 0; i < action_parts.size() - 1; i++) {
+            string s = action_parts[i];
+            if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
+                depar_action_name << parametrized_to_original[s] << "_";
+            } else {
+                depar_action_name << s << "_";
+            }
+        }
+        if (action_parts.size() > 0) {
+            string s = action_parts[action_parts.size() - 1];
+            if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
+                depar_action_name << parametrized_to_original[s];
+            } else {
+
+                depar_action_name << s;
+            }
+        }
+        return depar_action_name.str();
+    }
+}
 
 VarStateProb Handover::transitionFunction(VariableSet state, string action) {
     string human1_isAt = state.set[agent1_loc_var_];
@@ -141,8 +155,8 @@ int Handover::rewardFunction(VariableSet state, string action) {
     string object_isAt = state.set[object_loc_var_];
 
     if (object_isAt == agent1_name_ &&
-        action == agent1_name_ + "_give_" + object_name_ + "_" + agent2_name_ + "-" + agent2_name_ + "_receive_" + object_name_ + "_" + agent1_name_
-        && human1_isAt==human2_isAt
+            action == agent1_name_ + "_give_" + object_name_ + "_" + agent2_name_ + "-" + agent2_name_ + "_receive_" + object_name_ + "_" + agent1_name_
+            && human1_isAt == human2_isAt
             ) {
 
         return 1000;

@@ -491,13 +491,19 @@ string Mdp::findValue(string variable, vector<string> possible_values) {
     for (string v : possible_values) {
         if (std::find(varValues.at(variable).begin(), varValues.at(variable).end(), v) != varValues.at(variable).end()) {
             return v;
-        } else if (abstract_states_.find(variable) != abstract_states_.end()) {
+        }
+    }
+    //we privilege real possible values over abstract variables. This is needed because in some cases we might have an abstract state
+    //encompassing several values (ex. location1, location2, location3) and then another value set to a parameter
+    if (abstract_states_.find(variable) != abstract_states_.end()) {
+
+        for (string v : possible_values) {
             if (abstract_states_[variable].find(v) != abstract_states_[variable].end()) {
                 return abstract_states_[variable][v];
             }
         }
     }
-    return "other";
+    return "";
 }
 
 
@@ -549,14 +555,12 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
             actual_key = parametrized_to_original[s.first];
         }
         if (abstract_states_.find(s.first) != abstract_states_.end()) {
-            if (abstract_states_[s.first].find(s.second)!=abstract_states_[s.first].end()) {
-                for (auto abstract : abstract_states_[s.first]) {
-                    if (abstract.second == s.second) {
-                        actual_value = abstract.first;
-                        is_this_abstract = true;
-                        is_abstract_actual_key.insert(actual_key);
-                        break;
-                    }
+            for (auto abstract : abstract_states_[s.first]) {
+                if (abstract.second == s.second) {
+                    actual_value = abstract.first;
+                    is_this_abstract = true;
+                    is_abstract_actual_key.insert(actual_key);
+                    break;
                 }
             }
         }
@@ -566,17 +570,17 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
         }
 
         if (set.set.find(actual_key) != set.set.end()) {
-            if (is_abstract_actual_key.find(actual_key)!=is_abstract_actual_key.end() && !is_this_abstract) {
-                set.set[actual_key]=actual_value;
+            if (is_abstract_actual_key.find(actual_key) != is_abstract_actual_key.end() && !is_this_abstract) {
+                set.set[actual_key] = actual_value;
             }
         } else {
             set.set[actual_key] = actual_value;
         }
     }
     //we change "other" or abstract values with the full state versions and reintroduce missing variables
-        for (auto s : full_state.set) {
-        if (set.set.find(s.first) != set.set.end() && (is_abstract_actual_key.find(s.first)!=is_abstract_actual_key.end() ||
-                set.set.at(s.first)=="other")) {
+    for (auto s : full_state.set) {
+        if (set.set.find(s.first) != set.set.end() && (is_abstract_actual_key.find(s.first) != is_abstract_actual_key.end() ||
+                set.set.at(s.first) == "other")) {
             set.set[s.first] = s.second;
         } else if (set.set.find(s.first) == set.set.end()) {
             set.set[s.first] = s.second;

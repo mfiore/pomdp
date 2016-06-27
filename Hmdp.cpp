@@ -28,6 +28,7 @@ double Hmdp::getHierarchicReward(int i) {
 double Hmdp::getHierarchicReward(VariableSet set, Hmdp* super_hmdp) {
 
     VariableSet parametrized_set = convertToParametrizedState(set, super_hmdp);
+    if (parametrized_set.set.size()==0) return 0;;
     int i = mapStateEnum.at(parametrized_set);
 
     //    int i = convertHierarchicState(parametrized_set);
@@ -97,6 +98,7 @@ std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet original
 
 
     VariableSet v_param = convertToParametrizedState(original_set, super_hmdp);
+    if (v_param.set.size()==0) return temp_result;
     //        cout<<"Param in hierarchic transition\n";
     //        cout<<v_param.toString()<<"\n";
     //        printParameters();
@@ -257,8 +259,8 @@ void Hmdp::enumerateFunctions(string fileName) {
     cout << "Starting Enumeration\n";
     for (int i = 0; i < vecStateEnum.size(); i++) {
         for (string action : actions) {
-            if (i==2 && action=="agent1_give_object_agent2-agent2_receive_object_agent1") {
-                cout<<"";
+            if (i == 2 && action == "agent1_give_object_agent2-agent2_receive_object_agent1") {
+                cout << "";
             }
 
 
@@ -412,7 +414,7 @@ string Hmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-        printQValues(this_state);
+//        printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         if (hierarchy_map_.find(action) != hierarchy_map_.end()) {
             Hmdp * h = hierarchy_map_[action];
@@ -457,14 +459,11 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
             VariableSet depar_s = convertToDeparametrizedState(vecStateEnum[s.first], previous_orig_state);
             previous_orig_state = depar_s;
 
-     
+
             //            cout<<"Q- Values:\n";
             //            printQValues(vecStateEnum[s.first]);
             cout << "State: \n";
             cout << depar_s.toString();
-            if (i == 8) {
-                cout << "";
-            }
             string action = chooseHierarchicAction(depar_s);
 
             StateProb output;
@@ -614,22 +613,12 @@ VariableSet Hmdp::convertToParametrizedState(VariableSet s, Hmdp* super_mdp) {
 
         vector<string> par_key;
         vector<string> possible_values;
-        vector<string> super_values;
-        bool is_abstract = false;
 
         if (original_to_parametrized.find(el.first) != original_to_parametrized.end()) {
             par_key = original_to_parametrized[el.first];
         }
-        if (el.second == "other") {
-            string super_key;
-            if (std::find(super_mdp->variables.begin(), super_mdp->variables.end(), el.first) != super_mdp->variables.end()) {
-                super_key = el.first;
-            } else {
-                super_key = super_mdp->original_to_parametrized.at(el.first)[0]; //possible problem if there is more than one.
-            }
-            super_values = super_mdp->varValues.at(super_key);
-            is_abstract = true;
-        } else if (original_to_parametrized.find(el.second) != original_to_parametrized.end()) {
+
+        if(original_to_parametrized.find(el.second) != original_to_parametrized.end()) {
             possible_values = original_to_parametrized[el.second];
         }
         possible_values.push_back(el.second);
@@ -637,36 +626,22 @@ VariableSet Hmdp::convertToParametrizedState(VariableSet s, Hmdp* super_mdp) {
         if (par_key.size() > 0) {
             for (string key : par_key) {
                 if (vs_new.set.find(key) == vs_new.set.end()) {
-                    if (is_abstract) { //if the super_mdp state is abstract we set this var to any value not present in the super_mdp varValues
-                        possible_values = varValues.at(key);
-                        for (string v : possible_values) {
-                            if (std::find(super_values.begin(), super_values.end(), v) == super_values.end()) {
-                                vs_new.set[key] = v;
-                                break;
-                            }
-                        }
-                    } else {
-                        string value = findValue(key, possible_values);
-                        vs_new.set[key] = value;
+                    string value = findValue(key, possible_values);
+                    if (value=="") {
+                        return VariableSet();
                     }
+                    vs_new.set[key] = value;
                 }
             }
         }
-        //possibele incongruence in var-parameter situation
+        //possible incongruence in var-parameter situation
         if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
             if (vs_new.set.find(el.first) == vs_new.set.end()) {
-                if (is_abstract) {
-                    possible_values = varValues.at(el.first);
-                    for (string v : possible_values) {
-                        if (std::find(super_values.begin(), super_values.end(), v) == super_values.end()) {
-                            vs_new.set[el.first] = v;
-                            break;
-                        }
-                    }
-                } else {
-                    string value = findValue(el.first, possible_values);
-                    vs_new.set[el.first] = value;
+                string value = findValue(el.first, possible_values);
+                if (value=="") {
+                    return VariableSet();
                 }
+                vs_new.set[el.first] = value;
             }
         }
     }

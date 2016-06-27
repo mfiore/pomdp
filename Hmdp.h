@@ -113,7 +113,7 @@ public:
 
     void printHierarchy();
 
-    string getDeparametrizedAction(string action_name) override;
+    virtual string getDeparametrizedAction(string action_name) override;
 
     VariableSet fixAbstractStates(VariableSet sub_set, Hmdp* sub_mmdp);
     

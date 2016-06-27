@@ -17,8 +17,8 @@ CleanSurface::CleanSurface() {
     agent_name_ = "agent";
     surface_name_ = "surface";
 
-    std::vector<string> locations{"other", "surface"};
-    std::vector<string> statuses{"none", "cleaned","other"};
+    std::vector<string> locations{"other_location", "surface"};
+    std::vector<string> statuses{"none", "cleaned","other_status"};
 
     agent_loc_var_ = agent_name_ + "_isAt";
     surface_status_var_ = surface_name_ + "_status";
@@ -33,6 +33,15 @@ CleanSurface::CleanSurface() {
 
     this->varValues = var_values;
 
+    abstract_states_[surface_status_var_]["glued"] = "other_status";
+    abstract_states_[surface_status_var_]["completed"] = "other_status";
+
+    abstract_states_[agent_loc_var_]["surface1"] = "other_location";
+    abstract_states_[agent_loc_var_]["surface2"] = "other_location";
+    abstract_states_[agent_loc_var_]["surface3"] = "other_location";
+    abstract_states_[agent_loc_var_]["table"] = "other_location";
+
+    
     actions.push_back(agent_name_ + "_move_" + surface_name_);
     actions.push_back(agent_name_ + "_clean_" + surface_name_);
 

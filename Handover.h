@@ -21,14 +21,15 @@
 #include "MdpBasicActions.h"
 
 using namespace std;
-class Handover: public Hmdp {
+
+class Handover : public Hmdp {
 public:
     Handover();
     Handover(const Handover& orig);
     virtual ~Handover();
-    
-//    void assignParametersFromActionName(string action_name);
-//    string getDeparametrizedAction(string action_name);
+
+    //    void assignParametersFromActionName(string action_name);
+    string getDeparametrizedAction(string action_name);
 
 private:
 
@@ -36,14 +37,14 @@ private:
     int rewardFunction(VariableSet state, string action);
     bool isGoalState(VariableSet state);
     bool isStartingState(VariableSet state);
-    
+
     string agent1_loc_var_;
     string agent2_loc_var_;
     string object_loc_var_;
     string agent1_name_;
     string agent2_name_;
     string object_name_;
-    
+
 };
 
 #endif /* HANDOVER_H */

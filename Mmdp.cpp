@@ -62,6 +62,22 @@ void Mmdp::createJointMdpVariables() {
                 //push back only values that aren't there
                 //TODO
             }
+            if (mdp.second->abstract_states_.find(var) != mdp.second->abstract_states_.end()) {
+                map<string, string> states_values = mdp.second->abstract_states_[var];
+                map<string, string> new_states_values = mdp.second->abstract_states_[var];
+                for (auto v : states_values) {
+                    string actual_value = v.second;
+                    if (std::find(mdp.second->parameters.begin(), mdp.second->parameters.end(), v.second) != mdp.second->parameters.end()) {
+                        actual_value = actual_value + i_s;
+                    }
+                    new_states_values[v.first] =actual_value;
+                }
+                string actual_name=var;
+                if (mdp.second->variable_parameter.find(var)!=mdp.second->variable_parameter.end()) {
+                    actual_name=convertToMultiParameter(mdp.second,var,i);
+                }
+                abstract_states_[actual_name]=new_states_values;
+            }
         }
         for (auto par : mdp.second->parameters) {
             string new_par_name = par + i_s;
@@ -96,18 +112,18 @@ void Mmdp::createJointMdpVariables() {
         all_actions.push_back(mdp_param_actions);
         i++;
     }
-    for (string v:variables) {
-        vector<string> values=varValues.at(v);
-        if (std::find(values.begin(),values.end(),"agentp0")!=values.end() || 
-                std::find(values.begin(),values.end(),"agentp1")!=values.end()) {
-            if (std::find(values.begin(),values.end(),"agentp0")==values.end()) {
+    for (string v : variables) {
+        vector<string> values = varValues.at(v);
+        if (std::find(values.begin(), values.end(), "agentp0") != values.end() ||
+                std::find(values.begin(), values.end(), "agentp1") != values.end()) {
+            if (std::find(values.begin(), values.end(), "agentp0") == values.end()) {
                 values.push_back("agentp0");
             }
-            if (std::find(values.begin(),values.end(),"agentp1")==values.end()) {
+            if (std::find(values.begin(), values.end(), "agentp1") == values.end()) {
                 values.push_back("agentp1");
             }
         }
-        varValues[v]=values;
+        varValues[v] = values;
     }
 
     NestedLoop<string> loop(all_actions);
@@ -386,6 +402,9 @@ void Mmdp::enumerateFunctions(string fileName) {
             set<string> changed_mdps = sub_mdp_details.second;
             bool no_incongruences = true; //this will become false if 2 mdp states in the instance space have a different value (and different from the original too)
             Hmdp * h;
+            if (i == 0 && fileName == "agent_glue_surface-agent_clean_surface.pomdp" && action=="agentp0_handover_gluebottle_agentp1") {
+                cout << "";
+            }
             VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
 
             if (module_name == "this") {
@@ -438,8 +457,8 @@ void Mmdp::enumerateFunctions(string fileName) {
 
                     mmdp_h->assignParametersFromActionName(depar_action, changed_mdps, parameter_instances);
                 } else {
-                    if (i==18) {
-                        cout<<"";
+                    if (i == 18) {
+                        cout << "";
                     }
                     h = hierarchy_map_[module_name];
                     h->assignParametersFromActionName(depar_action);
@@ -1026,7 +1045,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-        printQValues(this_state);
+//        printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];
@@ -1035,10 +1054,10 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
             string dp = getDeparametrizedAction(action);
 
             active_module = module_name;
-            Hmdp *h=hierarchy_map_[active_module];
+            Hmdp *h = hierarchy_map_[active_module];
             if (std::find(joint_modules_.begin(), joint_modules_.end(), module_name) != joint_modules_.end()) {
                 h->assignParametersFromActionName(dp);
-                cout<<h->getHierarchicReward(state,this)<<"\n";
+                cout << h->getHierarchicReward(state, this) << "\n";
             } else {
                 Mmdp *mmdp_h = (Mmdp*) h;
                 mmdp_h->assignParametersFromActionName(dp, changed_mdps, parameter_instances);
