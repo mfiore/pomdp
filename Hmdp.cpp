@@ -257,6 +257,10 @@ void Hmdp::enumerateFunctions(string fileName) {
     cout << "Starting Enumeration\n";
     for (int i = 0; i < vecStateEnum.size(); i++) {
         for (string action : actions) {
+            if (i==2 && action=="agent1_give_object_agent2-agent2_receive_object_agent1") {
+                cout<<"";
+            }
+
 
             double r;
             StateProb future_beliefs;
@@ -408,6 +412,7 @@ string Hmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
+        printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         if (hierarchy_map_.find(action) != hierarchy_map_.end()) {
             Hmdp * h = hierarchy_map_[action];

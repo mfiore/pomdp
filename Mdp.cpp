@@ -12,6 +12,7 @@
 #include <stack>
 #include <utility>
 #include <algorithm>
+#include <set>
 
 Mdp::Mdp() {
     use_cost_ = false;
@@ -28,7 +29,7 @@ Mdp::~Mdp() {
  * returns the new v values and updates the q values
  */
 int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
-    double maxValue =use_cost_?10000: 0;
+    double maxValue = use_cost_ ? 10000 : 0;
     for (string action : actions) { //for every action
         PairStateAction rInput{i, action}; //calculate the reward of this state with this action
 
@@ -75,7 +76,7 @@ void Mdp::valueIteration(string fileName, bool rewrite) {
     if (fileName == "agent_glue_surface-agent_glue_surface.policy") {
         cout << "";
     }
-    int starting_value=use_cost_?100000:0;
+    int starting_value = use_cost_ ? 100000 : 0;
     std::vector<double> vhi(vecStateEnum.size(), starting_value); //vhi mantains the predicted reward in a state following the optimal policy
     std::vector<double> vhiOld(vecStateEnum.size(), starting_value);
 
@@ -390,7 +391,7 @@ void Mdp::create(string name, bool rewrite) {
 }
 
 string Mdp::chooseAction(int s) {
-    double max =use_cost_?10000 :-1;
+    double max = use_cost_ ? 10000 : -1;
     string max_action;
     for (string a : actions) {
         double qv = getQValue(s, a);
@@ -490,6 +491,10 @@ string Mdp::findValue(string variable, vector<string> possible_values) {
     for (string v : possible_values) {
         if (std::find(varValues.at(variable).begin(), varValues.at(variable).end(), v) != varValues.at(variable).end()) {
             return v;
+        } else if (abstract_states_.find(variable) != abstract_states_.end()) {
+            if (abstract_states_[variable].find(v) != abstract_states_[variable].end()) {
+                return abstract_states_[variable][v];
+            }
         }
     }
     return "other";
@@ -533,26 +538,45 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
 
 VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, VariableSet full_state) {
     VariableSet set;
+
+    std::set<string> is_abstract_actual_key;
     for (auto s : parameter_set.set) {
+        bool is_this_abstract = false;
+
         string actual_key = s.first;
         string actual_value = s.second;
         if (parametrized_to_original.find(s.first) != parametrized_to_original.end()) {
             actual_key = parametrized_to_original[s.first];
         }
-        if (parametrized_to_original.find(s.second) != parametrized_to_original.end()) {
+        if (abstract_states_.find(s.first) != abstract_states_.end()) {
+            if (abstract_states_[s.first].find(s.second)!=abstract_states_[s.first].end()) {
+                for (auto abstract : abstract_states_[s.first]) {
+                    if (abstract.second == s.second) {
+                        actual_value = abstract.first;
+                        is_this_abstract = true;
+                        is_abstract_actual_key.insert(actual_key);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (parametrized_to_original.find(actual_value) != parametrized_to_original.end()) {
             actual_value = parametrized_to_original[s.second];
         }
+
         if (set.set.find(actual_key) != set.set.end()) {
-            if (set.set[actual_key] == "other") {
-                set.set[actual_key] = actual_value;
+            if (is_abstract_actual_key.find(actual_key)!=is_abstract_actual_key.end() && !is_this_abstract) {
+                set.set[actual_key]=actual_value;
             }
         } else {
             set.set[actual_key] = actual_value;
         }
     }
-    //we change "other" values with the full state versions and reintroduce missing variables
-    for (auto s : full_state.set) {
-        if (set.set.find(s.first) != set.set.end() && set.set.at(s.first) == "other") {
+    //we change "other" or abstract values with the full state versions and reintroduce missing variables
+        for (auto s : full_state.set) {
+        if (set.set.find(s.first) != set.set.end() && (is_abstract_actual_key.find(s.first)!=is_abstract_actual_key.end() ||
+                set.set.at(s.first)=="other")) {
             set.set[s.first] = s.second;
         } else if (set.set.find(s.first) == set.set.end()) {
             set.set[s.first] = s.second;

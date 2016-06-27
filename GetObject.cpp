@@ -104,8 +104,7 @@ VarStateProb GetObject::transitionFunction(VariableSet state, string action) {
 int GetObject::rewardFunction(VariableSet state, string action) {
     string human_isAt = state.set[agent_loc_var_];
     string object_isAt = state.set[object_loc_var_];
-
-    if (human_isAt == object_isAt && action == "agent_take_object") return 100;
+    if (human_isAt == object_isAt && object_isAt!="other" && human_isAt!="other" && action == "agent_take_object") return 100;
     else return 0;
 }
 
@@ -113,7 +112,7 @@ bool GetObject::isGoalState(VariableSet state) {
     string human_isAt = state.set[agent_loc_var_];
     string object_isAt = state.set[object_loc_var_];
 
-    return object_isAt == agent_name_;
+    return object_isAt == agent_name_ && object_isAt!="other" && human_isAt!="other";
 }
 
 bool GetObject::isStartingState(VariableSet state) {

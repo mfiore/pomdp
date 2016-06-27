@@ -28,6 +28,7 @@
 
 #include "NestedLoop.h"
 #include "StringOperations.h"
+#include <set>
 
 using namespace std;
 
@@ -131,6 +132,8 @@ public:
     //to override. Returns true if the state is starting
     virtual bool isStartingState(VariableSet state) = 0;
     virtual bool isGoalState(VariableSet state) = 0;
+    
+    map<string, map<string, string> > abstract_states_;
 };
 
 #endif /* MDP_H */

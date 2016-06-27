@@ -94,7 +94,9 @@ public:
     MmdpManager* mmdp_manager_;
     
     vector<string> forbidden_actions_;
-    
+    vector<string> joint_actions_;
+    vector<string> joint_modules_;
+    map<string,string> joint_actions_module_name_;
     
     };
 

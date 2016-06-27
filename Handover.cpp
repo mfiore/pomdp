@@ -120,7 +120,7 @@ VarStateProb Handover::transitionFunction(VariableSet state, string action) {
             }
         } else if (action_name == "give"
                 && object_isAt == agent1_name_ && human1_isAt == human2_isAt) {
-            object_isAt == agent2_name_;
+            future_object_isAt = agent2_name_;
         }
     }
     VarStateProb future_beliefs;
@@ -128,7 +128,7 @@ VarStateProb Handover::transitionFunction(VariableSet state, string action) {
     VariableSet v;
     v.set[agent1_loc_var_] = future_human1_isAt;
     v.set[agent2_loc_var_] = future_human2_isAt;
-    v.set[object_isAt] = future_object_isAt;
+    v.set[object_loc_var_] = future_object_isAt;
 
     future_beliefs[v] = 1;
 
@@ -145,7 +145,7 @@ int Handover::rewardFunction(VariableSet state, string action) {
         && human1_isAt==human2_isAt
             ) {
 
-        return 100;
+        return 1000;
     } else return 0;
 }
 
@@ -158,5 +158,5 @@ bool Handover::isGoalState(VariableSet state) {
 bool Handover::isStartingState(VariableSet state) {
     string object_isAt = state.set[object_loc_var_];
 
-    return object_isAt != agent1_name_;
+    return object_isAt == agent1_name_;
 }
