@@ -528,6 +528,7 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
             for (string key : par_key) {
                 if (vs_new.set.find(key) == vs_new.set.end()) {
                     string value = findValue(key, possible_values);
+                    if (value=="") return VariableSet();
                     vs_new.set[key] = value;
                 }
             }
@@ -535,6 +536,7 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
         if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
             if (vs_new.set.find(el.first) == vs_new.set.end()) {
                 string value = findValue(el.first, possible_values);
+                if (value=="") return VariableSet();
                 vs_new.set[el.first] = value;
             }
         }

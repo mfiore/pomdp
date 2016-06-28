@@ -12,8 +12,8 @@ AttachBracket::AttachBracket() {
     surface_name_ = "surface";
     bracket_name_ = "bracket";
 
-    std::vector<string> locations{"other", "surface"};
-    std::vector<string> statuses{"other", "glued", "completed"};
+    std::vector<string> locations{"other_location", "surface"};
+    std::vector<string> statuses{"other_status", "glued", "completed"};
 
     agent_loc_var_ = agent_name_ + "_isAt";
     surface_status_var_ = surface_name_ + "_status";
@@ -29,12 +29,24 @@ AttachBracket::AttachBracket() {
     var_values[bracket_loc_var_] = locations;
     var_values[bracket_loc_var_].push_back(agent_name_);
     var_values[bracket_loc_var_].push_back("table");
-//    var_values[bracket_loc_var_].push_back("other");
 
     this->varValues = var_values;
 
+    abstract_states_[surface_status_var_]["none"] = "other_status";
+    abstract_states_[surface_status_var_]["cleaned"] = "other_status";
+
+    abstract_states_[agent_loc_var_]["surface1"] = "other_location";
+    abstract_states_[agent_loc_var_]["surface2"] = "other_location";
+    abstract_states_[agent_loc_var_]["surface3"] = "other_location";
+    abstract_states_[agent_loc_var_]["table"] = "other_location";
+
+    abstract_states_[bracket_loc_var_]["surface1"] = "other_location";
+    abstract_states_[bracket_loc_var_]["surface2"] = "other_location";
+    abstract_states_[bracket_loc_var_]["surface3"] = "other_location";
+
+
     actions.push_back(agent_name_ + "_move_" + surface_name_);
-    actions.push_back(agent_name_ + "_apply_" +bracket_name_+"_"+surface_name_);
+    actions.push_back(agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_);
     actions.push_back(agent_name_ + "_get_" + bracket_name_);
     hierarchy_map_[agent_name_ + "_get_" + bracket_name_] = new GetObject();
 
@@ -107,7 +119,7 @@ std::map<VariableSet, double> AttachBracket::transitionFunction(VariableSet stat
             && state.set[agent_loc_var_] == surface_name_
             && state.set[bracket_loc_var_] == agent_name_) {
         state.set[surface_status_var_] = "completed";
-        state.set[bracket_loc_var_]=surface_name_;
+        state.set[bracket_loc_var_] = surface_name_;
         future_beliefs[state] = 1;
     } else if (action_name == "move") {
         future_beliefs = MdpBasicActions::applyMove(agent_loc_var_, action_parameters[2], state);
@@ -118,7 +130,7 @@ std::map<VariableSet, double> AttachBracket::transitionFunction(VariableSet stat
 }
 
 bool AttachBracket::isStartingState(VariableSet state) {
-    if (state.set[surface_status_var_] == "glued" && state.set[bracket_loc_var_]=="table") return true;
+    if (state.set[surface_status_var_] == "glued" && state.set[bracket_loc_var_] == "table") return true;
     return false;
 
 }
