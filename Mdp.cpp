@@ -569,8 +569,6 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
             actual_key = parametrized_to_original[s.first];
         }
         if (abstract_states_.find(s.first) != abstract_states_.end()) {
-            is_this_abstract = true;
-            is_abstract_actual_key.insert(actual_key);
 
             vector<string> possible_abstract_values;
             for (auto abstract : abstract_states_[s.first]) {
@@ -588,13 +586,21 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
                 } else {
                     string par = original_to_parametrized.at(av)[0]; //ATTENTION: reducing vector could generate an error. Should parse the list
                     if (std::find(varValues.at(s.first).begin(), varValues.at(s.first).end(), par) == varValues.at(s.first).end()) {
-                        found_value=true;
-                        actual_value=av;
+                        found_value = true;
+                        actual_value = av;
                         break;
                     }
                 }
             }
-            if (!found_value && possible_abstract_values.size() > 0) {
+            if (found_value) {
+                is_this_abstract = true;
+                is_abstract_actual_key.insert(actual_key);
+
+            }
+            else if (!found_value && possible_abstract_values.size() > 0) {
+                is_this_abstract = true;
+                is_abstract_actual_key.insert(actual_key);
+
                 actual_value = possible_abstract_values[0];
             }
 

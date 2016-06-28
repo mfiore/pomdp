@@ -400,18 +400,14 @@ void Mmdp::enumerateFunctions(string fileName) {
 
             vector<string> single_actions = StringOperations::stringSplit(action, '-');
 
-            if (i == 18  && fileName == "agent_glue_surface-agent_clean_surface.pomdp") {
+//            if (i == 112 && fileName == "agent_assemble_bracket_surface-agent_wait.pomdp" &&
+//                    action == "agentp0_apply_bracketp0_surfacep0-agentp1_wait") {
+//                cout << "";
+//            }
+            if (i == 28 && fileName == "agent_apply_bracket_surface-agent_wait.pomdp") {
                 cout << "";
             }
-            if (i == 42 && fileName == "agent_get_object-agent_clean_surface.pomdp" &&
-                    action == "agentp0_take_objectp0-agentp1_move_surfacep1") {
-                cout << "";
-            }
-            if (i == 78 && fileName == "agent_glue_surface-agent_clean_surface.pomdp" &&
-                    action == "agentp0_move_surfacep0-agentp1_move_surfacep1") {
-                cout << "";
-            }
-            
+
 
             pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
             string module_name = sub_mdp_details.first[0];
@@ -1229,7 +1225,7 @@ void Mmdp::valueIteration(string fileName, bool rewrite) {
                 }
                 if (use_cost_ && isGoalState(vecStateEnum[s])) {
                     vhi[s] = estimateRemainingCost(vecStateEnum[s]);
-                    //                    vhi[s] = 0;
+//                                        vhi[s] = 0;
                 } else {
                     vhi[s] = bellmanBackup(s, vhi);
                 }

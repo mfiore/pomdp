@@ -7,15 +7,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/mfiore/workspace/pomdp/GetObject.cpp</file>
-            <file>file:/home/mfiore/workspace/pomdp/Mmdp.cpp</file>
-            <file>file:/home/mfiore/workspace/pomdp/Hmdp.cpp</file>
-            <file>file:/home/mfiore/workspace/pomdp/Mdp.cpp</file>
-            <file>file:/home/mfiore/workspace/pomdp/NestedLoop.h</file>
-            <file>file:/home/mfiore/workspace/pomdp/CleanSurface.cpp</file>
-            <file>file:/home/mfiore/workspace/pomdp/Mdp.h</file>
-            <file>file:/home/mfiore/workspace/pomdp/Mmdp.h</file>
-            <file>file:/home/mfiore/workspace/pomdp/MmdpManager.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/Mdp.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/Hmdp.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/GlueSurface.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/Handover.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/Mmdp.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/AttachBracket.cpp</file>
         </group>
     </open-files>
 </project-private>
