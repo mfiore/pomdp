@@ -28,7 +28,10 @@ double Hmdp::getHierarchicReward(int i) {
 double Hmdp::getHierarchicReward(VariableSet set, Hmdp* super_hmdp) {
 
     VariableSet parametrized_set = convertToParametrizedState(set, super_hmdp);
-    if (parametrized_set.set.size()==0) return 0;;
+    if (parametrized_set.set.size()==0) {
+        int c=use_cost_?1000:0;
+        return c;
+    }
     int i = mapStateEnum.at(parametrized_set);
 
     //    int i = convertHierarchicState(parametrized_set);
@@ -461,9 +464,12 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
 
 
             //            cout<<"Q- Values:\n";
-            //            printQValues(vecStateEnum[s.first]);
             cout << "State: \n";
-            cout << depar_s.toString();
+            cout << depar_s.toString()<<"\n";
+
+            printQValues(vecStateEnum[s.first]);
+
+            
             string action = chooseHierarchicAction(depar_s);
 
             StateProb output;

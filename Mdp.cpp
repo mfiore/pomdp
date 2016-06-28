@@ -13,9 +13,10 @@
 #include <utility>
 #include <algorithm>
 #include <set>
+#include <bits/stl_map.h>
 
 Mdp::Mdp() {
-    use_cost_ = false;
+    use_cost_ = true;
 }
 
 Mdp::Mdp(const Mdp& orig) {
@@ -31,6 +32,9 @@ Mdp::~Mdp() {
 int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
     double maxValue = use_cost_ ? 10000 : 0;
     for (string action : actions) { //for every action
+        if (i == 12 && action == "agentp1_handover_gluebottle_agentp0") {
+            cout << "";
+        }
         PairStateAction rInput{i, action}; //calculate the reward of this state with this action
 
         int currentReward;
@@ -43,10 +47,14 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
         }
         PairStateAction transitionInput{i, action};
         StateProb futureBeliefs = transition[transitionInput];
-
         double sum = 0;
-        for (auto aBelief : futureBeliefs) {
-            sum = sum + aBelief.second * vhi[aBelief.first]; //sum on the probabilities of the future states * the value of reaching that state
+
+        if (futureBeliefs.size() == 0) {
+            sum = use_cost_ ? 1000 : 0;
+        } else {
+            for (auto aBelief : futureBeliefs) {
+                sum = sum + aBelief.second * vhi[aBelief.first]; //sum on the probabilities of the future states * the value of reaching that state
+            }
         }
         PairStateAction qInput{i, action};
         double havNew;
@@ -54,6 +62,9 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
             havNew = 1 + sum;
         } else {
             havNew = currentReward + 0.3 * sum; //0.3 weights the future rewards
+        }
+        if (havNew < 10) {
+            cout << "";
         }
         qValue[qInput] = havNew; //update the human action value
         if (qValue[qInput] > maxValue && !use_cost_) {
@@ -102,6 +113,7 @@ void Mdp::valueIteration(string fileName, bool rewrite) {
 
             for (int s = 0; s < vecStateEnum.size(); s++) { //for each enumeration
                 vhiOld[s] = vhi[s];
+
 
                 if (use_cost_ && isGoalState(vecStateEnum[s])) {
                     vhi[s] = 0;
@@ -528,7 +540,7 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
             for (string key : par_key) {
                 if (vs_new.set.find(key) == vs_new.set.end()) {
                     string value = findValue(key, possible_values);
-                    if (value=="") return VariableSet();
+                    if (value == "") return VariableSet();
                     vs_new.set[key] = value;
                 }
             }
@@ -536,7 +548,7 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
         if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
             if (vs_new.set.find(el.first) == vs_new.set.end()) {
                 string value = findValue(el.first, possible_values);
-                if (value=="") return VariableSet();
+                if (value == "") return VariableSet();
                 vs_new.set[el.first] = value;
             }
         }
@@ -557,18 +569,39 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
             actual_key = parametrized_to_original[s.first];
         }
         if (abstract_states_.find(s.first) != abstract_states_.end()) {
+            is_this_abstract = true;
+            is_abstract_actual_key.insert(actual_key);
+
+            vector<string> possible_abstract_values;
             for (auto abstract : abstract_states_[s.first]) {
                 if (abstract.second == s.second) {
-                    actual_value = abstract.first;
-                    is_this_abstract = true;
-                    is_abstract_actual_key.insert(actual_key);
-                    break;
+                    possible_abstract_values.push_back(abstract.first);
                 }
             }
+            //look for parameter value inside variable range
+            bool found_value = false;
+            for (string av : possible_abstract_values) {
+                if (original_to_parametrized.find(av) == original_to_parametrized.end()) {
+                    found_value = true;
+                    actual_value = av;
+                    break;
+                } else {
+                    string par = original_to_parametrized.at(av)[0]; //ATTENTION: reducing vector could generate an error. Should parse the list
+                    if (std::find(varValues.at(s.first).begin(), varValues.at(s.first).end(), par) == varValues.at(s.first).end()) {
+                        found_value=true;
+                        actual_value=av;
+                        break;
+                    }
+                }
+            }
+            if (!found_value && possible_abstract_values.size() > 0) {
+                actual_value = possible_abstract_values[0];
+            }
+
         }
 
         if (parametrized_to_original.find(actual_value) != parametrized_to_original.end()) {
-            actual_value = parametrized_to_original[s.second];
+            actual_value = parametrized_to_original[actual_value];
         }
 
         if (set.set.find(actual_key) != set.set.end()) {
@@ -671,4 +704,18 @@ void Mdp::printParameters() {
         cout << s.first << " " << s.second << endl;
     }
     cout << endl;
+}
+
+int Mdp::getBestQ(VariableSet state) {
+    int best = use_cost_ ? 1000 : 0;
+
+    for (string a : actions) {
+        int q = getQValue(state, a);
+        if (use_cost_ && q < best) {
+            best = q;
+        } else if (!use_cost_ && q > best) {
+            best = q;
+        }
+    }
+    return best;
 }

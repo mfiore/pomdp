@@ -21,6 +21,10 @@ GetObject::GetObject() {
     var_values[agent_loc_var_] = locations;
     var_values[object_loc_var_] = locations;
     var_values[object_loc_var_].push_back(agent_name_);
+    var_values[object_loc_var_].push_back("other_agent");
+    
+    abstract_states_[object_loc_var_]["agent1"]="other_agent";
+    abstract_states_[object_loc_var_]["agent2"]="other_agent";
 
     this->varValues = var_values;
     

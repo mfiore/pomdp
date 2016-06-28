@@ -33,6 +33,7 @@ GlueSurface::GlueSurface() {
     var_values[agent_loc_var_] = locations;
     var_values[surface_status_var_] = statuses;
     var_values[glue_loc_var_].push_back("other_location");
+    var_values[glue_loc_var_].push_back("other_agent");
     var_values[glue_loc_var_].push_back(agent_name_);
 
     this->varValues=var_values;
@@ -40,6 +41,8 @@ GlueSurface::GlueSurface() {
     abstract_states_[glue_loc_var_]["surface2"]="other_location";
     abstract_states_[glue_loc_var_]["surface3"]="other_location";
     abstract_states_[glue_loc_var_]["table"]="other_location";
+    abstract_states_[glue_loc_var_]["agent1"]="other_agent";
+    abstract_states_[glue_loc_var_]["agent2"]="other_agent";
     
     abstract_states_[surface_status_var_]["none"]="other_status";
     abstract_states_[surface_status_var_]["completed"]="other_status";

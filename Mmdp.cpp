@@ -112,19 +112,19 @@ void Mmdp::createJointMdpVariables() {
         all_actions.push_back(mdp_param_actions);
         i++;
     }
-    for (string v : variables) {
-        vector<string> values = varValues.at(v);
-        if (std::find(values.begin(), values.end(), "agentp0") != values.end() ||
-                std::find(values.begin(), values.end(), "agentp1") != values.end()) {
-            if (std::find(values.begin(), values.end(), "agentp0") == values.end()) {
-                values.push_back("agentp0");
-            }
-            if (std::find(values.begin(), values.end(), "agentp1") == values.end()) {
-                values.push_back("agentp1");
-            }
-        }
-        varValues[v] = values;
-    }
+//    for (string v : variables) {
+//        vector<string> values = varValues.at(v);
+//        if (std::find(values.begin(), values.end(), "agentp0") != values.end() ||
+//                std::find(values.begin(), values.end(), "agentp1") != values.end()) {
+//            if (std::find(values.begin(), values.end(), "agentp0") == values.end()) {
+//                values.push_back("agentp0");
+//            }
+//            if (std::find(values.begin(), values.end(), "agentp1") == values.end()) {
+//                values.push_back("agentp1");
+//            }
+//        }
+//        varValues[v] = values;
+//    }
 
     NestedLoop<string> loop(all_actions);
     vector<vector<string> > action_matrix = loop.buildMatrix();
@@ -152,8 +152,7 @@ void Mmdp::createJointMdpVariables() {
 
                 if (action_parts[0] == "agentp0") {
                     handover_action = "agentp1_handover_" + action_parts[2] + "_agentp0";
-                }
-                else {
+                } else {
                     handover_action = "agentp0_handover_" + action_parts[2] + "_agentp1";
                 }
                 if (std::find(new_actions.begin(), new_actions.end(), handover_action) == new_actions.end()) {
@@ -401,15 +400,42 @@ void Mmdp::enumerateFunctions(string fileName) {
 
             vector<string> single_actions = StringOperations::stringSplit(action, '-');
 
+            if (i == 18  && fileName == "agent_glue_surface-agent_clean_surface.pomdp") {
+                cout << "";
+            }
+            if (i == 42 && fileName == "agent_get_object-agent_clean_surface.pomdp" &&
+                    action == "agentp0_take_objectp0-agentp1_move_surfacep1") {
+                cout << "";
+            }
+            if (i == 78 && fileName == "agent_glue_surface-agent_clean_surface.pomdp" &&
+                    action == "agentp0_move_surfacep0-agentp1_move_surfacep1") {
+                cout << "";
+            }
+            
+
             pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
             string module_name = sub_mdp_details.first[0];
+            string action_name = sub_mdp_details.first[2];
             set<string> changed_mdps = sub_mdp_details.second;
             bool no_incongruences = true; //this will become false if 2 mdp states in the instance space have a different value (and different from the original too)
             Hmdp * h;
+
+            bool has_wait = false;
+
+            for (int i = 0; i < single_actions.size(); i++) {
+                if (single_actions[i] == "agentp" + to_string(i) + "_wait") {
+                    has_wait = true;
+                    break;
+                }
+            }
+
             if (i == 0 && fileName == "agent_glue_surface-agent_clean_surface.pomdp" && action == "agentp0_handover_gluebottle_agentp1") {
                 cout << "";
             }
             VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
+
+
+
 
             if (module_name == "this") {
                 //if it's not a hierarchical action we have to check the state from each mdp, and look 
@@ -516,6 +542,16 @@ void Mmdp::enumerateFunctions(string fileName) {
                 r = use_cost_ ? 1000 : 0;
 
             }
+            //            if (no_incongruences && use_cost_ && std::find(joint_actions_.begin(), joint_actions_.end(), action) == joint_actions_.end()
+            //                    && !has_wait && isGoalState()) {
+            //                int min_cost = 10000;
+            //                string generic_name = module_name != "this" ? module_name : name;
+            //                for (auto belief : future_beliefs) {
+            //                    int c = estimateRemainingCost(vecStateEnum[belief.first], generic_name, action_name);
+            //                    min_cost = c < min_cost ? c : min_cost;
+            //                }
+            //                r = r + min_cost;
+            //            }
 
             PairStateAction rewardInput{i, action};
             reward[rewardInput] = r;
@@ -1104,3 +1140,117 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
 //    }
 //}
 
+int Mmdp::estimateRemainingCost(VariableSet state) {
+    int index = 0;
+    int c = 0;
+
+    VariableSet depar_state = convertToDeparametrizedState(state, VariableSet());
+    vector<string> module_agents = StringOperations::stringSplit(name, '-');
+    vector<string> action_agents = StringOperations::stringSplit(parametrized_name, '-');
+
+    for (int i = 0; i < module_agents.size(); i++) {
+        if (module_agents[i] == "agent_wait") {
+            return 0;
+        }
+    }
+    for (auto agent : agent_hmpd_) {
+        pair<VariableSet, set<string> > mdp_state = convertToMdpState(agent.second, index, state);
+        if (!agent.second->isGoalState(mdp_state.first)) {
+            //not a goal estate. Estimate the cost to reach the goal state
+            vector<string> new_action_name_v;
+            vector<string> new_module_name_v;
+
+            for (int i = 0; i < agent_hmpd_.size(); i++) {
+                vector<string> module_parts = StringOperations::stringSplit(module_agents[i], '_');
+                vector<string> action_parts = StringOperations::stringSplit(action_agents[i], '_');
+                if (i == index) {
+                    new_action_name_v.push_back(action_agents[index]);
+                    new_module_name_v.push_back(module_agents[index]);
+                } else {
+                    new_action_name_v.push_back(action_parts[0] + "_wait");
+                    new_module_name_v.push_back(module_parts[0] + "_wait");
+                }
+            }
+            string new_action_name_s = new_action_name_v[0];
+            string new_module_name_s = new_module_name_v[0];
+            for (int i = 1; i < new_action_name_v.size(); i++) {
+                new_action_name_s = new_action_name_s + "-" + new_action_name_v[i];
+            }
+            for (int i = 1; i < new_action_name_v.size(); i++) {
+                new_module_name_s = new_module_name_s + "-" + new_module_name_v[i];
+            }
+
+
+            Mmdp *single_mmdp = (Mmdp*) mmdp_manager_->getMmdp(new_module_name_s, new_action_name_s, false, false);
+            //            VariableSet mmdp_state = single_mmdp->convertToMmdpState(mdp_state.first, agent.second, index);
+            int bestq = single_mmdp->getBestQ(depar_state);
+            c = c + bestq;
+        }
+        index++;
+    }
+    return c;
+
+}
+
+void Mmdp::valueIteration(string fileName, bool rewrite) {
+    ifstream inputFile(fileName);
+
+    int starting_value = use_cost_ ? 100000 : 0;
+    std::vector<double> vhi(vecStateEnum.size(), starting_value); //vhi mantains the predicted reward in a state following the optimal policy
+    std::vector<double> vhiOld(vecStateEnum.size(), starting_value);
+
+    if (inputFile.good() && !rewrite) {
+        string line;
+        for (int i = 0; i < vecStateEnum.size(); i++) {
+            getline(inputFile, line);
+            vector<double> q_line = StringOperations::split(line, ' ');
+            int j = 0;
+            for (string action : actions) {
+                PairStateAction qInput{i, action};
+                qValue[qInput] = q_line[j];
+                j++;
+            }
+        }
+        inputFile.close();
+
+    } else {
+        double epsilon = 0.1; //stopping value of the value iteration
+        double maxDiff = 0;
+        cout << "Starting Value Iteration\n";
+        do { //we loop until vhiOld-hvi<epsilon (more or less)
+            if (fileName == "agent_glue_surface-agent_clean_surface.policy") {
+                cout << " ";
+            }
+            for (int s = 0; s < vecStateEnum.size(); s++) { //for each enumeration
+                vhiOld[s] = vhi[s];
+                if (s == 12) {
+                    VariableSet v = vecStateEnum[s];
+                    cout << " ";
+                }
+                if (use_cost_ && isGoalState(vecStateEnum[s])) {
+                    vhi[s] = estimateRemainingCost(vecStateEnum[s]);
+                    //                    vhi[s] = 0;
+                } else {
+                    vhi[s] = bellmanBackup(s, vhi);
+                }
+            }
+            maxDiff = 0;
+            for (int i = 0; i < vhi.size(); i++) { //calculate the maximum difference on the vhi (stopping parameter)
+                double d = abs(vhi[i] - vhiOld[i]);
+                if (d > maxDiff) {
+                    maxDiff = d;
+                }
+            }
+
+        } while (maxDiff > epsilon);
+        ofstream file(fileName);
+        for (int i = 0; i < vecStateEnum.size(); i++) {
+            for (string action : actions) {
+                PairStateAction qInput{i, action};
+                file << qValue[qInput] << " ";
+            }
+            file << "\n";
+        }
+        file.close();
+    }
+}

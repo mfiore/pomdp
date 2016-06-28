@@ -27,7 +27,7 @@ public:
     virtual void create(string name, bool rewrite, bool first);
 
     std::map<string, Hmdp*> agent_hmpd_;
-//    VariableSet convertToParametrizedState(VariableSet s);
+    //    VariableSet convertToParametrizedState(VariableSet s);
 
     void createJointMdpVariables();
     virtual void enumerateGoalAndStartStates();
@@ -88,17 +88,21 @@ public:
     vector<string> hasParametersInCommon();
 
     vector<string> hasParametersInCommon(map<string, Hmdp*> agents);
-    
+
     VariableSet fixAbstractStates(VariableSet sub_set, VariableSet super_set, Hmdp* sub_mmdp);
 
     MmdpManager* mmdp_manager_;
-    
+
     vector<string> forbidden_actions_;
     vector<string> joint_actions_;
     vector<string> joint_modules_;
-    map<string,string> joint_actions_module_name_;
-    
-    };
+    map<string, string> joint_actions_module_name_;
+
+    int estimateRemainingCost(VariableSet state);
+
+    void valueIteration(string fileName, bool rewrite);
+
+};
 
 #endif /* MMDP_H */
 

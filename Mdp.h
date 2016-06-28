@@ -103,7 +103,7 @@ public:
 
     //learning functions
     virtual int bellmanBackup(int i, std::vector<double> vhi);
-    void valueIteration(string fileName, bool rewrite = false);
+    virtual void valueIteration(string fileName, bool rewrite = false);
     void prioritizedSweeping(); //for now it's slower on the tested examples. Maybe it's the queue overhead
 
 
@@ -134,6 +134,8 @@ public:
     virtual bool isGoalState(VariableSet state) = 0;
     
     map<string, map<string, string> > abstract_states_;
+    
+    int getBestQ(VariableSet state);
 };
 
 #endif /* MDP_H */
