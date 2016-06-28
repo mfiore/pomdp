@@ -70,13 +70,13 @@ void Mmdp::createJointMdpVariables() {
                     if (std::find(mdp.second->parameters.begin(), mdp.second->parameters.end(), v.second) != mdp.second->parameters.end()) {
                         actual_value = actual_value + i_s;
                     }
-                    new_states_values[v.first] =actual_value;
+                    new_states_values[v.first] = actual_value;
                 }
-                string actual_name=var;
-                if (mdp.second->variable_parameter.find(var)!=mdp.second->variable_parameter.end()) {
-                    actual_name=convertToMultiParameter(mdp.second,var,i);
+                string actual_name = var;
+                if (mdp.second->variable_parameter.find(var) != mdp.second->variable_parameter.end()) {
+                    actual_name = convertToMultiParameter(mdp.second, var, i);
                 }
-                abstract_states_[actual_name]=new_states_values;
+                abstract_states_[actual_name] = new_states_values;
             }
         }
         for (auto par : mdp.second->parameters) {
@@ -148,13 +148,17 @@ void Mmdp::createJointMdpVariables() {
         for (string agent_action : agent_parts) {
             vector<string> action_parts = StringOperations::stringSplit(agent_action, '_');
             if (action_parts[1] == "get") {
-                string handover_action1 = "agentp0_handover_" + action_parts[2] + "_agentp1";
-                string handover_action2 = "agentp1_handover_" + action_parts[2] + "_agentp0";
-                if (std::find(new_actions.begin(), new_actions.end(), handover_action1) == new_actions.end()) {
-                    new_actions.push_back(handover_action1);
-                    new_actions.push_back(handover_action2);
-                    joint_actions_.push_back(handover_action1);
-                    joint_actions_.push_back(handover_action2);
+                string handover_action;
+
+                if (action_parts[0] == "agentp0") {
+                    handover_action = "agentp1_handover_" + action_parts[2] + "_agentp0";
+                }
+                else {
+                    handover_action = "agentp0_handover_" + action_parts[2] + "_agentp1";
+                }
+                if (std::find(new_actions.begin(), new_actions.end(), handover_action) == new_actions.end()) {
+                    new_actions.push_back(handover_action);
+                    joint_actions_.push_back(handover_action);
 
                 }
                 if (std::find(joint_modules_.begin(), joint_modules_.end(), "handover") == joint_modules_.end()) {
@@ -402,7 +406,7 @@ void Mmdp::enumerateFunctions(string fileName) {
             set<string> changed_mdps = sub_mdp_details.second;
             bool no_incongruences = true; //this will become false if 2 mdp states in the instance space have a different value (and different from the original too)
             Hmdp * h;
-            if (i == 0 && fileName == "agent_glue_surface-agent_clean_surface.pomdp" && action=="agentp0_handover_gluebottle_agentp1") {
+            if (i == 0 && fileName == "agent_glue_surface-agent_clean_surface.pomdp" && action == "agentp0_handover_gluebottle_agentp1") {
                 cout << "";
             }
             VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
@@ -1045,7 +1049,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-//        printQValues(this_state);
+        //        printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];
