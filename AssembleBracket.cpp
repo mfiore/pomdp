@@ -128,8 +128,8 @@ std::map<VariableSet, double> AssembleBracket::transitionFunction(VariableSet st
 }
 
 bool AssembleBracket::isStartingState(VariableSet state) {
-    return state.set[surface_status_var_] != "completed";
-//            && state.set[bracket_loc_var_] == "table";
+    return state.set[surface_status_var_] != "completed"
+            && state.set[bracket_loc_var_] == "table";
 
 }
 

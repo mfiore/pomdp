@@ -89,7 +89,9 @@ string Handover::getDeparametrizedAction(string action_name) {
     vector<string> single_actions = StringOperations::stringSplit(action_name, '-');
     stringstream depar_action_name;
 
+    int index=0;
     for (string action : single_actions) {
+        if (index>0) depar_action_name<<"-";
         vector<string> action_parts = StringOperations::stringSplit(action, '_');
         for (int i = 0; i < action_parts.size() - 1; i++) {
             string s = action_parts[i];
@@ -108,8 +110,10 @@ string Handover::getDeparametrizedAction(string action_name) {
                 depar_action_name << s;
             }
         }
-        return depar_action_name.str();
+        index++;
     }
+    return depar_action_name.str();
+
 }
 
 VarStateProb Handover::transitionFunction(VariableSet state, string action) {

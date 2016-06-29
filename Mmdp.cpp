@@ -108,23 +108,25 @@ void Mmdp::createJointMdpVariables() {
             }
             mdp_param_actions.push_back(new_action);
         }
-        mdp_param_actions.push_back("agent" + i_s + "_wait");
+        if (std::find(mdp_param_actions.begin(), mdp_param_actions.end(), "agent" + i_s + "_wait") == mdp_param_actions.end()) {
+            mdp_param_actions.push_back("agent" + i_s + "_wait");
+        }
         all_actions.push_back(mdp_param_actions);
         i++;
     }
-//    for (string v : variables) {
-//        vector<string> values = varValues.at(v);
-//        if (std::find(values.begin(), values.end(), "agentp0") != values.end() ||
-//                std::find(values.begin(), values.end(), "agentp1") != values.end()) {
-//            if (std::find(values.begin(), values.end(), "agentp0") == values.end()) {
-//                values.push_back("agentp0");
-//            }
-//            if (std::find(values.begin(), values.end(), "agentp1") == values.end()) {
-//                values.push_back("agentp1");
-//            }
-//        }
-//        varValues[v] = values;
-//    }
+    //    for (string v : variables) {
+    //        vector<string> values = varValues.at(v);
+    //        if (std::find(values.begin(), values.end(), "agentp0") != values.end() ||
+    //                std::find(values.begin(), values.end(), "agentp1") != values.end()) {
+    //            if (std::find(values.begin(), values.end(), "agentp0") == values.end()) {
+    //                values.push_back("agentp0");
+    //            }
+    //            if (std::find(values.begin(), values.end(), "agentp1") == values.end()) {
+    //                values.push_back("agentp1");
+    //            }
+    //        }
+    //        varValues[v] = values;
+    //    }
 
     NestedLoop<string> loop(all_actions);
     vector<vector<string> > action_matrix = loop.buildMatrix();
@@ -400,10 +402,10 @@ void Mmdp::enumerateFunctions(string fileName) {
 
             vector<string> single_actions = StringOperations::stringSplit(action, '-');
 
-//            if (i == 112 && fileName == "agent_assemble_bracket_surface-agent_wait.pomdp" &&
-//                    action == "agentp0_apply_bracketp0_surfacep0-agentp1_wait") {
-//                cout << "";
-//            }
+            //            if (i == 112 && fileName == "agent_assemble_bracket_surface-agent_wait.pomdp" &&
+            //                    action == "agentp0_apply_bracketp0_surfacep0-agentp1_wait") {
+            //                cout << "";
+            //            }
             if (i == 28 && fileName == "agent_apply_bracket_surface-agent_wait.pomdp") {
                 cout << "";
             }
@@ -1081,7 +1083,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-        //        printQValues(this_state);
+//                printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];
@@ -1180,7 +1182,8 @@ int Mmdp::estimateRemainingCost(VariableSet state) {
             Mmdp *single_mmdp = (Mmdp*) mmdp_manager_->getMmdp(new_module_name_s, new_action_name_s, false, false);
             //            VariableSet mmdp_state = single_mmdp->convertToMmdpState(mdp_state.first, agent.second, index);
             int bestq = single_mmdp->getBestQ(depar_state);
-            c = c + bestq;
+//            c = c + 3;
+            c=c+bestq;
         }
         index++;
     }
@@ -1225,7 +1228,7 @@ void Mmdp::valueIteration(string fileName, bool rewrite) {
                 }
                 if (use_cost_ && isGoalState(vecStateEnum[s])) {
                     vhi[s] = estimateRemainingCost(vecStateEnum[s]);
-//                                        vhi[s] = 0;
+                    //                                        vhi[s] = 0;
                 } else {
                     vhi[s] = bellmanBackup(s, vhi);
                 }

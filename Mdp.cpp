@@ -538,11 +538,11 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
         //if it's a parameter variable
         if (par_key.size() > 0) {
             for (string key : par_key) {
-                if (vs_new.set.find(key) == vs_new.set.end()) {
+//                if (vs_new.set.find(key) == vs_new.set.end()) {
                     string value = findValue(key, possible_values);
                     if (value == "") return VariableSet();
                     vs_new.set[key] = value;
-                }
+//                }
             }
         }
         if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
@@ -609,13 +609,19 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
         if (parametrized_to_original.find(actual_value) != parametrized_to_original.end()) {
             actual_value = parametrized_to_original[actual_value];
         }
+        bool assigned_value=false;
 
         if (set.set.find(actual_key) != set.set.end()) {
             if (is_abstract_actual_key.find(actual_key) != is_abstract_actual_key.end() && !is_this_abstract) {
                 set.set[actual_key] = actual_value;
+                is_abstract_actual_key.erase(is_abstract_actual_key.find(actual_key));
             }
         } else {
             set.set[actual_key] = actual_value;
+            assigned_value = true;
+        }
+        if (!assigned_value && is_abstract_actual_key.find(actual_key)!=is_abstract_actual_key.end()) {
+            is_abstract_actual_key.erase(is_abstract_actual_key.find(actual_key));
         }
     }
     //we change "other" or abstract values with the full state versions and reintroduce missing variables

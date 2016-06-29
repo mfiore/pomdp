@@ -20,6 +20,7 @@
 #include <string>
 #include "StringOperations.h"
 #include <unordered_set>
+#include <stdlib.h> 
 
 using namespace std;
 
