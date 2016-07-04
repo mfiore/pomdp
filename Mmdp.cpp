@@ -189,6 +189,7 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
 
 
 
+
         for (auto a : agent_hmpd_) {
             name = StringOperations::addToString(name, a.second->name, '-');
         }
@@ -213,6 +214,11 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
         enumerateStates();
 
         for (string a : actions) {
+            if (name == "agent_apply_bracket_surface-agent_get_object" && a == "agentp0_get_bracketp0-agentp1_move_table") {
+                cout << "";
+            }
+
+
             pair<vector<string>, set<string> > sub_mdp_result = getSubMdpName(a);
             string module_name = sub_mdp_result.first[0];
             if (module_name != "this") {
@@ -392,13 +398,13 @@ void Mmdp::enumerateFunctions(string fileName) {
 
     for (int i = 0; i < vecStateEnum.size(); i++) {
 
-        if (i==178) {
-            cout<<"";
+        if (i == 178) {
+            cout << "";
         }
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
             string depar_action = getDeparametrizedAction(action);
-            
+
             if (i == 178 && action == "agentp0_apply_bracketp0_surfacep0-agentp1_wait") {
                 cout << "";
             }
@@ -412,7 +418,7 @@ void Mmdp::enumerateFunctions(string fileName) {
             //                    action == "agentp0_apply_bracketp0_surfacep0-agentp1_wait") {
             //                cout << "";
             //            }
-            
+
 
 
             pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
@@ -724,14 +730,13 @@ bool Mmdp::isMmdpStateCongruent(VariableSet state) {
                 string new_value = var_values[parametrized_to_original[var.first]];
                 if (actual_value != new_value) {
                     //if it's an abstract state we could allow the values to be different in some instantiations.
-                    if (abstract_states_.find(var.first)!=abstract_states_.end()) {
-                        if (abstract_states_.at(var.first).find(actual_value)==abstract_states_.at(var.first).end()
-                                && abstract_states_.at(var.first).find(new_value)==abstract_states_.at(var.first).end()
+                    if (abstract_states_.find(var.first) != abstract_states_.end()) {
+                        if (abstract_states_.at(var.first).find(actual_value) == abstract_states_.at(var.first).end()
+                                && abstract_states_.at(var.first).find(new_value) == abstract_states_.at(var.first).end()
                                 ) {
                             return false;
-                        } 
-                    }
-                    else {
+                        }
+                    } else {
                         return false;
                     }
                 }
@@ -904,13 +909,22 @@ vector<string> Mmdp::hasParametersInCommon(map<string, Hmdp*> agents) {
             if (agent1.first != agent2.first) {
                 map<string, string> this_instance = agent1.second->parameter_instances;
                 map<string, string> other_instance = agent2.second->parameter_instances;
-                //if they have a parameter in common 
+                //if they have a parameter in common //EDIT when two parameters had the same value but different names
+                // (ex. brakcet= bracket1 and object=bracket1)
+                //it didn't work
                 for (auto s : this_instance) {
-                    if (other_instance.find(s.first) != other_instance.end()) {
-                        if (other_instance[s.first] == s.second) {
+                    for (auto s2 : other_instance) {
+                        if (s.second == s2.second) {
                             parameters_in_common.push_back(s.first);
+                            continue;
                         }
+
                     }
+                    //                    if (other_instance.find(s.first) != other_instance.end()) {
+                    //                        if (other_instance[s.first] == s.second) {
+                    //                            parameters_in_common.push_back(s.first);
+                    //                        }
+                    //                    }
                 }
                 //but also if a parameter is assigned to a variable of the other submmdps
                 for (auto original : agent1.second->parametrized_to_original) {
@@ -1094,7 +1108,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-//                printQValues(this_state);
+//        printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];
@@ -1193,8 +1207,8 @@ int Mmdp::estimateRemainingCost(VariableSet state) {
             Mmdp *single_mmdp = (Mmdp*) mmdp_manager_->getMmdp(new_module_name_s, new_action_name_s, false, false);
             //            VariableSet mmdp_state = single_mmdp->convertToMmdpState(mdp_state.first, agent.second, index);
             int bestq = single_mmdp->getBestQ(depar_state);
-//            c = c + 3;
-            c=c+bestq;
+            //            c = c + 3;
+            c = c + bestq;
         }
         index++;
     }

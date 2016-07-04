@@ -234,7 +234,7 @@ void Hmdp::calculateHierarchicTransition() {
                     int sp = future_state.first;
                     if (sp != s && !isGoalState(vecStateEnum[sp])) {
                         if (use_cost_) {
-                            a.insert(s, sp) = future_state.second;
+                            a.insert(s, sp) = -future_state.second;
                         } else {
                             a.insert(s, sp) = -beta * future_state.second;
                         }
@@ -478,7 +478,7 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
             cout << "State: \n";
             cout << depar_s.toString() << "\n";
 
-                  if (i == 1) {
+                  if (i ==6) {
                 cout << "";
                 //                printQValues(vecStateEnum[s.first]);
             }
