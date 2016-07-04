@@ -19,15 +19,15 @@ AssembleBracket::AssembleBracket() {
     glue_name_ = "gluebottle";
     surface_name_ = "surface";
 
-    //    std::vector<string> locations{"table", "surface1", "surface2", "surface3","surface"};
+    std::vector<string> locations{"surface"};
     std::vector<string> statuses{"none", "cleaned", "glued", "completed"};
 
-    //    agent_loc_var_ = agent_name_+"_isAt";
+    agent_loc_var_ = agent_name_ + "_isAt";
     bracket_loc_var_ = bracket_name_ + "_isAt";
     glue_loc_var_ = glue_name_ + "_isAt";
     surface_status_var_ = surface_name_ + "_status";
 
-    //    variables.push_back(agent_loc_var_);
+    variables.push_back(agent_loc_var_);
     variables.push_back(bracket_loc_var_);
     variables.push_back(surface_status_var_);
     variables.push_back(glue_loc_var_);
@@ -64,9 +64,14 @@ AssembleBracket::AssembleBracket() {
     actions.push_back(agent_name_ + "_clean_" + surface_name_);
     actions.push_back(agent_name_ + "_glue_" + surface_name_);
     actions.push_back(agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_);
-    hierarchy_map_[agent_name_ + "_clean_" + surface_name_] = new CleanSurface();
-    hierarchy_map_[agent_name_ + "_glue_" + surface_name_] = new GlueSurface();
-    hierarchy_map_[agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_] = new AttachBracket();
+    actions.push_back(agent_name_ + "_get_" + bracket_name_);
+    actions.push_back(agent_name_ + "_get_" + glue_name_);
+    actions.push_back(agent_name_ + "_move_" + surface_name_);
+    //    hierarchy_map_[agent_name_ + "_clean_" + surface_name_] = new CleanSurface();
+    //    hierarchy_map_[agent_name_ + "_glue_" + surface_name_] = new GlueSurface();
+    //    hierarchy_map_[agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_] = new AttachBracket();
+    hierarchy_map_[agent_name_ + "_get_" + bracket_name_] = new GetObject();
+    hierarchy_map_[agent_name_ + "_get_" + glue_name_] = new GetObject();
 
     this->actions = actions;
 
@@ -101,9 +106,9 @@ AssembleBracket::AssembleBracket(const AssembleBracket& orig) {
 }
 
 AssembleBracket::~AssembleBracket() {
-    delete hierarchy_map_[agent_name_ + "_clean_" + surface_name_];
-    delete hierarchy_map_[agent_name_ + "_glue_" + surface_name_];
-    delete hierarchy_map_[agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_];
+    //    delete hierarchy_map_[agent_name_ + "_clean_" + surface_name_];
+    //    delete hierarchy_map_[agent_name_ + "_glue_" + surface_name_];
+    //    delete hierarchy_map_[agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_];
 
 }
 
@@ -126,9 +131,32 @@ AssembleBracket::~AssembleBracket() {
 std::map<VariableSet, double> AssembleBracket::transitionFunction(VariableSet state, string action) {
     VarStateProb future_beliefs;
 
+    string glue_location = state.set.at(glue_loc_var_);
+    string agent_location = state.set.at(surface_name_);
+    string surface_status = state.set.at(surface_status_var_);
+
+    vector<string> action_parameters = MdpBasicActions::getActionParameters(action);
+    string action_name = action_parameters[1];
+
     if (action == agent_name_ + "_wait") {
         future_beliefs[state] = 1;
+    } else if (action_name == "glue" && glue_location == agent_name_ && agent_location == surface_name_ &&
+            surface_status == "cleaned") {
+        state.set[surface_status_var_] = "glued";
+        future_beliefs[state] = 1;
+    } else if (action_name == "clean" && agent_location == surface_name_ && surface_status == "none") {
+        state.set[surface_status_var_] = "cleaned";
+        future_beliefs[state] = 1;
+    } else if (action_name == "apply" + surface_name_ && agent_location == surface_name_ && surface_status == "glued") {
+        state.set[surface_status_var_] = "completed";
+        future_beliefs[state] = 1;
+    } else if (action_name == "move") {
+        future_beliefs = MdpBasicActions::applyMove(agent_loc_var_, action_parameters[2], state);
+    } else {
+        future_beliefs[state] = 1;
     }
+
+
     return future_beliefs;
 
 }
