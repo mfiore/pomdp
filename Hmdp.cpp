@@ -35,8 +35,14 @@ double Hmdp::getHierarchicReward(VariableSet set, Hmdp* super_hmdp) {
     int i = mapStateEnum.at(parametrized_set);
 
     //    int i = convertHierarchicState(parametrized_set);
-    double r = hierarchic_reward_[i];
-    return hierarchic_reward_[i];
+    double r;
+    if (hierarchic_reward_.find(i) == hierarchic_reward_.end()) {
+        r=use_cost_? 1000 : 0;
+    }
+    else {
+        r=hierarchic_reward_.at(i);
+    }
+    return r;
 }
 
 std::map<int, double> Hmdp::getHierarchicTransition(int i) {
@@ -170,7 +176,7 @@ void Hmdp::calculateHierarchicReward() {
                     if (!use_cost_) {
                         a.insert(s, sp) = -beta * future_state.second;
                     } else {
-                        a.insert(s, sp) = future_state.second;
+                        a.insert(s, sp) = -future_state.second;
                     }
                 }
             }
@@ -181,6 +187,8 @@ void Hmdp::calculateHierarchicReward() {
                 b(s) = 1;
             }
         }
+//        cout<<a<<"\n";
+//        cout<<b<<"\n";
         Eigen::BiCGSTAB<Eigen::SparseMatrix<double> > solver;
         a.makeCompressed();
         solver.compute(a);
@@ -470,9 +478,9 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
             cout << "State: \n";
             cout << depar_s.toString() << "\n";
 
-            if (i == 3) {
+                  if (i == 1) {
                 cout << "";
-//                printQValues(vecStateEnum[s.first]);
+                //                printQValues(vecStateEnum[s.first]);
             }
 
 

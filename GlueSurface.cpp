@@ -122,10 +122,8 @@ std::map<VariableSet, double> GlueSurface::transitionFunction(VariableSet state,
     return future_beliefs;
 }
 
-bool GlueSurface::isStartingState(VariableSet state) {
-    if (state.set[surface_status_var_] == "cleaned") return true;
-    return false;
-
+bool GlueSurface::isStartingState(VariableSet state) {  
+    return state.set[surface_status_var_]!="glued";
 }
 
 int GlueSurface::rewardFunction(VariableSet state, string action) {

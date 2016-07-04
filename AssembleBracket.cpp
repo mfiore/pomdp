@@ -37,11 +37,13 @@ AssembleBracket::AssembleBracket() {
     //    var_values[glue_loc_var_] = locations;
     var_values[glue_loc_var_].push_back(agent_name_);
     var_values[glue_loc_var_].push_back("other_location");
+    var_values[glue_loc_var_].push_back("other_agent");
     //    var_values[bracket_loc_var_]=locations;
     var_values[bracket_loc_var_].push_back(agent_name_);
     var_values[bracket_loc_var_].push_back("other_location");
     var_values[bracket_loc_var_].push_back(surface_name_);
     var_values[bracket_loc_var_].push_back("table");
+    var_values[bracket_loc_var_].push_back("other_agent");
     var_values[surface_status_var_] = statuses;
 
     this->varValues = var_values;
@@ -50,10 +52,14 @@ AssembleBracket::AssembleBracket() {
     abstract_states_[glue_loc_var_]["surface2"] = "other_location";
     abstract_states_[glue_loc_var_]["surface3"] = "other_location";
     abstract_states_[glue_loc_var_]["table"] = "other_location";
+    abstract_states_[glue_loc_var_]["agent1"] = "other_agent";
+    abstract_states_[glue_loc_var_]["agent2"] = "other_agent";
 
     abstract_states_[bracket_loc_var_]["surface1"] = "other_location";
     abstract_states_[bracket_loc_var_]["surface2"] = "other_location";
     abstract_states_[bracket_loc_var_]["surface3"] = "other_location";
+    abstract_states_[bracket_loc_var_]["agent1"] = "other_agent";
+    abstract_states_[bracket_loc_var_]["agent2"] = "other_agent";
 
     actions.push_back(agent_name_ + "_clean_" + surface_name_);
     actions.push_back(agent_name_ + "_glue_" + surface_name_);

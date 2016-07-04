@@ -29,6 +29,7 @@ AttachBracket::AttachBracket() {
     var_values[bracket_loc_var_] = locations;
     var_values[bracket_loc_var_].push_back(agent_name_);
     var_values[bracket_loc_var_].push_back("table");
+    var_values[bracket_loc_var_].push_back("other_agent");
 
     this->varValues = var_values;
 
@@ -43,6 +44,8 @@ AttachBracket::AttachBracket() {
     abstract_states_[bracket_loc_var_]["surface1"] = "other_location";
     abstract_states_[bracket_loc_var_]["surface2"] = "other_location";
     abstract_states_[bracket_loc_var_]["surface3"] = "other_location";
+    abstract_states_[bracket_loc_var_]["agent1"] = "other_agent";
+    abstract_states_[bracket_loc_var_]["agent2"] = "other_agent";
 
 
     actions.push_back(agent_name_ + "_move_" + surface_name_);
@@ -130,8 +133,9 @@ std::map<VariableSet, double> AttachBracket::transitionFunction(VariableSet stat
 }
 
 bool AttachBracket::isStartingState(VariableSet state) {
-    if (state.set[surface_status_var_] == "glued" && state.set[bracket_loc_var_] == "table") return true;
-    return false;
+//    if (state.set[bracket_loc_var_] == "table") return true;
+    return (state.set[surface_status_var_]!="completed");
+//    return false;
 
 }
 
