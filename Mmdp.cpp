@@ -392,10 +392,16 @@ void Mmdp::enumerateFunctions(string fileName) {
 
     for (int i = 0; i < vecStateEnum.size(); i++) {
 
+        if (i==178) {
+            cout<<"";
+        }
         if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
         for (string action : actions) {
             string depar_action = getDeparametrizedAction(action);
-
+            
+            if (i == 178 && action == "agentp0_apply_bracketp0_surfacep0-agentp1_wait") {
+                cout << "";
+            }
 
             double r = 0;
             StateProb future_beliefs;
@@ -406,9 +412,7 @@ void Mmdp::enumerateFunctions(string fileName) {
             //                    action == "agentp0_apply_bracketp0_surfacep0-agentp1_wait") {
             //                cout << "";
             //            }
-            if (i == 28 && fileName == "agent_apply_bracket_surface-agent_wait.pomdp") {
-                cout << "";
-            }
+            
 
 
             pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
@@ -427,9 +431,6 @@ void Mmdp::enumerateFunctions(string fileName) {
                 }
             }
 
-            if (i == 0 && fileName == "agent_glue_surface-agent_clean_surface.pomdp" && action == "agentp0_handover_gluebottle_agentp1") {
-                cout << "";
-            }
             VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
 
 
@@ -722,7 +723,17 @@ bool Mmdp::isMmdpStateCongruent(VariableSet state) {
             if (var_values.find(parametrized_to_original[var.first]) != var_values.end()) {
                 string new_value = var_values[parametrized_to_original[var.first]];
                 if (actual_value != new_value) {
-                    return false;
+                    //if it's an abstract state we could allow the values to be different in some instantiations.
+                    if (abstract_states_.find(var.first)!=abstract_states_.end()) {
+                        if (abstract_states_.at(var.first).find(actual_value)==abstract_states_.at(var.first).end()
+                                && abstract_states_.at(var.first).find(new_value)==abstract_states_.at(var.first).end()
+                                ) {
+                            return false;
+                        } 
+                    }
+                    else {
+                        return false;
+                    }
                 }
             } else {
                 string par_var = parametrized_to_original[var.first];
