@@ -329,25 +329,36 @@ string Mmdp::convertToMultiParameter(Mdp* mdp, string var_name, int i) {
     } else return actual_var_name;
 }
 
-VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStateProb cumulative_future_state,
+pair<VarStateProb, set<string> > Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStateProb cumulative_future_state,
         VariableSet mmdp_instance_state, Hmdp *mdp, int index, bool *no_incongruences,
-        std::set<string> new_not_present_variables, VariableSet old_single_agent_state) {
+        std::set<string> new_not_present_variables, VariableSet old_single_agent_state, set<string> abstract_variables,
+        set<string> old_abstract_variables) {
     VarStateProb result;
 
+    pair<VarStateProb, set<string> > complete_result;
     VariableSet old_single_agent_depar = mdp->convertToDeparametrizedState(old_single_agent_state, VariableSet());
 
 
     //if one of the two states is empty we return the other
     if (mdp_future_state.empty()) {
-        result = cumulative_future_state;
-        return result;
+        complete_result.first = result;
+        complete_result.second = old_abstract_variables;
+        return complete_result;
     } else if (cumulative_future_state.empty()) {
         //we return mdp_future_state but converted in the instance space
         for (auto state : mdp_future_state) {
             VariableSet instance_state = mdp->convertToDeparametrizedState(state.first, VariableSet());
-            result[instance_state] = state.second;
+            VariableSet instance_state_only_present;
+            for (auto s : instance_state.set) {
+                if (new_not_present_variables.find(s.first) == new_not_present_variables.end()) {
+                    instance_state_only_present.set[s.first] = s.second;
+                }
+            }
+            result[instance_state_only_present] = state.second;
         }
-        return result;
+        complete_result.first = result;
+        complete_result.second = abstract_variables;
+        return complete_result;
     }
     //if both states aren't empty we mix them
     for (auto state : mdp_future_state) {
@@ -372,11 +383,14 @@ VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStatePr
                         if (new_cumulative_state.set[var.first] == original_value &&
                                 var.second != original_value && var.second != old_this_value) {
                             new_cumulative_state.set[var.first] = var.second;
-                        }//case 2: the values are different from themselves and from original. It's an incongruency and we quit
+                        }//case 2: the values are different from themselves and from original and 
+                            //both are not abstract. It's an incongruency and we quit
                         else if (new_cumulative_state.set[var.first] != original_value &&
-                                var.second != original_value && var.second != old_this_value) {
+                                var.second != original_value && var.second != old_this_value
+                                && old_abstract_variables.find(var.first) == old_abstract_variables.end()
+                                && abstract_variables.find(var.first) == abstract_variables.end()) {
                             *no_incongruences = false;
-                            return result;
+                            return complete_result;
                         }
                     }
                 }
@@ -387,7 +401,132 @@ VarStateProb Mmdp::joinMdpFutureStates(VarStateProb mdp_future_state, VarStatePr
             result[new_cumulative_state] = cumulative_state.second * state.second;
         }
     }
-    return result;
+    for (string abstract : abstract_variables) {
+        if (old_abstract_variables.find(abstract) == old_abstract_variables.end()) {
+            old_abstract_variables.insert(abstract);
+        }
+    }
+    complete_result.first = result;
+    complete_result.second = old_abstract_variables;
+    return complete_result;
+}
+
+void Mmdp::testEnumerate(int i, string action) {
+    if (!isMmdpStateCongruent(vecStateEnum[i])) return;
+    string depar_action = getDeparametrizedAction(action);
+    double r = 0;
+    StateProb future_beliefs;
+
+    vector<string> single_actions = StringOperations::stringSplit(action, '-');
+
+    pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
+    string module_name = sub_mdp_details.first[0];
+    string action_name = sub_mdp_details.first[2];
+    set<string> changed_mdps = sub_mdp_details.second;
+    bool no_incongruences = true; //this will become false if 2 mdp states in the instance space have a different value (and different from the original too)
+    Hmdp * h;
+
+    bool has_wait = false;
+
+    for (int i = 0; i < single_actions.size(); i++) {
+        if (single_actions[i] == "agentp" + to_string(i) + "_wait") {
+            has_wait = true;
+            break;
+        }
+    }
+
+    VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
+
+    if (module_name == "this") {
+        //if it's not a hierarchical action we have to check the state from each mdp, and look 
+        //to see if the resulting state is not incongruent
+
+        vector<string> single_actions = StringOperations::stringSplit(action, '-');
+        int index = 0;
+        VarStateProb cumulative_future_mdp_states; //this will hold the joint mdp future states in the instance space
+        VariableSet mmdp_instance_state = convertToDeparametrizedState(vecStateEnum[i], VariableSet()); //will need it to check for inconsistencies
+
+        set<string> old_abstract_variables;
+        for (auto mdp : agent_hmpd_) {
+
+            vector<string> action_parts = StringOperations::stringSplit(single_actions[index], '_');
+            VarStateProb mdp_future_states;
+            tuple<VariableSet, set<string>, set<string > > mdp_state_result = convertToMdpState(mdp.second, index, vecStateEnum[i]);
+            VariableSet mdp_state = std::get<0>(mdp_state_result);
+            set<string> not_present_variables = std::get<1>(mdp_state_result);
+            set<string> abstract_variables = std::get<2>(mdp_state_result);
+            if (action_parts[1] == "wait") {
+                mdp_future_states[mdp_state] = 1;
+            } else {
+                string mdp_action = convertToSingleMdpAction(mdp.second, index, single_actions[index]);
+                mdp_future_states = mdp.second->transitionFunction(mdp_state, mdp_action);
+                //                                                r = r + mdp.second->rewardFunction(mdp_state, mdp_action);
+            }
+            pair<VarStateProb, set<string> > join_result = joinMdpFutureStates(mdp_future_states, cumulative_future_mdp_states,
+                    mmdp_instance_state, mdp.second, index, &no_incongruences, not_present_variables, mdp_state,
+                    abstract_variables, old_abstract_variables);
+            old_abstract_variables = std::get<1>(join_result);
+            cumulative_future_mdp_states = std::get<0>(join_result);
+
+            if (!no_incongruences) {
+                break;
+            }
+            index++;
+        }
+
+        if (no_incongruences) {
+            //convert the cumulative_future_state to parameter state
+            for (auto state : cumulative_future_mdp_states) {
+                VariableSet converted_state = convertToParametrizedState(state.first);
+                //                        cout << converted_state.toString() << endl;
+                int i = mapStateEnum.at(converted_state);
+                future_beliefs[mapStateEnum.at(converted_state)] = state.second;
+            }
+        } else {
+        }
+    } else {
+        //if it's a hierarchical action it's the same as an hmdp
+        if (std::find(joint_actions_.begin(), joint_actions_.end(), action) == joint_actions_.end()) {
+            h = hierarchy_map_[module_name];
+            Mmdp *mmdp_h = (Mmdp*) h;
+
+            mmdp_h->assignParametersFromActionName(depar_action, changed_mdps, parameter_instances);
+        } else {
+            h = hierarchy_map_[module_name];
+            h->assignParametersFromActionName(depar_action);
+        }
+
+        VarStateProb temp_future_beliefs = h->getHierarchicTransition(v_deparam, this);
+
+        for (auto temp_b : temp_future_beliefs) {
+            VariableSet fb = temp_b.first;
+            VariableSet param_fb = convertToParametrizedState(fb);
+            for (auto v : vecStateEnum[i].set) {
+                if (param_fb.set.find(v.first) == param_fb.set.end()) {
+                    param_fb.set[v.first] = v.second;
+                }
+            }
+
+            future_beliefs[mapStateEnum.at(param_fb)] = temp_b.second;
+        }
+        VariableSet vstry = vecStateEnum[i];
+
+    }
+
+    for (auto belief : future_beliefs) {
+        VariableSet v = vecStateEnum[belief.first];
+        cout << v.toString() << "\n";
+    }
+
+    if (module_name != "this") {
+        r = h->getHierarchicReward(v_deparam, this);
+    } else if (no_incongruences) {
+        r = use_cost_ ? 1 : rewardFunction(vecStateEnum[i], action);
+
+    } else {
+        r = use_cost_ ? 1000 : 0;
+    }
+    cout << r << "\n";
 }
 
 void Mmdp::enumerateFunctions(string fileName) {
@@ -440,7 +579,7 @@ void Mmdp::enumerateFunctions(string fileName) {
             VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
 
 
-
+            VarStateProb cumulative_future_mdp_states;
 
             if (module_name == "this") {
                 //if it's not a hierarchical action we have to check the state from each mdp, and look 
@@ -451,13 +590,15 @@ void Mmdp::enumerateFunctions(string fileName) {
                 VarStateProb cumulative_future_mdp_states; //this will hold the joint mdp future states in the instance space
                 VariableSet mmdp_instance_state = convertToDeparametrizedState(vecStateEnum[i], VariableSet()); //will need it to check for inconsistencies
 
+                set<string> old_abstract_variables;
                 for (auto mdp : agent_hmpd_) {
 
                     vector<string> action_parts = StringOperations::stringSplit(single_actions[index], '_');
                     VarStateProb mdp_future_states;
-                    pair<VariableSet, set<string> > mdp_state_result = convertToMdpState(mdp.second, index, vecStateEnum[i]);
-                    VariableSet mdp_state = mdp_state_result.first;
-                    set<string> not_present_variables = mdp_state_result.second;
+                    tuple<VariableSet, set<string>, set<string> > mdp_state_result = convertToMdpState(mdp.second, index, vecStateEnum[i]);
+                    VariableSet mdp_state = get<0>(mdp_state_result);
+                    set<string> not_present_variables = get<1>(mdp_state_result);
+                    set<string> abstract_variables = get<2>(mdp_state_result);
                     if (action_parts[1] == "wait") {
                         mdp_future_states[mdp_state] = 1;
                     } else {
@@ -465,9 +606,12 @@ void Mmdp::enumerateFunctions(string fileName) {
                         mdp_future_states = mdp.second->transitionFunction(mdp_state, mdp_action);
                         //                                                r = r + mdp.second->rewardFunction(mdp_state, mdp_action);
                     }
-                    cumulative_future_mdp_states = joinMdpFutureStates(mdp_future_states, cumulative_future_mdp_states,
-                            mmdp_instance_state, mdp.second, index, &no_incongruences, not_present_variables, mdp_state);
+                    pair<VarStateProb, set<string> > join_result = joinMdpFutureStates(mdp_future_states, cumulative_future_mdp_states,
+                            mmdp_instance_state, mdp.second, index, &no_incongruences, not_present_variables, mdp_state,
+                            abstract_variables, old_abstract_variables);
 
+                    cumulative_future_mdp_states = std::get<0>(join_result);
+                    old_abstract_variables = std::get<1>(join_result);
                     if (!no_incongruences) {
                         break;
                     }
@@ -573,9 +717,10 @@ void Mmdp::enumerateGoalAndStartStates() {
         bool is_starting_state = true;
         bool is_goal_state = false;
         for (auto mdp : agent_hmpd_) {
-            pair<VariableSet, set<string> > mdp_state = convertToMdpState(mdp.second, i, state.first);
-            is_starting_state = is_starting_state && mdp.second->isStartingState(mdp_state.first);
-            is_goal_state = is_goal_state || mdp.second->isGoalState(mdp_state.first);
+            tuple<VariableSet, set<string>, set<string> > mdp_state_result = convertToMdpState(mdp.second, i, state.first);
+            VariableSet mdp_state = std::get<0> (mdp_state_result);
+            is_starting_state = is_starting_state && mdp.second->isStartingState(mdp_state);
+            is_goal_state = is_goal_state || mdp.second->isGoalState(mdp_state);
             i++;
         }
 
@@ -621,8 +766,9 @@ int Mmdp::rewardFunction(VariableSet state, string action) {
     new_states = transition[p];
     for (auto s : new_states) {
         for (auto a : agent_hmpd_) {
-            pair<VariableSet, set<string> > mdp_state = convertToMdpState(a.second, index, vecStateEnum[s.first]);
-            if (a.second->isGoalState(mdp_state.first)) {
+            tuple<VariableSet, set<string>, set<string> > mdp_state_result = convertToMdpState(a.second, index, vecStateEnum[s.first]);
+            VariableSet mdp_state = std::get<0>(mdp_state_result);
+            if (a.second->isGoalState(mdp_state)) {
                 reward = reward + 500;
             }
             index++;
@@ -662,9 +808,10 @@ bool Mmdp::isGoalState(VariableSet state) {
     return std::find(goal_states_.begin(), goal_states_.end(), i_state) != goal_states_.end();
 }
 
-pair<VariableSet, set < string >> Mmdp::convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state) {
-    pair<VariableSet, set<string> > result;
+std::tuple<VariableSet, set < string >, set<string> > Mmdp::convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state) {
+    tuple<VariableSet, set<string>, set<string> > result;
     set<string> not_present_variables;
+    set<string> abstract_variables;
     VariableSet mdp_state;
     //    cout<<mmdp_state.toString()<<"\n";
     for (auto mdp_var : mdp->variables) {
@@ -673,19 +820,30 @@ pair<VariableSet, set < string >> Mmdp::convertToMdpState(Hmdp* mdp, int index, 
             actual_var_name = convertToMultiParameter(mdp, mdp_var, index);
         }
         string actual_var_value = mmdp_state.set[actual_var_name];
+        bool not_present = false;
         if (std::find(parameters.begin(), parameters.end(), actual_var_value) != parameters.end()) {
             string agent_parameter = actual_var_value.substr(actual_var_value.length() - 1);
             if (agent_parameter == to_string(index)) { //it's actually a parameter of this mmdp
                 actual_var_value = convertToSingleParameter(actual_var_value, index);
             } else {
+                not_present = true;
                 not_present_variables.insert(actual_var_name);
-                actual_var_value = mdp->varValues.at(mdp_var)[0];
+                actual_var_value = mdp->varValues.at(mdp_var)[0]; //metti un valore a caso per la transizione
+            }
+        }
+        if (!not_present) { //if the value is abstract we consider it as not present, because we might have more accurate info from the
+            //other mdp
+            if (mdp->abstract_states_.find(mdp_var) != mdp->abstract_states_.end()) {
+                for (auto ass : mdp->abstract_states_.at(mdp_var)) {
+                    if (ass.second == actual_var_value) {
+                        abstract_variables.insert(actual_var_name);
+                    }
+                }
             }
         }
         mdp_state.set[mdp_var] = actual_var_value;
     }
-    result.first = mdp_state;
-    result.second = not_present_variables;
+    result = std::make_tuple(mdp_state, not_present_variables, abstract_variables);
     return result;
 }
 
@@ -718,31 +876,68 @@ void Mmdp::assignParametersToMdp(Hmdp* mdp, int index) {
 }
 
 bool Mmdp::isMmdpStateCongruent(VariableSet state) {
-    std::map<string, string> var_values;
+    std::map<string, string> depar_state;
+    map<string, vector<string> > var_abstract_values;
+
 
     for (auto var : state.set) {
-        string actual_value = var.second;
-        if (parametrized_to_original.find(actual_value) != parametrized_to_original.end()) {
-            actual_value = parametrized_to_original[var.second];
+        string par_var = var.first;
+        string par_value = var.second;
+        string original_value = var.second;
+        if (parametrized_to_original.find(par_value) != parametrized_to_original.end()) {
+            original_value = parametrized_to_original[par_value];
         }
-        if (parametrized_to_original.find(var.first) != parametrized_to_original.end()) {
-            if (var_values.find(parametrized_to_original[var.first]) != var_values.end()) {
-                string new_value = var_values[parametrized_to_original[var.first]];
-                if (actual_value != new_value) {
-                    //if it's an abstract state we could allow the values to be different in some instantiations.
-                    if (abstract_states_.find(var.first) != abstract_states_.end()) {
-                        if (abstract_states_.at(var.first).find(actual_value) == abstract_states_.at(var.first).end()
-                                && abstract_states_.at(var.first).find(new_value) == abstract_states_.at(var.first).end()
-                                ) {
-                            return false;
+        //if it's not a parameter than it has to be congruent
+        if (parametrized_to_original.find(par_var) != parametrized_to_original.end()) {
+            string original_var = parametrized_to_original[par_var];
+
+
+            if (depar_state.find(original_var) != depar_state.end()) {
+                string depar_value = depar_state.at(original_var);
+                if (original_value != depar_value) {
+                    //case 1: one of the two values is abstract, while the other is  not.
+                    //in this case if the abstract var range includes the real value it's ok, if not it's incongruent
+                    if (abstract_states_.find(par_var) != abstract_states_.end()) {
+                        vector<string> abstract_values = getAbstractLinkedValues(par_var, par_value);
+                        if (abstract_values.size() == 0) {
+                            abstract_values.push_back(par_value); //variable is abstract but not value
                         }
-                    } else {
-                        return false;
+                        //this is abstract but the original is not
+                        if (var_abstract_values.find(original_var) == var_abstract_values.end()) {
+                            if (std::find(abstract_values.begin(), abstract_values.end(), depar_value) == abstract_values.end()) {
+                                return false;
+                            }
+                        } else {
+                            //both are abstract. In this case the state is congruent if the intersection between the two abstract_values
+                            //is not null. This intersection will also become the next abstract_values for this var.
+                            vector<string> other_abstract_values = var_abstract_values.at(original_var);
+                            vector<string> intersection(10);
+                            std::set_intersection(abstract_values.begin(), abstract_values.end(),
+                                    other_abstract_values.begin(), other_abstract_values.end(),
+                                    intersection.begin());
+                            if (intersection.size() == 0) {
+                                return false;
+                            } else {
+                                var_abstract_values[original_var] = intersection;
+                            }
+
+                        }
                     }
+
                 }
             } else {
-                string par_var = parametrized_to_original[var.first];
-                var_values[par_var] = actual_value;
+                depar_state[original_var] = original_value;
+                //saves states linked to this abstract var
+                if (abstract_states_.find(par_var) != abstract_states_.end()) {
+                    vector<string> abstract_values;
+                    for (auto s : abstract_states_[par_var]) {
+                        if (s.second == par_value) {
+                            abstract_values.push_back(s.first);
+                        }
+                    }
+                    var_abstract_values[original_var] = abstract_values;
+                }
+
             }
         }
     }
@@ -1177,8 +1372,9 @@ int Mmdp::estimateRemainingCost(VariableSet state) {
         }
     }
     for (auto agent : agent_hmpd_) {
-        pair<VariableSet, set<string> > mdp_state = convertToMdpState(agent.second, index, state);
-        if (!agent.second->isGoalState(mdp_state.first)) {
+        tuple<VariableSet, set<string>, set<string> > mdp_state_result = convertToMdpState(agent.second, index, state);
+        VariableSet mdp_state = std::get<0>(mdp_state_result);
+        if (!agent.second->isGoalState(mdp_state)) {
             //not a goal estate. Estimate the cost to reach the goal state
             vector<string> new_action_name_v;
             vector<string> new_module_name_v;
@@ -1247,10 +1443,6 @@ void Mmdp::valueIteration(string fileName, bool rewrite) {
             }
             for (int s = 0; s < vecStateEnum.size(); s++) { //for each enumeration
                 vhiOld[s] = vhi[s];
-                if (s == 12) {
-                    VariableSet v = vecStateEnum[s];
-                    cout << " ";
-                }
                 if (use_cost_ && isGoalState(vecStateEnum[s])) {
                     vhi[s] = estimateRemainingCost(vecStateEnum[s]);
                     //                                        vhi[s] = 0;
@@ -1278,3 +1470,5 @@ void Mmdp::valueIteration(string fileName, bool rewrite) {
         file.close();
     }
 }
+
+

@@ -136,6 +136,11 @@ public:
     map<string, map<string, string> > abstract_states_;
     
     int getBestQ(VariableSet state);
+    
+    VarStateProb getFutureStates(VariableSet state, string action);
+    vector<string> getAbstractLinkedValues(string var, string abstract_value);
+    int getReward(VariableSet state, string action);
+    
 };
 
 #endif /* MDP_H */

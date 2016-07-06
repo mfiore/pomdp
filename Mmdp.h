@@ -15,6 +15,7 @@
 #include "Wait.h"
 #include <set>
 #include "MmdpManager.h"
+#include <tuple>
 
 using namespace std;
 
@@ -52,12 +53,12 @@ public:
 
     VariableSet convertToMmdpState(VariableSet mdp_state, Hmdp* mdp, int index);
 
-    pair<VariableSet, set<string> > convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state);
+    tuple<VariableSet, set<string> , set<string> > convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state);
     void assignParametersToMdp(Hmdp* mdp, int index);
 
-    VarStateProb joinMdpFutureStates(VarStateProb mdp_future_state, VarStateProb cumulative_future_state,
+    pair<VarStateProb, set<string> > joinMdpFutureStates(VarStateProb mdp_future_state, VarStateProb cumulative_future_state,
             VariableSet mmdp_state, Hmdp *mdp, int index, bool *no_incongruences, std::set<string> new_not_present_variables,
-            VariableSet old_single_agent_state);
+            VariableSet old_single_agent_state, set<string> abstract_variables, set<string> old_abstract_variables);
 
     bool isMmdpStateCongruent(VariableSet state);
 
@@ -101,6 +102,9 @@ public:
     int estimateRemainingCost(VariableSet state);
 
     void valueIteration(string fileName, bool rewrite);
+    
+    void testEnumerate(int i, string action);
+
 
 };
 

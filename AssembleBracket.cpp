@@ -33,7 +33,8 @@ AssembleBracket::AssembleBracket() {
     variables.push_back(glue_loc_var_);
 
     std::map<string, std::vector < string>> var_values;
-    //    var_values[agent_loc_var_] = locations;
+    var_values[agent_loc_var_] = locations;
+    var_values[agent_loc_var_].push_back("other_location");
     //    var_values[glue_loc_var_] = locations;
     var_values[glue_loc_var_].push_back(agent_name_);
     var_values[glue_loc_var_].push_back("other_location");
@@ -42,7 +43,7 @@ AssembleBracket::AssembleBracket() {
     var_values[bracket_loc_var_].push_back(agent_name_);
     var_values[bracket_loc_var_].push_back("other_location");
     var_values[bracket_loc_var_].push_back(surface_name_);
-    var_values[bracket_loc_var_].push_back("table");
+    //    var_values[bracket_loc_var_].push_back("table");
     var_values[bracket_loc_var_].push_back("other_agent");
     var_values[surface_status_var_] = statuses;
 
@@ -58,8 +59,14 @@ AssembleBracket::AssembleBracket() {
     abstract_states_[bracket_loc_var_]["surface1"] = "other_location";
     abstract_states_[bracket_loc_var_]["surface2"] = "other_location";
     abstract_states_[bracket_loc_var_]["surface3"] = "other_location";
+    abstract_states_[bracket_loc_var_]["table"] = "other_location";
     abstract_states_[bracket_loc_var_]["agent1"] = "other_agent";
     abstract_states_[bracket_loc_var_]["agent2"] = "other_agent";
+
+    abstract_states_[agent_loc_var_]["surface1"] = "other_location";
+    abstract_states_[agent_loc_var_]["surface2"] = "other_location";
+    abstract_states_[agent_loc_var_]["surface3"] = "other_location";
+    abstract_states_[agent_loc_var_]["table"] = "other_location";
 
     actions.push_back(agent_name_ + "_clean_" + surface_name_);
     actions.push_back(agent_name_ + "_glue_" + surface_name_);
@@ -84,9 +91,9 @@ AssembleBracket::AssembleBracket() {
     parameter_action_place[3] = surface_name_;
 
     vector<string> par_var;
-    //    par_var.push_back(agent_loc_var_);
-    //    parameter_variables[agent_name_] = par_var;
-    //    variable_parameter[par_var[0]] = agent_name_;
+        par_var.push_back(agent_loc_var_);
+        parameter_variables[agent_name_] = par_var;
+        variable_parameter[par_var[0]] = agent_name_;
 
     par_var.clear();
     par_var.push_back(bracket_loc_var_);
@@ -132,8 +139,9 @@ std::map<VariableSet, double> AssembleBracket::transitionFunction(VariableSet st
     VarStateProb future_beliefs;
 
     string glue_location = state.set.at(glue_loc_var_);
-    string agent_location = state.set.at(surface_name_);
+    string agent_location = state.set.at(agent_loc_var_);
     string surface_status = state.set.at(surface_status_var_);
+    string bracket_location = state.set.at(bracket_loc_var_);
 
     vector<string> action_parameters = MdpBasicActions::getActionParameters(action);
     string action_name = action_parameters[1];
@@ -147,8 +155,10 @@ std::map<VariableSet, double> AssembleBracket::transitionFunction(VariableSet st
     } else if (action_name == "clean" && agent_location == surface_name_ && surface_status == "none") {
         state.set[surface_status_var_] = "cleaned";
         future_beliefs[state] = 1;
-    } else if (action_name == "apply" + surface_name_ && agent_location == surface_name_ && surface_status == "glued") {
+    } else if (action_name == "apply"  && agent_location == surface_name_ && surface_status == "glued" 
+            && bracket_location==agent_name_) {
         state.set[surface_status_var_] = "completed";
+        state.set[bracket_loc_var_]=surface_name_;
         future_beliefs[state] = 1;
     } else if (action_name == "move") {
         future_beliefs = MdpBasicActions::applyMove(agent_loc_var_, action_parameters[2], state);
@@ -162,8 +172,8 @@ std::map<VariableSet, double> AssembleBracket::transitionFunction(VariableSet st
 }
 
 bool AssembleBracket::isStartingState(VariableSet state) {
-    return state.set[surface_status_var_] != "completed"
-            && state.set[bracket_loc_var_] == "table";
+    return state.set[surface_status_var_] != "completed";
+    //            && state.set[bracket_loc_var_] == "table";
 
 }
 

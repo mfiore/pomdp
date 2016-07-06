@@ -37,10 +37,9 @@ double Hmdp::getHierarchicReward(VariableSet set, Hmdp* super_hmdp) {
     //    int i = convertHierarchicState(parametrized_set);
     double r;
     if (hierarchic_reward_.find(i) == hierarchic_reward_.end()) {
-        r=use_cost_? 1000 : 0;
-    }
-    else {
-        r=hierarchic_reward_.at(i);
+        r = use_cost_ ? 1000 : 0;
+    } else {
+        r = hierarchic_reward_.at(i);
     }
     return r;
 }
@@ -118,9 +117,6 @@ std::map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet original
     for (int g : goal_states_) {
         pair<int, int> hierachic_input{i, g};
         double prob = hierarchic_transition_[hierachic_input];
-        if (prob != 0) {
-            cout << "";
-        }
         if (prob != 0 && abs(prob) <= 1) {
             VariableSet depar_set = convertToDeparametrizedState(vecStateEnum[g], original_set);
             temp_result[depar_set] = abs(prob);
@@ -187,8 +183,8 @@ void Hmdp::calculateHierarchicReward() {
                 b(s) = 1;
             }
         }
-//        cout<<a<<"\n";
-//        cout<<b<<"\n";
+        //        cout<<a<<"\n";
+        //        cout<<b<<"\n";
         Eigen::BiCGSTAB<Eigen::SparseMatrix<double> > solver;
         a.makeCompressed();
         solver.compute(a);
@@ -478,7 +474,7 @@ void Hmdp::simulate(int n, VariableSet initial_state) {
             cout << "State: \n";
             cout << depar_s.toString() << "\n";
 
-                  if (i ==6) {
+            if (i == 6) {
                 cout << "";
                 //                printQValues(vecStateEnum[s.first]);
             }
@@ -676,3 +672,5 @@ VariableSet Hmdp::convertToParametrizedState(VariableSet s, Hmdp* super_mdp) {
 VariableSet Hmdp::convertToParametrizedState(VariableSet parameter_set) {
     return Mdp::convertToParametrizedState(parameter_set);
 } //converts a state space to it's parametrized version
+
+

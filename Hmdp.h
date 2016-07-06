@@ -122,6 +122,7 @@ public:
     virtual VariableSet convertToParametrizedState(VariableSet parameter_set, Hmdp* super_mdp); //converts a state space to it's parametrized version
 
     
+    
 };
 
 #endif	/* HMDP_H */

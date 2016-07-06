@@ -42,8 +42,9 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
         //contains only transition with non zero rewards.
         if (reward.find(rInput) != reward.end()) {
             currentReward = reward[rInput];
-        } else {
-            currentReward = 0;
+        }
+        else {
+            currentReward=use_cost_? 1000:0;
         }
         PairStateAction transitionInput{i, action};
         StateProb futureBeliefs = transition[transitionInput];
@@ -59,7 +60,7 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
         PairStateAction qInput{i, action};
         double havNew;
         if (use_cost_) {
-            havNew = 1 + sum;
+            havNew = currentReward + sum;
         } else {
             havNew = currentReward + 0.3 * sum; //0.3 weights the future rewards
         }
@@ -508,7 +509,6 @@ string Mdp::findValue(string variable, vector<string> possible_values) {
     //we privilege real possible values over abstract variables. This is needed because in some cases we might have an abstract state
     //encompassing several values (ex. location1, location2, location3) and then another value set to a parameter
     if (abstract_states_.find(variable) != abstract_states_.end()) {
-
         for (string v : possible_values) {
             if (abstract_states_[variable].find(v) != abstract_states_[variable].end()) {
                 return abstract_states_[variable][v];
@@ -528,27 +528,38 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
         vector<string> par_key;
         vector<string> possible_values;
 
-        if (original_to_parametrized.find(el.first) != original_to_parametrized.end()) {
-            par_key = original_to_parametrized[el.first];
-        }
+        //check if the value is a parameter.
         if (original_to_parametrized.find(el.second) != original_to_parametrized.end()) {
             possible_values = original_to_parametrized[el.second];
         }
-        possible_values.push_back(el.second);
+        possible_values.push_back(el.second); //the original value is always a possibility, but it has a minor priority
+
+        //check if it's a parameter variable
+        if (original_to_parametrized.find(el.first) != original_to_parametrized.end()) {
+            par_key = original_to_parametrized[el.first];
+        }
+
         //if it's a parameter variable
         if (par_key.size() > 0) {
             for (string key : par_key) {
-//                if (vs_new.set.find(key) == vs_new.set.end()) {
-                    string value = findValue(key, possible_values);
-                    if (value == "") return VariableSet();
-                    vs_new.set[key] = value;
-//                }
+                //                if (vs_new.set.find(key) == vs_new.set.end()) {
+                string value = findValue(key, possible_values);
+                if (value == "") {
+                    cout << "WARNING! NO VALUE FOUND\n";
+                    return VariableSet();
+                }
+                vs_new.set[key] = value;
+                //                }
             }
         }
+        //check if it's a variable
         if (std::find(variables.begin(), variables.end(), el.first) != variables.end()) {
             if (vs_new.set.find(el.first) == vs_new.set.end()) {
                 string value = findValue(el.first, possible_values);
-                if (value == "") return VariableSet();
+                if (value == "") {
+                    cout << "WARNING! NO VALUE FOUND\n";
+                    return VariableSet();
+                }
                 vs_new.set[el.first] = value;
             }
         }
@@ -572,19 +583,25 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
 
             vector<string> possible_abstract_values;
             for (auto abstract : abstract_states_[s.first]) {
-                if (abstract.second == s.second) {
+                if (abstract.second == s.second) { //if it's an abstract value
                     possible_abstract_values.push_back(abstract.first);
                 }
             }
-            //look for parameter value inside variable range
             bool found_value = false;
+            //if there is a parameter value with the same value of this abstract state it takes precedence normally. So if we have an abstract
+            //state which can assume different value and one of these is a parameter, we want to look for an abstract value which is 
+            //not that parameter. For example other_location => (surface1, surface2, surface3) and surface1 is also a parameter, assigned
+            //to surface. If the real deparametrized value was "surface1" we would expect to have "surface" has value of this var in the mdp.
+            //if it's other location it means it's another one (surface1, surface2, surface3)
             for (string av : possible_abstract_values) {
-                if (original_to_parametrized.find(av) == original_to_parametrized.end()) {
+                if (original_to_parametrized.find(av) == original_to_parametrized.end()) { //if the abstract value is not a parameter
                     found_value = true;
                     actual_value = av;
                     break;
                 } else {
-                    string par = original_to_parametrized.at(av)[0]; //ATTENTION: reducing vector could generate an error. Should parse the list
+                    string par = original_to_parametrized.at(av)[0]; //if the abstract value is also a parameter
+                    //if it's a parameter we take it only if it's not a value of this variable 
+                    //ex surface => surface1 but the current variable can't assume the value surface
                     if (std::find(varValues.at(s.first).begin(), varValues.at(s.first).end(), par) == varValues.at(s.first).end()) {
                         found_value = true;
                         actual_value = av;
@@ -593,14 +610,12 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
                 }
             }
             if (found_value) {
-                is_this_abstract = true;
+                is_this_abstract = true; //we sign this because we will substitute them with real values if we have them
                 is_abstract_actual_key.insert(actual_key);
 
-            }
-            else if (!found_value && possible_abstract_values.size() > 0) {
+            } else if (!found_value && possible_abstract_values.size() > 0) { //if not found value we take just one random?
                 is_this_abstract = true;
                 is_abstract_actual_key.insert(actual_key);
-
                 actual_value = possible_abstract_values[0];
             }
 
@@ -609,9 +624,11 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
         if (parametrized_to_original.find(actual_value) != parametrized_to_original.end()) {
             actual_value = parametrized_to_original[actual_value];
         }
-        bool assigned_value=false;
+        bool assigned_value = false;
 
         if (set.set.find(actual_key) != set.set.end()) {
+            //this is the case where we had 2 variables in the mdp assigned to the same real value (for ex. two parameter variables)
+            //and only one of those had an abstract value. In this case we take the non abstract
             if (is_abstract_actual_key.find(actual_key) != is_abstract_actual_key.end() && !is_this_abstract) {
                 set.set[actual_key] = actual_value;
                 is_abstract_actual_key.erase(is_abstract_actual_key.find(actual_key));
@@ -620,7 +637,7 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
             set.set[actual_key] = actual_value;
             assigned_value = true;
         }
-        if (!assigned_value && is_abstract_actual_key.find(actual_key)!=is_abstract_actual_key.end()) {
+        if (!assigned_value && is_abstract_actual_key.find(actual_key) != is_abstract_actual_key.end()) {
             is_abstract_actual_key.erase(is_abstract_actual_key.find(actual_key));
         }
     }
@@ -730,4 +747,39 @@ int Mdp::getBestQ(VariableSet state) {
         }
     }
     return best;
+}
+
+VarStateProb Mdp::getFutureStates(VariableSet state, string action) {
+    VariableSet v_par = convertToParametrizedState(state);
+    VarStateProb result;
+    PairStateAction p;
+    p.first = mapStateEnum.at(v_par);
+    p.second = action;
+    StateProb fs = transition[p];
+    for (auto s : fs) {
+        result[vecStateEnum[s.first]] = s.second;
+    }
+    return result;
+
+}
+
+vector<string> Mdp::getAbstractLinkedValues(string var, string abstract_value) {
+    vector<string> result;
+    if (abstract_states_.find(var) != abstract_states_.end()) {
+        for (auto s : abstract_states_[var]) {
+            if (s.second == abstract_value) {
+                result.push_back(s.first);
+            }
+        }
+    }
+    return result;
+
+}
+
+int Mdp::getReward(VariableSet state, string action) {
+    VariableSet v_par=convertToParametrizedState(state);
+    PairStateAction p;
+    p.first=mapStateEnum.at(v_par);
+    p.second=action;
+    return reward.at(p);
 }
