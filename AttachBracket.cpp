@@ -90,7 +90,7 @@ AttachBracket::AttachBracket(const AttachBracket& orig) {
 }
 
 AttachBracket::~AttachBracket() {
-    delete hierarchy_map_[agent_name_ + "_get_" + bracket_name_];
+//    delete hierarchy_map_[agent_name_ + "_get_" + bracket_name_];
 
 }
 

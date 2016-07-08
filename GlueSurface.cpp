@@ -55,7 +55,7 @@ GlueSurface::GlueSurface() {
     actions.push_back(agent_name_ + "_get_" + glue_name_);
     actions.push_back(agent_name_ + "_move_" + surface_name_);
     actions.push_back(agent_name_ + "_glue_" + surface_name_);
-    hierarchy_map_[agent_name_ + "_get_" + glue_name_] = new GetObject();
+    hierarchy_map_[agent_name_ + "_get_" + glue_name_]= new GetObject();
 
     this->actions = actions;
 

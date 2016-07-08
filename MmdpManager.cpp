@@ -13,7 +13,8 @@
 
 #include "MmdpManager.h"
 
-MmdpManager::MmdpManager(vector<map<string, Hmdp*>> hmdp_map) : hmdp_map_(hmdp_map) {
+
+MmdpManager::MmdpManager(){
 }
 
 MmdpManager::MmdpManager(const MmdpManager& orig) {
@@ -28,8 +29,8 @@ Hmdp* MmdpManager::getMmdp(string name, string action_name, bool rewrite, bool f
     } else {
         if (name == "handover") {
             if (hmdp_map_[0].find("handover") != hmdp_map_[0].end()) {
-                Hmdp* h=hmdp_map_[0].at("handover");
-                h->create(action_name,rewrite,first);
+                Hmdp* h = hmdp_map_[0].at("handover");
+                h->create(action_name, rewrite, first);
                 return h;
             }
         } else {
@@ -51,8 +52,20 @@ Hmdp* MmdpManager::getMmdp(string name, string action_name, bool rewrite, bool f
             sub_mmdp->create(action_name, rewrite, first);
             return mmdp_map_[name];
         }
-    } 
+    }
 
+}
+
+Hmdp * MmdpManager::getMdp(string name, string action_name, bool rewrite, bool first) {
+    if (mmdp_map_.find(name) != mmdp_map_.end()) {
+        return mmdp_map_[name];
+    } else {
+        Hmdp *h = hmdp_map_[0].at(name);
+        h->create(action_name, rewrite, first);
+        mmdp_map_[name] = h;
+        return h;
+
+    }
 }
 
 

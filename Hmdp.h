@@ -6,7 +6,7 @@
  */
 
 #ifndef HMDP_H
-#define	HMDP_H
+#define HMDP_H
 
 #include "Mdp.h"
 #include <map>
@@ -21,11 +21,11 @@
 #include "StringOperations.h"
 #include <unordered_set>
 #include <stdlib.h> 
+//#include "MmdpManager.h"
 
 using namespace std;
 
 class Hmdp : public Mdp {
-
 public:
     typedef std::map<string, Hmdp*> HmdpMap;
 
@@ -36,7 +36,7 @@ public:
     //gets the hierarchic reward from a certain state. The "i" version is not actually needed
     double getHierarchicReward(int i);
     double getHierarchicReward(VariableSet state, Hmdp* super_hmdp);
-    
+
     //gets the hierarchic transition from a certain state. As before, the i version is not needed.
     //the version including an action is used for simulation purposes, when we want to know the resulting state of
     //applying an action in a hierarchical mdp setting. The VariableSet state is in the original space and is returned
@@ -44,13 +44,13 @@ public:
     std::map<int, double> getHierarchicTransition(int s);
     std::map<VariableSet, double> getHierarchicTransition(VariableSet s, Hmdp* super_hmdp);
     std::map<VariableSet, double> getHierarchicTransition(VariableSet set, string action, Hmdp* super_hmdp);
-    
+
     //converts the current state space to the one of the caller (meaning the mdp at the higher level of hierarchy which called
     //the current mdp). original_set is the higher level original state space (needed because some variables might not exist
     //the current mdp, and we will fill them with the originalvalues). temp_results is the current state space of this mdp
-    std::map<VariableSet,double> convertToHigherState(VariableSet original_set, std::map<VariableSet, double> temp_result);
+    std::map<VariableSet, double> convertToHigherState(VariableSet original_set, std::map<VariableSet, double> temp_result);
 
-    
+
     //asigns the parameters of an action from it's name (e.g. we call the TakeObject MDP with action human_take_take
     //parameters will be: agent -> human, object -> tape). We provide a basic one which split an action in a vector 
     //separting it's parts with an '_' and considers action as agent_action_object_support (where object and support are optional)
@@ -59,9 +59,9 @@ public:
 
     //returns the action chosen from a hierarchy. The action will be returned as the parametrized version. To get the original one
     //we need to call getDeparametrizedAction
-   virtual  string chooseHierarchicAction(VariableSet state);
+    virtual string chooseHierarchicAction(VariableSet state);
     string chooseHierarchicAction(int s);
-    
+
     //simulate n steps on the initial state using the policy
     void simulate(int n, VariableSet initial_state);
 
@@ -73,11 +73,11 @@ public:
     //if first=true it won't calculate hierarchical reward and transition, saving some time (it's usable only on the first node
     //of a hierarchical mdp architecture)
     virtual void create(string name, bool rewrite, bool first);
-    
+
     Hmdp* getLowestActiveModule();
-    
-//private:
- 
+
+    //private:
+
 
     //calculates hierarchic reward and transition
     void calculateHierarchicReward();
@@ -85,7 +85,7 @@ public:
 
     //converts a state (already parametrized! so we need to call the convertToParametrizedState before) to the current state
     //in practice it just eliminates variables that are not needed in the current mdp
-//    int convertHierarchicState(VariableSet state);
+    //    int convertHierarchicState(VariableSet state);
 
     //loads and write hierarchical mdp files
     void readHierarchical(string fileName);
@@ -94,22 +94,22 @@ public:
     //contains the hierarchic transition and reward
     std::map<pair<int, int>, double> hierarchic_transition_;
     std::map<int, double> hierarchic_reward_;
-    
+
     //active module tracks the current operating MDP in the hierachy ("this" if the actual object is active)
     string active_module;
 
-//protected:
+    //protected:
     vector<int> starting_states_;
     vector<int> goal_states_;
 
-    
+
     virtual void enumerateFunctions(string fileName) override;
     virtual void enumerateGoalAndStartStates();
 
     bool isAlreadyCreated();
     bool is_created_;
 
-    
+
     void printGoalStates();
 
     void printHierarchy();
@@ -117,13 +117,27 @@ public:
     virtual string getDeparametrizedAction(string action_name) override;
 
     VariableSet fixAbstractStates(VariableSet sub_set, Hmdp* sub_mmdp);
-    
+
     virtual VariableSet convertToParametrizedState(VariableSet parameter_set) override; //converts a state space to it's parametrized version
     virtual VariableSet convertToParametrizedState(VariableSet parameter_set, Hmdp* super_mdp); //converts a state space to it's parametrized version
 
+    string hierarchic_file_;
+    bool is_hierarchy_cached_;
     
+    std::map<VariableSet, double> getHierarchicTransitionFromFile(int i, VariableSet original_set);
+    double getHierarchicRewardFromFile(int i);
+
     
+    void loadHierarchicInCache();
+    void emptyHierarchicCache();
+    
+    virtual void testEnumerate(int i, string action);
+
+    
+
 };
 
-#endif	/* HMDP_H */
+
+
+#endif /* HMDP_H */
 

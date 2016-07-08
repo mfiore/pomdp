@@ -11,10 +11,12 @@
  * Created on June 16, 2016, 2:54 PM
  */
 
-#include "Hmdp.h"
+//#include "Hmdp.h"
 #include "Mmdp.h"
 #include <vector>
 #include <map>
+#include <string>
+#include "StringOperations.h"
 
 using namespace std;
 
@@ -23,14 +25,17 @@ using namespace std;
 
 class MmdpManager {
 public:
-    MmdpManager(vector<map<string, Hmdp*> > hmdp_map);
+    MmdpManager();
     MmdpManager(const MmdpManager& orig);
     virtual ~MmdpManager();
 
 
     Hmdp* getMmdp(string name, string action_name, bool rewrite, bool first);
-private:
+    Hmdp* getMdp(string name, string action_name, bool rewrite, bool first);
+
     vector<map<string, Hmdp*> > hmdp_map_;
+
+private:
     map<string, Hmdp*> mmdp_map_;
     
 

@@ -32,9 +32,6 @@ Mdp::~Mdp() {
 int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
     double maxValue = use_cost_ ? 10000 : 0;
     for (string action : actions) { //for every action
-        if (i == 12 && action == "agentp1_handover_gluebottle_agentp0") {
-            cout << "";
-        }
         PairStateAction rInput{i, action}; //calculate the reward of this state with this action
 
         int currentReward;
@@ -63,9 +60,6 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
             havNew = currentReward + sum;
         } else {
             havNew = currentReward + 0.3 * sum; //0.3 weights the future rewards
-        }
-        if (havNew < 10) {
-            cout << "";
         }
         qValue[qInput] = havNew; //update the human action value
         if (qValue[qInput] > maxValue && !use_cost_) {
@@ -573,12 +567,13 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
     std::set<string> is_abstract_actual_key;
     for (auto s : parameter_set.set) {
         bool is_this_abstract = false;
-
+        bool was_this_abstract=false;
         string actual_key = s.first;
         string actual_value = s.second;
         if (parametrized_to_original.find(s.first) != parametrized_to_original.end()) {
             actual_key = parametrized_to_original[s.first];
         }
+        was_this_abstract=is_abstract_actual_key.find(actual_key)!=is_abstract_actual_key.end();
         if (abstract_states_.find(s.first) != abstract_states_.end()) {
 
             vector<string> possible_abstract_values;
@@ -637,7 +632,8 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
             set.set[actual_key] = actual_value;
             assigned_value = true;
         }
-        if (!assigned_value && is_abstract_actual_key.find(actual_key) != is_abstract_actual_key.end()) {
+        if (!assigned_value && is_abstract_actual_key.find(actual_key) != is_abstract_actual_key.end()
+                && !was_this_abstract) {
             is_abstract_actual_key.erase(is_abstract_actual_key.find(actual_key));
         }
     }
