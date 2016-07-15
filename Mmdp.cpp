@@ -788,9 +788,9 @@ std::tuple<VariableSet, set < string >, set<string> > Mmdp::convertToMdpState(Hm
         if (mdp->variable_parameter.find(mdp_var) != mdp->variable_parameter.end()) {
             actual_var_name = convertToMultiParameter(mdp, mdp_var, index);
         }
-        string original_var_name=actual_var_name;
-        if (parametrized_to_original.find(actual_var_name)!=parametrized_to_original.end()) {
-            original_var_name=parametrized_to_original[actual_var_name];
+        string original_var_name = actual_var_name;
+        if (parametrized_to_original.find(actual_var_name) != parametrized_to_original.end()) {
+            original_var_name = parametrized_to_original[actual_var_name];
         }
         string actual_var_value = mmdp_state.set[actual_var_name];
         bool my_parameter = false;
@@ -1308,7 +1308,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     VariableSet this_state = convertToParametrizedState(state);
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
-//                        printQValues(this_state);
+        //                        printQValues(this_state);
         string action = chooseAction(mapStateEnum.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];
@@ -1473,4 +1473,21 @@ void Mmdp::valueIteration(string fileName, bool rewrite) {
     }
 }
 
-
+string Mmdp::chooseAction(int s) {
+    double max = use_cost_ ? 10000 : -1;
+    string max_action;
+    for (string a : actions) {
+        double qv = getQValue(s, a);
+        if (qv > max && !use_cost_) {
+            max = qv;
+            max_action = a;
+        } else if (qv < max && use_cost_) {
+            max = qv;
+            max_action = a;
+        }
+        else if (qv==max && a.find("wait")!=a.npos){
+            max_action=a;
+        }
+    }
+    return max_action;
+}

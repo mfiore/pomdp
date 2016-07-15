@@ -54,7 +54,7 @@ public:
 
     VariableSet convertToMmdpState(VariableSet mdp_state, Hmdp* mdp, int index);
 
-    tuple<VariableSet, set<string> , set<string> > convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state);
+    tuple<VariableSet, set<string>, set<string> > convertToMdpState(Hmdp* mdp, int index, VariableSet mmdp_state);
     void assignParametersToMdp(Hmdp* mdp, int index);
 
     pair<VarStateProb, set<string> > joinMdpFutureStates(VarStateProb mdp_future_state, VarStateProb cumulative_future_state,
@@ -103,10 +103,11 @@ public:
     int estimateRemainingCost(VariableSet state);
 
     void valueIteration(string fileName, bool rewrite);
-    
+
     void testEnumerate(int i, string action);
-    
-    
+
+    string chooseAction(int s);
+
 
 
 };

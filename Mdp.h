@@ -109,7 +109,7 @@ public:
 
     double getQValue(int s, string action);
 
-    string chooseAction(int s);
+    virtual string chooseAction(int s);
 
 
     virtual VariableSet convertToParametrizedState(VariableSet parameter_set); //converts a state space to it's parametrized version
