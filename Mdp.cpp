@@ -79,9 +79,6 @@ int Mdp::bellmanBackup(int i, std::vector<double> vhi) {
 void Mdp::valueIteration(string fileName, bool rewrite) {
     ifstream inputFile(fileName);
 
-    if (fileName == "agent_glue_surface-agent_glue_surface.policy") {
-        cout << "";
-    }
     int starting_value = use_cost_ ? 100000 : 0;
     std::vector<double> vhi(vecStateEnum.size(), starting_value); //vhi mantains the predicted reward in a state following the optimal policy
     std::vector<double> vhiOld(vecStateEnum.size(), starting_value);
@@ -90,7 +87,7 @@ void Mdp::valueIteration(string fileName, bool rewrite) {
         string line;
         for (int i = 0; i < vecStateEnum.size(); i++) {
             getline(inputFile, line);
-            vector<double> q_line = StringOperations::split(line, ' ');
+            std::vector<double> q_line = StringOperations::split(line, ' ');
             int j = 0;
             for (string action : actions) {
                 PairStateAction qInput{i, action};
@@ -108,7 +105,6 @@ void Mdp::valueIteration(string fileName, bool rewrite) {
 
             for (int s = 0; s < vecStateEnum.size(); s++) { //for each enumeration
                 vhiOld[s] = vhi[s];
-
 
                 if (use_cost_ && isGoalState(vecStateEnum[s])) {
                     vhi[s] = 0;
@@ -316,7 +312,7 @@ bool Mdp::readMdp(string fileName, bool rewrite) {
 
                 string line;
                 getline(inputFile, line);
-                vector<string> transition_v = StringOperations::stringSplit(line, ' ');
+                std::vector<string> transition_v = StringOperations::stringSplit(line, ' ');
                 int j = 0;
 
                 PairStateAction bTransitionInput{i, action};
@@ -368,7 +364,7 @@ void Mdp::enumerateFunctions(string fileName) {
             transition[transitionInput] = transitionOutput;
 
             PairStateAction rewardInput{i, action};
-            reward[rewardInput] = rewardFunction(vecStateEnum[i], action);
+            reward[rewardInput] = use_cost_? 1: rewardFunction(vecStateEnum[i], action);
             file << reward[rewardInput] << "\n";
         }
     }
@@ -494,7 +490,7 @@ void Mdp::assignParameters(std::map<string, string> instance) {
     }
 }
 
-string Mdp::findValue(string variable, vector<string> possible_values) {
+string Mdp::findValue(string variable, std::vector<string> possible_values) {
     for (string v : possible_values) {
         if (std::find(varValues.at(variable).begin(), varValues.at(variable).end(), v) != varValues.at(variable).end()) {
             return v;
@@ -519,8 +515,8 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
     VariableSet vs_new;
     //for each variable in the set
     for (auto el : s.set) {
-        vector<string> par_key;
-        vector<string> possible_values;
+        std::vector<string> par_key;
+        std::vector<string> possible_values;
 
         //check if the value is a parameter.
         if (original_to_parametrized.find(el.second) != original_to_parametrized.end()) {
@@ -576,7 +572,7 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
         was_this_abstract=is_abstract_actual_key.find(actual_key)!=is_abstract_actual_key.end();
         if (abstract_states_.find(s.first) != abstract_states_.end()) {
 
-            vector<string> possible_abstract_values;
+            std::vector<string> possible_abstract_values;
             for (auto abstract : abstract_states_[s.first]) {
                 if (abstract.second == s.second) { //if it's an abstract value
                     possible_abstract_values.push_back(abstract.first);
@@ -652,7 +648,7 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
 
 string Mdp::getDeparametrizedAction(string action_name) {
 
-    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    std::vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
     stringstream depar_action_name;
     for (int i = 0; i < action_parts.size() - 1; i++) {
         string s = action_parts[i];
@@ -674,7 +670,7 @@ string Mdp::getDeparametrizedAction(string action_name) {
 }
 
 string Mdp::getParametrizedAction(string action_name) {
-    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    std::vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
     stringstream param_action_name;
 
     param_action_name << "agent_" << action_parts[1];
@@ -759,8 +755,8 @@ VarStateProb Mdp::getFutureStates(VariableSet state, string action) {
 
 }
 
-vector<string> Mdp::getAbstractLinkedValues(string var, string abstract_value) {
-    vector<string> result;
+std::vector<string> Mdp::getAbstractLinkedValues(string var, string abstract_value) {
+    std::vector<string> result;
     if (abstract_states_.find(var) != abstract_states_.end()) {
         for (auto s : abstract_states_[var]) {
             if (s.second == abstract_value) {

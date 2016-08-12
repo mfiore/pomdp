@@ -30,7 +30,6 @@
 #include "StringOperations.h"
 #include <set>
 
-using namespace std;
 
 typedef pair<int, string> PairStateAction;
 typedef std::map<int, double> StateProb;
@@ -72,8 +71,8 @@ public:
     std::map<string, string> parameter_instances; //current set up of parameters (ex. object_name=grey_tape)
     std::map<string, std::vector<string> > parameter_variables; //each parameter can be link to variables (ex. object_name is linked to object_isAt)
     std::map<string, string> variable_parameter; //inverse link
-    std::map<string, std::vector<string> > original_to_parametrized; //map that converts a var to it's parametrized version (e.g. greyTape_isAt -> object_isAt)
-    //it's a vector because theoretically more parameters could be set to the same value (e.g. greyTape_isAt -> object1_isAt, object2_isAt)
+    std::map<string, std::vector<string> > original_to_parametrized; //std::map that converts a var to it's parametrized version (e.g. greyTape_isAt -> object_isAt)
+    //it's a std::vector because theoretically more parameters could be set to the same value (e.g. greyTape_isAt -> object1_isAt, object2_isAt)
     std::map<string, string > parametrized_to_original; //opposite of the one upper
 
     /*position of the parameters in an action. Ex. human_take_bottle: agent -> 1, object ->3
@@ -124,7 +123,7 @@ public:
 
     void printParameters();
 
-    string findValue(string variable, vector<string> possible_values);
+    string findValue(string variable, std::vector<string> possible_values);
 
     bool use_cost_;
 
@@ -133,12 +132,12 @@ public:
     virtual bool isStartingState(VariableSet state) = 0;
     virtual bool isGoalState(VariableSet state) = 0;
     
-    map<string, map<string, string> > abstract_states_;
+    std::map<string, std::map<string, string> > abstract_states_;
     
     int getBestQ(VariableSet state);
     
     VarStateProb getFutureStates(VariableSet state, string action);
-    vector<string> getAbstractLinkedValues(string var, string abstract_value);
+    std::vector<string> getAbstractLinkedValues(string var, string abstract_value);
     int getReward(VariableSet state, string action);
     
 };

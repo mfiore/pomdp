@@ -38,7 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/AssembleBracket.o \
 	${OBJECTDIR}/AttachBracket.o \
 	${OBJECTDIR}/CleanSurface.o \
-	${OBJECTDIR}/GetLaundry.o \
+	${OBJECTDIR}/DrinkWater.o \
 	${OBJECTDIR}/GetObject.o \
 	${OBJECTDIR}/GlueSurface.o \
 	${OBJECTDIR}/Handover.o \
@@ -52,12 +52,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/PriorityQueue.o \
 	${OBJECTDIR}/ReorderTable.o \
 	${OBJECTDIR}/Saphari.o \
-	${OBJECTDIR}/StartWashingMachine.o \
-	${OBJECTDIR}/TakeObject.o \
 	${OBJECTDIR}/VariableSet.o \
-	${OBJECTDIR}/Wait.o \
-	${OBJECTDIR}/WashLaundry.o \
-	${OBJECTDIR}/WashLaundryFull.o
+	${OBJECTDIR}/Wait.o
 
 
 # C Compiler Flags
@@ -101,10 +97,10 @@ ${OBJECTDIR}/CleanSurface.o: CleanSurface.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CleanSurface.o CleanSurface.cpp
 
-${OBJECTDIR}/GetLaundry.o: GetLaundry.cpp 
+${OBJECTDIR}/DrinkWater.o: DrinkWater.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetLaundry.o GetLaundry.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/DrinkWater.o DrinkWater.cpp
 
 ${OBJECTDIR}/GetObject.o: GetObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -171,16 +167,6 @@ ${OBJECTDIR}/Saphari.o: Saphari.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Saphari.o Saphari.cpp
 
-${OBJECTDIR}/StartWashingMachine.o: StartWashingMachine.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/StartWashingMachine.o StartWashingMachine.cpp
-
-${OBJECTDIR}/TakeObject.o: TakeObject.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TakeObject.o TakeObject.cpp
-
 ${OBJECTDIR}/VariableSet.o: VariableSet.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -190,16 +176,6 @@ ${OBJECTDIR}/Wait.o: Wait.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
-
-${OBJECTDIR}/WashLaundry.o: WashLaundry.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundry.o WashLaundry.cpp
-
-${OBJECTDIR}/WashLaundryFull.o: WashLaundryFull.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundryFull.o WashLaundryFull.cpp
 
 # Subprojects
 .build-subprojects:

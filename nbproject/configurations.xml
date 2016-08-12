@@ -11,6 +11,12 @@
                    projectFiles="true">
     </logicalFolder>
     <logicalFolder name="f1" displayName="Source Files" projectFiles="true">
+      <logicalFolder name="f2" displayName="DrinkReorderTest" projectFiles="true">
+        <itemPath>DrinkWater.cpp</itemPath>
+        <itemPath>DrinkWater.h</itemPath>
+        <itemPath>ReorderTable.cpp</itemPath>
+        <itemPath>ReorderTable.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="models" projectFiles="true">
         <logicalFolder name="f1" displayName="Saphari" projectFiles="true">
           <itemPath>AssembleBracket.cpp</itemPath>
@@ -28,23 +34,11 @@
           <itemPath>Saphari.cpp</itemPath>
           <itemPath>Saphari.h</itemPath>
         </logicalFolder>
-        <itemPath>GetLaundry.cpp</itemPath>
-        <itemPath>GetLaundry.h</itemPath>
         <itemPath>MdpBasicActions.h</itemPath>
         <itemPath>PlaceObject.cpp</itemPath>
         <itemPath>PlaceObject.h</itemPath>
-        <itemPath>ReorderTable.cpp</itemPath>
-        <itemPath>ReorderTable.h</itemPath>
-        <itemPath>StartWashingMachine.cpp</itemPath>
-        <itemPath>StartWashingMachine.h</itemPath>
-        <itemPath>TakeObject.cpp</itemPath>
-        <itemPath>TakeObject.h</itemPath>
         <itemPath>Wait.cpp</itemPath>
         <itemPath>Wait.h</itemPath>
-        <itemPath>WashLaundry.cpp</itemPath>
-        <itemPath>WashLaundry.h</itemPath>
-        <itemPath>WashLaundryFull.cpp</itemPath>
-        <itemPath>WashLaundryFull.h</itemPath>
       </logicalFolder>
       <itemPath>Hmdp.cpp</itemPath>
       <itemPath>Hmdp.h</itemPath>
@@ -108,9 +102,9 @@
       </item>
       <item path="CleanSurface.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
+      <item path="DrinkWater.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
+      <item path="DrinkWater.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="GetObject.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -168,15 +162,7 @@
       </item>
       <item path="Saphari.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="StartWashingMachine.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="StartWashingMachine.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="TakeObject.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="TakeObject.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -185,14 +171,6 @@
       <item path="Wait.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Wait.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="WashLaundry.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="WashLaundry.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="WashLaundryFull.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="WashLaundryFull.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tinyxml2.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -231,9 +209,9 @@
       </item>
       <item path="CleanSurface.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GetLaundry.cpp" ex="false" tool="1" flavor2="0">
+      <item path="DrinkWater.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="GetLaundry.h" ex="false" tool="3" flavor2="0">
+      <item path="DrinkWater.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="GetObject.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -291,15 +269,7 @@
       </item>
       <item path="Saphari.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="StartWashingMachine.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="StartWashingMachine.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="TakeObject.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="TakeObject.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="VariableSet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -308,14 +278,6 @@
       <item path="Wait.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Wait.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="WashLaundry.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="WashLaundry.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="WashLaundryFull.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="WashLaundryFull.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tinyxml2.h" ex="false" tool="3" flavor2="0">
       </item>
