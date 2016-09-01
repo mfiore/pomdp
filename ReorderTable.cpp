@@ -18,9 +18,9 @@ ReorderTable::ReorderTable() {
     bottle_loc_var_ = "bottle_isAt";
     glass_loc_var_ = "glass_isAt";
 
-    variables.push_back(agent_loc_var_);
-    variables.push_back(bottle_loc_var_);
-    variables.push_back(glass_loc_var_);
+    variables_.push_back(agent_loc_var_);
+    variables_.push_back(bottle_loc_var_);
+    variables_.push_back(glass_loc_var_);
 
     agent_name_ = "agent";
     glass_name_ = "glass";
@@ -36,7 +36,7 @@ ReorderTable::ReorderTable() {
     var_values[bottle_loc_var_].push_back(agent_name_);
     var_values[glass_loc_var_] = locations;
     var_values[glass_loc_var_].push_back(agent_name_);
-    this->varValues = var_values;
+    this->var_values_ = var_values;
 
     std::vector<string> actions;
     for (string l : locations) {
@@ -48,9 +48,9 @@ ReorderTable::ReorderTable() {
     actions.push_back(agent_name_ + "_take_" + bottle_name_);
 
 
-    this->actions = actions;
+    this->actions_ = actions;
 
-    name = "agent_reorder_table";
+    name_ = "agent_reorder_table";
 
 }
 

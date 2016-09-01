@@ -34,29 +34,29 @@ void Mmdp::createJointMdpVariables() {
     for (auto mdp : agent_hmpd_) {
         cout << mdp.first << "\n";
         string i_s = "p" + boost::lexical_cast<string>(i);
-        for (auto var : mdp.second->variables) {
+        for (auto var : mdp.second->variables_) {
             //convert values to multiparameter if needed
             vector<string> actual_var_values;
-            for (auto value : mdp.second->varValues.at(var)) {
+            for (auto value : mdp.second->var_values_.at(var)) {
                 string actual_value = value;
-                if (std::find(mdp.second->parameters.begin(), mdp.second->parameters.end(), value) != mdp.second->parameters.end()) {
+                if (std::find(mdp.second->parameters_.begin(), mdp.second->parameters_.end(), value) != mdp.second->parameters_.end()) {
                     actual_value = actual_value + i_s;
                 }
                 actual_var_values.push_back(actual_value);
             }
 
             string actual_var = var;
-            if (mdp.second->variable_parameter.find(var) != mdp.second->variable_parameter.end()) {
+            if (mdp.second->variable_parameter_.find(var) != mdp.second->variable_parameter_.end()) {
                 actual_var = convertToMultiParameter(mdp.second, var, i);
-                variables.push_back(actual_var);
-                varValues[actual_var] = actual_var_values;
-            } else if (std::find(variables.begin(), variables.end(), actual_var) == variables.end()) {
-                variables.push_back(actual_var);
-                varValues[actual_var] = actual_var_values;
+                variables_.push_back(actual_var);
+                var_values_[actual_var] = actual_var_values;
+            } else if (std::find(variables_.begin(), variables_.end(), actual_var) == variables_.end()) {
+                variables_.push_back(actual_var);
+                var_values_[actual_var] = actual_var_values;
             } else {
                 for (string actual_value : actual_var_values) {
-                    if (std::find(varValues.at(actual_var).begin(), varValues.at(actual_var).end(), actual_value) == varValues.at(actual_var).end()) {
-                        varValues.at(actual_var).push_back(actual_value);
+                    if (std::find(var_values_.at(actual_var).begin(), var_values_.at(actual_var).end(), actual_value) == var_values_.at(actual_var).end()) {
+                        var_values_.at(actual_var).push_back(actual_value);
                     }
                 }
                 //push back only values that aren't there
@@ -67,41 +67,41 @@ void Mmdp::createJointMdpVariables() {
                 map<string, string> new_states_values = mdp.second->abstract_states_[var];
                 for (auto v : states_values) {
                     string actual_value = v.second;
-                    if (std::find(mdp.second->parameters.begin(), mdp.second->parameters.end(), v.second) != mdp.second->parameters.end()) {
+                    if (std::find(mdp.second->parameters_.begin(), mdp.second->parameters_.end(), v.second) != mdp.second->parameters_.end()) {
                         actual_value = actual_value + i_s;
                     }
                     new_states_values[v.first] = actual_value;
                 }
                 string actual_name = var;
-                if (mdp.second->variable_parameter.find(var) != mdp.second->variable_parameter.end()) {
+                if (mdp.second->variable_parameter_.find(var) != mdp.second->variable_parameter_.end()) {
                     actual_name = convertToMultiParameter(mdp.second, var, i);
                 }
                 abstract_states_[actual_name] = new_states_values;
             }
         }
-        for (auto par : mdp.second->parameters) {
+        for (auto par : mdp.second->parameters_) {
             string new_par_name = par + i_s;
-            parameters.push_back(new_par_name);
-            for (auto par_var : mdp.second->parameter_variables[par]) {
+            parameters_.push_back(new_par_name);
+            for (auto par_var : mdp.second->parameter_variables_[par]) {
                 string new_var_name = convertToMultiParameter(mdp.second, par_var, i);
-                parameter_variables[new_par_name].push_back(new_var_name);
+                parameter_variables_[new_par_name].push_back(new_var_name);
                 //              }
             }
         }
         vector<string> mdp_param_actions;
-        for (string action : mdp.second->actions) {
+        for (string action : mdp.second->actions_) {
             vector<string> action_parts = StringOperations::stringSplit(action, '_');
             string new_action = "";
             for (int i = 0; i < action_parts.size() - 1; i++) {
                 string part = action_parts[i];
-                if (std::find(mdp.second->parameters.begin(), mdp.second->parameters.end(), part) != mdp.second->parameters.end()) {
+                if (std::find(mdp.second->parameters_.begin(), mdp.second->parameters_.end(), part) != mdp.second->parameters_.end()) {
                     new_action = new_action + part + i_s + "_";
                 } else {
                     new_action = new_action + part + "_";
                 }
             }
             string part = action_parts[action_parts.size() - 1];
-            if (std::find(mdp.second->parameters.begin(), mdp.second->parameters.end(), part) != mdp.second->parameters.end()) {
+            if (std::find(mdp.second->parameters_.begin(), mdp.second->parameters_.end(), part) != mdp.second->parameters_.end()) {
                 new_action = new_action + part + i_s;
             } else {
                 new_action = new_action + part;
@@ -141,11 +141,11 @@ void Mmdp::createJointMdpVariables() {
             }
         }
         if (std::find(forbidden_actions_.begin(), forbidden_actions_.end(), action_name) == forbidden_actions_.end()) {
-            actions.push_back(action_name);
+            actions_.push_back(action_name);
         }
     }
     vector<string> new_actions;
-    for (string a : actions) {
+    for (string a : actions_) {
         vector<string> agent_parts = StringOperations::stringSplit(a, '-');
         for (string agent_action : agent_parts) {
             vector<string> action_parts = StringOperations::stringSplit(agent_action, '_');
@@ -169,7 +169,7 @@ void Mmdp::createJointMdpVariables() {
         }
     }
     for (string a : new_actions) {
-        actions.push_back(a);
+        actions_.push_back(a);
     }
 
 }
@@ -178,7 +178,7 @@ void Mmdp::createSubMdpNames(string name) {
     vector<string> single_names = StringOperations::stringSplit(name, '-');
     int i = 0;
     for (auto mdp : agent_hmpd_) {
-        mdp.second->name = single_names[i];
+        mdp.second->name_ = single_names[i];
         i++;
     }
 }
@@ -191,20 +191,20 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
 
 
         for (auto a : agent_hmpd_) {
-            name = StringOperations::addToString(name, a.second->name, '-');
+            name_ = StringOperations::addToString(name_, a.second->name_, '-');
         }
 
 
-        parametrized_name = action_name;
+        parametrized_name_ = action_name;
 
-        cout << "Creating " << parametrized_name << "\n";
+        cout << "Creating " << parametrized_name_ << "\n";
 
         std::set<string> changed_mdps;
         for (auto agent : agent_hmpd_) {
             changed_mdps.insert(agent.first);
         }
         createJointMdpVariables();
-        assignParametersFromActionName(parametrized_name, changed_mdps, map<string, string>());
+        assignParametersFromActionName(parametrized_name_, changed_mdps, map<string, string>());
 
 
 
@@ -213,8 +213,8 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
 
         enumerateStates();
 
-        for (string a : actions) {
-            if (name == "agent_apply_bracket_surface-agent_get_object" && a == "agentp0_get_bracketp0-agentp1_move_table") {
+        for (string a : actions_) {
+            if (name_ == "agent_apply_bracket_surface-agent_get_object" && a == "agentp0_get_bracketp0-agentp1_move_table") {
                 cout << "";
             }
 
@@ -233,16 +233,16 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
 
         string fileName;
         if (hasParametersInCommon().size() > 0) {
-            fileName = parametrized_name;
+            fileName = parametrized_name_;
         } else {
-            fileName = name;
+            fileName = name_;
         }
 
         bool has_read = readMdp(fileName + ".pomdp", rewrite);
 
         enumerateGoalAndStartStates();
 
-        assignParametersFromActionName(parametrized_name, changed_mdps, map<string, string>());
+        assignParametersFromActionName(parametrized_name_, changed_mdps, map<string, string>());
 
         if (!has_read) {
             enumerateFunctions(fileName + ".pomdp");
@@ -284,15 +284,15 @@ void Mmdp::assignParametersFromActionName(string action_name, set<string> change
             string i_s = "p" + boost::lexical_cast<string>(i);
             vector<string> action_parts = StringOperations::stringSplit(single_actions[i], '_');
             for (int j = 0; j < action_parts.size(); j++) {
-                if (agent.second->parameter_action_place.find(j) != agent.second->parameter_action_place.end()) {
-                    instance[agent.second->parameter_action_place[j] + i_s] = action_parts[j];
+                if (agent.second->parameter_action_place_.find(j) != agent.second->parameter_action_place_.end()) {
+                    instance[agent.second->parameter_action_place_[j] + i_s] = action_parts[j];
                 }
             }
         }
         i++;
     }
 
-    parametrized_name = action_name;
+    parametrized_name_ = action_name;
     assignParameters(instance);
     i = 0;
     for (auto mdp : agent_hmpd_) {
@@ -300,7 +300,7 @@ void Mmdp::assignParametersFromActionName(string action_name, set<string> change
             i++;
             continue;
         }
-        mdp.second->parametrized_name = single_actions[i];
+        mdp.second->parametrized_name_ = single_actions[i];
         assignParametersToMdp(mdp.second, i);
         i++;
     }
@@ -309,10 +309,10 @@ void Mmdp::assignParametersFromActionName(string action_name, set<string> change
 string Mmdp::convertToSingleParameter(string var_name, int index) {
     string i_s = "p" + boost::lexical_cast<string>(index);
     string actual_var_name = var_name;
-    if (variable_parameter.find(var_name) != variable_parameter.end()) {
-        string par = variable_parameter[var_name];
+    if (variable_parameter_.find(var_name) != variable_parameter_.end()) {
+        string par = variable_parameter_[var_name];
         actual_var_name.replace(actual_var_name.find(par, 0), par.length(), par.substr(0, par.length() - i_s.length()));
-    } else if (std::find(parameters.begin(), parameters.end(), var_name) != parameters.end()) {
+    } else if (std::find(parameters_.begin(), parameters_.end(), var_name) != parameters_.end()) {
         string par = var_name;
         actual_var_name.replace(actual_var_name.find(par, 0), par.length(), par.substr(0, par.length() - i_s.length()));
     }
@@ -323,11 +323,11 @@ string Mmdp::convertToSingleParameter(string var_name, int index) {
 string Mmdp::convertToMultiParameter(Mdp* mdp, string var_name, int i) {
     string i_s = "p" + boost::lexical_cast<string>(i);
     string actual_var_name = var_name;
-    if (mdp->variable_parameter.find(var_name) != mdp->variable_parameter.end()) {
-        string par = mdp->variable_parameter[var_name];
+    if (mdp->variable_parameter_.find(var_name) != mdp->variable_parameter_.end()) {
+        string par = mdp->variable_parameter_[var_name];
         actual_var_name.replace(actual_var_name.find(par, 0), par.length(), par + i_s);
         return actual_var_name;
-    } else if (std::find(mdp->parameters.begin(), mdp->parameters.end(), var_name) != mdp->parameters.end()) {
+    } else if (std::find(mdp->parameters_.begin(), mdp->parameters_.end(), var_name) != mdp->parameters_.end()) {
         return actual_var_name + i_s;
     } else return actual_var_name;
 }
@@ -421,7 +421,7 @@ pair<VarStateProb, set<string> > Mmdp::joinMdpFutureStates(VarStateProb mdp_futu
 }
 
 void Mmdp::testEnumerate(int i, string action) {
-    if (!isMmdpStateCongruent(vecStateEnum[i])) return;
+    if (!isMmdpStateCongruent(vec_state_enum_[i])) return;
     string depar_action = getDeparametrizedAction(action);
     double r = 0;
     StateProb future_beliefs;
@@ -444,7 +444,7 @@ void Mmdp::testEnumerate(int i, string action) {
         }
     }
 
-    VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
+    VariableSet v_deparam = convertToDeparametrizedState(vec_state_enum_[i], VariableSet());
 
     if (module_name == "this") {
         //if it's not a hierarchical action we have to check the state from each mdp, and look 
@@ -453,14 +453,14 @@ void Mmdp::testEnumerate(int i, string action) {
         vector<string> single_actions = StringOperations::stringSplit(action, '-');
         int index = 0;
         VarStateProb cumulative_future_mdp_states; //this will hold the joint mdp future states in the instance space
-        VariableSet mmdp_instance_state = convertToDeparametrizedState(vecStateEnum[i], VariableSet()); //will need it to check for inconsistencies
+        VariableSet mmdp_instance_state = convertToDeparametrizedState(vec_state_enum_[i], VariableSet()); //will need it to check for inconsistencies
 
         set<string> old_abstract_variables;
         for (auto mdp : agent_hmpd_) {
 
             vector<string> action_parts = StringOperations::stringSplit(single_actions[index], '_');
             VarStateProb mdp_future_states;
-            tuple<VariableSet, set<string>, set<string > > mdp_state_result = convertToMdpState(mdp.second, index, vecStateEnum[i]);
+            tuple<VariableSet, set<string>, set<string > > mdp_state_result = convertToMdpState(mdp.second, index, vec_state_enum_[i]);
             VariableSet mdp_state = std::get<0>(mdp_state_result);
             set<string> not_present_variables = std::get<1>(mdp_state_result);
             set<string> abstract_variables = std::get<2>(mdp_state_result);
@@ -488,8 +488,8 @@ void Mmdp::testEnumerate(int i, string action) {
             for (auto state : cumulative_future_mdp_states) {
                 VariableSet converted_state = convertToParametrizedState(state.first);
                 //                        cout << converted_state.toString() << endl;
-                int i = mapStateEnum.at(converted_state);
-                future_beliefs[mapStateEnum.at(converted_state)] = state.second;
+                int i = map_state_enum_.at(converted_state);
+                future_beliefs[map_state_enum_.at(converted_state)] = state.second;
             }
         } else {
         }
@@ -499,7 +499,7 @@ void Mmdp::testEnumerate(int i, string action) {
             h = hierarchy_map_[module_name];
             Mmdp *mmdp_h = (Mmdp*) h;
 
-            mmdp_h->assignParametersFromActionName(depar_action, changed_mdps, parameter_instances);
+            mmdp_h->assignParametersFromActionName(depar_action, changed_mdps, parameter_instances_);
         } else {
             h = hierarchy_map_[module_name];
             h->assignParametersFromActionName(depar_action);
@@ -510,27 +510,27 @@ void Mmdp::testEnumerate(int i, string action) {
         for (auto temp_b : temp_future_beliefs) {
             VariableSet fb = temp_b.first;
             VariableSet param_fb = convertToParametrizedState(fb);
-            for (auto v : vecStateEnum[i].set) {
+            for (auto v : vec_state_enum_[i].set) {
                 if (param_fb.set.find(v.first) == param_fb.set.end()) {
                     param_fb.set[v.first] = v.second;
                 }
             }
 
-            future_beliefs[mapStateEnum.at(param_fb)] = temp_b.second;
+            future_beliefs[map_state_enum_.at(param_fb)] = temp_b.second;
         }
-        VariableSet vstry = vecStateEnum[i];
+        VariableSet vstry = vec_state_enum_[i];
 
     }
 
     for (auto belief : future_beliefs) {
-        VariableSet v = vecStateEnum[belief.first];
+        VariableSet v = vec_state_enum_[belief.first];
         cout << v.toString() << "\n";
     }
 
     if (module_name != "this") {
         r = h->getHierarchicReward(v_deparam, this);
     } else if (no_incongruences) {
-        r = use_cost_ ? 1 : rewardFunction(vecStateEnum[i], action);
+        r = use_cost_ ? 1 : rewardFunction(vec_state_enum_[i], action);
 
     } else {
         r = use_cost_ ? 1000 : 0;
@@ -544,7 +544,7 @@ void Mmdp::enumerateFunctions(string fileName) {
 
     int nline = 0;
 
-    for (string action : actions) {
+    for (string action : actions_) {
         string depar_action = getDeparametrizedAction(action);
 
 
@@ -561,7 +561,7 @@ void Mmdp::enumerateFunctions(string fileName) {
             if (std::find(joint_actions_.begin(), joint_actions_.end(), action) == joint_actions_.end()) {
                 h = hierarchy_map_[module_name];
                 Mmdp *mmdp_h = (Mmdp*) h;
-                mmdp_h->assignParametersFromActionName(depar_action, changed_mdps, parameter_instances);
+                mmdp_h->assignParametersFromActionName(depar_action, changed_mdps, parameter_instances_);
             } else {
                 h = hierarchy_map_[module_name];
                 h->assignParametersFromActionName(depar_action);
@@ -569,10 +569,10 @@ void Mmdp::enumerateFunctions(string fileName) {
             h->loadHierarchicInCache();
         }
 
-        for (int i = 0; i < vecStateEnum.size(); i++) {
+        for (int i = 0; i < vec_state_enum_.size(); i++) {
 
-            if (!isMmdpStateCongruent(vecStateEnum[i])) continue;
-            VariableSet v_deparam = convertToDeparametrizedState(vecStateEnum[i], VariableSet());
+            if (!isMmdpStateCongruent(vec_state_enum_[i])) continue;
+            VariableSet v_deparam = convertToDeparametrizedState(vec_state_enum_[i], VariableSet());
 
 
             double r = 0;
@@ -593,7 +593,7 @@ void Mmdp::enumerateFunctions(string fileName) {
 
                     vector<string> action_parts = StringOperations::stringSplit(single_actions[index], '_');
                     VarStateProb mdp_future_states;
-                    tuple<VariableSet, set<string>, set<string> > mdp_state_result = convertToMdpState(mdp.second, index, vecStateEnum[i]);
+                    tuple<VariableSet, set<string>, set<string> > mdp_state_result = convertToMdpState(mdp.second, index, vec_state_enum_[i]);
                     VariableSet mdp_state = get<0>(mdp_state_result);
                     set<string> not_present_variables = get<1>(mdp_state_result);
                     set<string> abstract_variables = get<2>(mdp_state_result);
@@ -620,8 +620,8 @@ void Mmdp::enumerateFunctions(string fileName) {
                     //convert the cumulative_future_state to parameter state
                     for (auto state : cumulative_future_mdp_states) {
                         VariableSet converted_state = convertToParametrizedState(state.first);
-                        int i = mapStateEnum.at(converted_state);
-                        future_beliefs[mapStateEnum.at(converted_state)] = state.second;
+                        int i = map_state_enum_.at(converted_state);
+                        future_beliefs[map_state_enum_.at(converted_state)] = state.second;
                     }
                 } else {
                 }
@@ -632,13 +632,13 @@ void Mmdp::enumerateFunctions(string fileName) {
                 for (auto temp_b : temp_future_beliefs) {
                     VariableSet fb = temp_b.first;
                     VariableSet param_fb = convertToParametrizedState(fb);
-                    for (auto v : vecStateEnum[i].set) {
+                    for (auto v : vec_state_enum_[i].set) {
                         if (param_fb.set.find(v.first) == param_fb.set.end()) {
                             param_fb.set[v.first] = v.second;
                         }
                     }
 
-                    future_beliefs[mapStateEnum.at(param_fb)] = temp_b.second;
+                    future_beliefs[map_state_enum_.at(param_fb)] = temp_b.second;
                 }
             }
 
@@ -649,19 +649,19 @@ void Mmdp::enumerateFunctions(string fileName) {
 
                 file << s << " " << belief.second << " ";
                 PairStateAction bTransitionInput{s, action};
-                std::vector<int> previousBeliefs = predecessors[bTransitionInput];
+                std::vector<int> previousBeliefs = predecessors_[bTransitionInput];
                 previousBeliefs.push_back(i);
-                predecessors[bTransitionInput] = previousBeliefs;
+                predecessors_[bTransitionInput] = previousBeliefs;
             }
             file << "\n";
             nline++;
-            transition[transitionInput] = future_beliefs;
+            transition_[transitionInput] = future_beliefs;
 
             if (module_name != "this") {
                 //                r = use_cost_ ? h->getHierarchicReward(v_deparam, this) : rewardFunction(vecStateEnum[i], action);
                 r = h->getHierarchicReward(v_deparam, this);
             } else if (no_incongruences) {
-                r = use_cost_ ? 1 : rewardFunction(vecStateEnum[i], action);
+                r = use_cost_ ? 1 : rewardFunction(vec_state_enum_[i], action);
 
             } else {
                 r = use_cost_ ? 1000 : 0;
@@ -669,7 +669,7 @@ void Mmdp::enumerateFunctions(string fileName) {
             }
 
             PairStateAction rewardInput{i, action};
-            reward[rewardInput] = r;
+            reward_[rewardInput] = r;
             file << r << "\n";
             nline++;
         }
@@ -681,7 +681,7 @@ void Mmdp::enumerateFunctions(string fileName) {
 }
 
 void Mmdp::enumerateGoalAndStartStates() {
-    for (auto state : mapStateEnum) {
+    for (auto state : map_state_enum_) {
         int i = 0;
         bool is_starting_state = true;
         bool is_goal_state = false;
@@ -731,11 +731,11 @@ int Mmdp::rewardFunction(VariableSet state, string action) {
     //    if (sub_mdp_details.first[0] == "this") C{
     StateProb new_states;
 
-    PairStateAction p{mapStateEnum.at(state), action};
-    new_states = transition[p];
+    PairStateAction p{map_state_enum_.at(state), action};
+    new_states = transition_[p];
     for (auto s : new_states) {
         for (auto a : agent_hmpd_) {
-            tuple<VariableSet, set<string>, set<string> > mdp_state_result = convertToMdpState(a.second, index, vecStateEnum[s.first]);
+            tuple<VariableSet, set<string>, set<string> > mdp_state_result = convertToMdpState(a.second, index, vec_state_enum_[s.first]);
             VariableSet mdp_state = std::get<0>(mdp_state_result);
             if (a.second->isGoalState(mdp_state)) {
                 reward = reward + 500;
@@ -768,12 +768,12 @@ int Mmdp::rewardFunction(VariableSet state, string action) {
 }
 
 bool Mmdp::isStartingState(VariableSet state) {
-    int i_state = mapStateEnum.at(state);
+    int i_state = map_state_enum_.at(state);
     return std::find(starting_states_.begin(), starting_states_.end(), i_state) != starting_states_.end();
 }
 
 bool Mmdp::isGoalState(VariableSet state) {
-    int i_state = mapStateEnum.at(state);
+    int i_state = map_state_enum_.at(state);
     return std::find(goal_states_.begin(), goal_states_.end(), i_state) != goal_states_.end();
 }
 
@@ -783,24 +783,24 @@ std::tuple<VariableSet, set < string >, set<string> > Mmdp::convertToMdpState(Hm
     set<string> abstract_variables;
     VariableSet mdp_state;
     //    cout<<mmdp_state.toString()<<"\n";
-    for (auto mdp_var : mdp->variables) {
+    for (auto mdp_var : mdp->variables_) {
         string actual_var_name = mdp_var;
-        if (mdp->variable_parameter.find(mdp_var) != mdp->variable_parameter.end()) {
+        if (mdp->variable_parameter_.find(mdp_var) != mdp->variable_parameter_.end()) {
             actual_var_name = convertToMultiParameter(mdp, mdp_var, index);
         }
         string original_var_name = actual_var_name;
-        if (parametrized_to_original.find(actual_var_name) != parametrized_to_original.end()) {
-            original_var_name = parametrized_to_original[actual_var_name];
+        if (parametrized_to_original_.find(actual_var_name) != parametrized_to_original_.end()) {
+            original_var_name = parametrized_to_original_[actual_var_name];
         }
         string actual_var_value = mmdp_state.set[actual_var_name];
         bool my_parameter = false;
-        if (std::find(parameters.begin(), parameters.end(), actual_var_value) != parameters.end()) {
+        if (std::find(parameters_.begin(), parameters_.end(), actual_var_value) != parameters_.end()) {
             string agent_parameter = actual_var_value.substr(actual_var_value.length() - 1);
             if (agent_parameter == to_string(index)) { //it's actually a parameter of this mmdp
                 actual_var_value = convertToSingleParameter(actual_var_value, index);
                 my_parameter = true;
             } else {
-                actual_var_value = parametrized_to_original.at(actual_var_value);
+                actual_var_value = parametrized_to_original_.at(actual_var_value);
             }
         }
         if (mdp->abstract_states_.find(mdp_var) != mdp->abstract_states_.end() && !my_parameter) {
@@ -819,7 +819,7 @@ std::tuple<VariableSet, set < string >, set<string> > Mmdp::convertToMdpState(Hm
         }
         //            }
 
-        if (std::find(mdp->varValues.at(mdp_var).begin(), mdp->varValues.at(mdp_var).end(), actual_var_value) == mdp->varValues.at(mdp_var).end()) {
+        if (std::find(mdp->var_values_.at(mdp_var).begin(), mdp->var_values_.at(mdp_var).end(), actual_var_value) == mdp->var_values_.at(mdp_var).end()) {
             cout << "WARNING! ABSTRACT VALUE NOT FOUND IN CONVERTTOMDPSTATE\n";
 
         }
@@ -855,10 +855,10 @@ VariableSet Mmdp::convertToMmdpState(VariableSet mdp_state, Hmdp* mdp, int index
     for (auto var : mdp_state.set) {
         string actual_var_name = var.first;
         string actual_var_value = var.second;
-        if (mdp->variable_parameter.find(actual_var_name) != mdp->variable_parameter.end()) {
+        if (mdp->variable_parameter_.find(actual_var_name) != mdp->variable_parameter_.end()) {
             actual_var_name = convertToMultiParameter(mdp, actual_var_name, index);
         }
-        if (std::find(mdp->parameters.begin(), mdp->parameters.end(), actual_var_value) != mdp->parameters.end()) {
+        if (std::find(mdp->parameters_.begin(), mdp->parameters_.end(), actual_var_value) != mdp->parameters_.end()) {
             actual_var_value = convertToMultiParameter(mdp, actual_var_value, index);
         }
         mmdp_state.set[actual_var_name] = actual_var_value;
@@ -868,9 +868,9 @@ VariableSet Mmdp::convertToMmdpState(VariableSet mdp_state, Hmdp* mdp, int index
 
 void Mmdp::assignParametersToMdp(Hmdp* mdp, int index) {
     std::map<string, string> instance;
-    for (auto parameter : mdp->parameters) {
+    for (auto parameter : mdp->parameters_) {
         string actual_par = convertToMultiParameter(mdp, parameter, index);
-        instance[parameter] = parameter_instances[actual_par];
+        instance[parameter] = parameter_instances_[actual_par];
     }
     //    for (auto i : instance) {
     //        cout << i.first << " " << i.second << "\n";
@@ -887,12 +887,12 @@ bool Mmdp::isMmdpStateCongruent(VariableSet state) {
         string par_var = var.first;
         string par_value = var.second;
         string original_value = var.second;
-        if (parametrized_to_original.find(par_value) != parametrized_to_original.end()) {
-            original_value = parametrized_to_original[par_value];
+        if (parametrized_to_original_.find(par_value) != parametrized_to_original_.end()) {
+            original_value = parametrized_to_original_[par_value];
         }
         //if it's not a parameter than it has to be congruent
-        if (parametrized_to_original.find(par_var) != parametrized_to_original.end()) {
-            string original_var = parametrized_to_original[par_var];
+        if (parametrized_to_original_.find(par_var) != parametrized_to_original_.end()) {
+            string original_var = parametrized_to_original_[par_var];
 
 
             if (depar_state.find(original_var) != depar_state.end()) {
@@ -967,8 +967,8 @@ string Mmdp::getDeparametrizedAction(string action_name) {
         for (int j = 0; j < action_parts.size() - 1; j++) {
             string s = action_parts[j];
             s = convertToMultiParameter(mdp[i], s, i);
-            if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
-                depar_action_name << parametrized_to_original[s] << "_";
+            if (parametrized_to_original_.find(s) != parametrized_to_original_.end()) {
+                depar_action_name << parametrized_to_original_[s] << "_";
             } else {
                 depar_action_name << s << "_";
             }
@@ -977,8 +977,8 @@ string Mmdp::getDeparametrizedAction(string action_name) {
         string s = action_parts[action_parts.size() - 1];
         s = convertToMultiParameter(mdp[i], s, i);
 
-        if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
-            depar_action_name << parametrized_to_original[s];
+        if (parametrized_to_original_.find(s) != parametrized_to_original_.end()) {
+            depar_action_name << parametrized_to_original_[s];
         } else {
             depar_action_name << s;
         }
@@ -994,7 +994,7 @@ string Mmdp::convertToSingleMdpAction(Mdp *mdp, int index, string mmdp_action) {
     vector<string> action_parts = StringOperations::stringSplit(mmdp_action, '_');
     stringstream ss;
     for (int i = 0; i < action_parts.size() - 1; i++) {
-        if (std::find(parameters.begin(), parameters.end(), action_parts[i]) != parameters.end()) {
+        if (std::find(parameters_.begin(), parameters_.end(), action_parts[i]) != parameters_.end()) {
             string actual_parameter = convertToSingleParameter(action_parts[i], index);
             ss << actual_parameter << "_";
         } else {
@@ -1002,7 +1002,7 @@ string Mmdp::convertToSingleMdpAction(Mdp *mdp, int index, string mmdp_action) {
         }
     }
     int i = action_parts.size() - 1;
-    if (std::find(parameters.begin(), parameters.end(), action_parts[i]) != parameters.end()) {
+    if (std::find(parameters_.begin(), parameters_.end(), action_parts[i]) != parameters_.end()) {
         string actual_parameter = convertToSingleParameter(action_parts[i], index);
         ss << actual_parameter;
     } else {
@@ -1016,7 +1016,7 @@ void Mmdp::createSubMmdps() {
     //for each hierarchical action we create a submdp:
     //if the action is hierarchical for the agent_mdp will be the linked sub_hmdp 
     //else the action for the agent_mdp will be the same hmdp
-    for (string a : actions) {
+    for (string a : actions_) {
 
         string generic_name = ""; //the generic name is the name of the modules.
         string specific_name = ""; //the specific name is the name of actions
@@ -1026,7 +1026,7 @@ void Mmdp::createSubMmdps() {
 
         vector<string> single_actions_depar = StringOperations::stringSplit(depar_action, '-');
         vector<string> single_actions = StringOperations::stringSplit(a, '-');
-        vector<string> parametrized_sub_names = StringOperations::stringSplit(parametrized_name, '-');
+        vector<string> parametrized_sub_names = StringOperations::stringSplit(parametrized_name_, '-');
         int action_index = 0;
         bool is_hierarchical = false;
         Mmdp* sub_mmdp = new Mmdp(mmdp_manager_);
@@ -1052,15 +1052,15 @@ void Mmdp::createSubMmdps() {
                     sub_mmdp->agent_hmpd_[mdp_agent.first] = this_agent_hmdp->hierarchy_map_[sub_action];
 
                     is_hierarchical = true;
-                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name, '-');
-                    generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name, '-');
+                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name_, '-');
+                    generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name_, '-');
 
                 } else {
                     //                    this_agent_hmdp->assignParametersFromActionName(single_actions_depar[action_index]);
 
                     sub_mmdp->agent_hmpd_[mdp_agent.first] = this_agent_hmdp;
-                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name, '-');
-                    generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name, '-');
+                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name_, '-');
+                    generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name_, '-');
                 }
                 //                sub_mmdp->assignParametersFromActionName()
 
@@ -1105,8 +1105,8 @@ vector<string> Mmdp::hasParametersInCommon(map<string, Hmdp*> agents) {
     for (auto agent1 : agents) {
         for (auto agent2 : agents) {
             if (agent1.first != agent2.first) {
-                map<string, string> this_instance = agent1.second->parameter_instances;
-                map<string, string> other_instance = agent2.second->parameter_instances;
+                map<string, string> this_instance = agent1.second->parameter_instances_;
+                map<string, string> other_instance = agent2.second->parameter_instances_;
                 //if they have a parameter in common //EDIT when two parameters had the same value but different names
                 // (ex. brakcet= bracket1 and object=bracket1)
                 //it didn't work
@@ -1125,10 +1125,10 @@ vector<string> Mmdp::hasParametersInCommon(map<string, Hmdp*> agents) {
                     //                    }
                 }
                 //but also if a parameter is assigned to a variable of the other submmdps
-                for (auto original : agent1.second->parametrized_to_original) {
-                    if (std::find(agent2.second->variables.begin(), agent2.second->variables.end(), original.second) != agent2.second->variables.end()) {
-                        if (agent1.second->variable_parameter.find(original.first) != agent1.second->variable_parameter.end()) {
-                            parameters_in_common.push_back(agent1.second->variable_parameter.at(original.first));
+                for (auto original : agent1.second->parametrized_to_original_) {
+                    if (std::find(agent2.second->variables_.begin(), agent2.second->variables_.end(), original.second) != agent2.second->variables_.end()) {
+                        if (agent1.second->variable_parameter_.find(original.first) != agent1.second->variable_parameter_.end()) {
+                            parameters_in_common.push_back(agent1.second->variable_parameter_.at(original.first));
                         } else {
 
                             parameters_in_common.push_back(original.first);
@@ -1150,10 +1150,10 @@ bool Mmdp::readMdp(string fileName, bool rewrite) {
     int nline = 0;
     ifstream inputFile(fileName);
     if (inputFile.good() && !rewrite) {
-        for (string action : actions) {
+        for (string action : actions_) {
 
-            for (int i = 0; i < vecStateEnum.size(); i++) {
-                if (!isMmdpStateCongruent(vecStateEnum[i])) {
+            for (int i = 0; i < vec_state_enum_.size(); i++) {
+                if (!isMmdpStateCongruent(vec_state_enum_[i])) {
                     continue;
                 }
                 vector<string> single_actions = StringOperations::stringSplit(action, '-');
@@ -1171,19 +1171,19 @@ bool Mmdp::readMdp(string fileName, bool rewrite) {
 
                 while (j < transition_v.size()) {
                     transitionOutput[stoi(transition_v[j])] = stod(transition_v[j + 1]);
-                    std::vector<int> previousBeliefs = predecessors[bTransitionInput];
+                    std::vector<int> previousBeliefs = predecessors_[bTransitionInput];
                     previousBeliefs.push_back(stoi(transition_v[j]));
-                    predecessors[bTransitionInput] = previousBeliefs;
+                    predecessors_[bTransitionInput] = previousBeliefs;
 
                     j = j + 2;
                 }
 
-                transition[transitionInput] = transitionOutput;
+                transition_[transitionInput] = transitionOutput;
 
                 getline(inputFile, line);
                 nline++;
                 PairStateAction rewardInput = {i, action};
-                reward[rewardInput] = stoi(line);
+                reward_[rewardInput] = stoi(line);
             }
         }
         inputFile.close();
@@ -1220,7 +1220,7 @@ pair<vector<string>, set<string> > Mmdp::getSubMdpName(string action) {
 
     string depar_action = getDeparametrizedAction(action);
     vector<string> depar_single_actions = StringOperations::stringSplit(depar_action, '-');
-    vector<string> parametrized_this_name = StringOperations::stringSplit(parametrized_name, '-');
+    vector<string> parametrized_this_name = StringOperations::stringSplit(parametrized_name_, '-');
     map<string, Hmdp*> agent_hmdps;
 
     map<string, vector<string> > agent_single_actions;
@@ -1241,14 +1241,14 @@ pair<vector<string>, set<string> > Mmdp::getSubMdpName(string action) {
             if (this_agent_hmdp->hierarchy_map_.find(sub_action) != this_agent_hmdp->hierarchy_map_.end()) {
                 this_agent_hmdp->hierarchy_map_[sub_action]->assignParametersFromActionName(depar_single_actions[action_index]);
                 is_hierarchical = true;
-                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name, '-');
-                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name, '-');
+                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name_, '-');
+                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name_, '-');
                 agent_hmdps[mdp_agent.first] = this_agent_hmdp->hierarchy_map_[sub_action];
                 changed_mdps.insert(mdp_agent.first);
             } else {
                 this_agent_hmdp->assignParametersFromActionName(parametrized_this_name[action_index]);
-                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name, '-');
-                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name, '-');
+                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name_, '-');
+                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name_, '-');
                 agent_hmdps[mdp_agent.first] = this_agent_hmdp;
             }
         }
@@ -1271,7 +1271,7 @@ pair<vector<string>, set<string> > Mmdp::getSubMdpName(string action) {
             module_name = "";
             for (string p : parameters_in_common) {
                 for (auto a : agent_hmpd_) {
-                    for (auto place : agent_hmdps[a.first]->parameter_action_place) {
+                    for (auto place : agent_hmdps[a.first]->parameter_action_place_) {
                         if (place.second == p) {
                             //                            agent_single_actions[a.first][place.first] = agent_hmdps[a.first]->parameter_instances.at(p);
                             agent_single_actions[a.first][place.first] = agent_single_actions[a.first][place.first] + "c";
@@ -1309,7 +1309,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
     if (isGoalState(this_state)) return "";
     if (active_module == "this") {
         //                        printQValues(this_state);
-        string action = chooseAction(mapStateEnum.at(this_state));
+        string action = chooseAction(map_state_enum_.at(this_state));
         pair<vector<string>, set<string> > sub_mdp_details = getSubMdpName(action);
         string module_name = sub_mdp_details.first[0];
         set<string> changed_mdps = sub_mdp_details.second;
@@ -1323,7 +1323,7 @@ string Mmdp::chooseHierarchicAction(VariableSet state) {
                 cout << h->getHierarchicReward(state, this) << "\n";
             } else {
                 Mmdp *mmdp_h = (Mmdp*) h;
-                mmdp_h->assignParametersFromActionName(sub_mdp_details.first[2], changed_mdps, parameter_instances);
+                mmdp_h->assignParametersFromActionName(sub_mdp_details.first[2], changed_mdps, parameter_instances_);
             }
             return h->chooseHierarchicAction(state);
         } else {
@@ -1368,8 +1368,8 @@ int Mmdp::estimateRemainingCost(VariableSet state) {
     int c = 0;
 
     VariableSet depar_state = convertToDeparametrizedState(state, VariableSet());
-    vector<string> module_agents = StringOperations::stringSplit(name, '-');
-    vector<string> action_agents = StringOperations::stringSplit(parametrized_name, '-');
+    vector<string> module_agents = StringOperations::stringSplit(name_, '-');
+    vector<string> action_agents = StringOperations::stringSplit(parametrized_name_, '-');
 
     for (int i = 0; i < module_agents.size(); i++) {
         if (module_agents[i] == "agent_wait") {
@@ -1421,62 +1421,39 @@ void Mmdp::valueIteration(string fileName, bool rewrite) {
     ifstream inputFile(fileName);
 
     int starting_value = use_cost_ ? 100000 : 0;
-    std::vector<double> vhi(vecStateEnum.size(), starting_value); //vhi mantains the predicted reward in a state following the optimal policy
-    std::vector<double> vhiOld(vecStateEnum.size(), starting_value);
+    std::vector<double> vhi(vec_state_enum_.size(), starting_value); //vhi mantains the predicted reward in a state following the optimal policy
+    std::vector<double> vhiOld(vec_state_enum_.size(), starting_value);
 
-    if (inputFile.good() && !rewrite) {
-        string line;
-        for (int i = 0; i < vecStateEnum.size(); i++) {
-            getline(inputFile, line);
-            vector<double> q_line = StringOperations::split(line, ' ');
-            int j = 0;
-            for (string action : actions) {
-                PairStateAction qInput{i, action};
-                qValue[qInput] = q_line[j];
-                j++;
+    double epsilon = 0.1; //stopping value of the value iteration
+    double maxDiff = 0;
+    cout << "Starting Value Iteration\n";
+    do { //we loop until vhiOld-hvi<epsilon (more or less)
+        for (int s = 0; s < vec_state_enum_.size(); s++) { //for each enumeration
+            vhiOld[s] = vhi[s];
+            if (use_cost_ && isGoalState(vec_state_enum_[s])) {
+                vhi[s] = estimateRemainingCost(vec_state_enum_[s]);
+                //                                        vhi[s] = 0;
+            } else {
+                vhi[s] = bellmanBackup(s, vhi);
             }
         }
-        inputFile.close();
-
-    } else {
-        double epsilon = 0.1; //stopping value of the value iteration
-        double maxDiff = 0;
-        cout << "Starting Value Iteration\n";
-        do { //we loop until vhiOld-hvi<epsilon (more or less)
-            for (int s = 0; s < vecStateEnum.size(); s++) { //for each enumeration
-                vhiOld[s] = vhi[s];
-                if (use_cost_ && isGoalState(vecStateEnum[s])) {
-                    vhi[s] = estimateRemainingCost(vecStateEnum[s]);
-                    //                                        vhi[s] = 0;
-                } else {
-                    vhi[s] = bellmanBackup(s, vhi);
-                }
+        maxDiff = 0;
+        for (int i = 0; i < vhi.size(); i++) { //calculate the maximum difference on the vhi (stopping parameter)
+            double d = abs(vhi[i] - vhiOld[i]);
+            if (d > maxDiff) {
+                maxDiff = d;
             }
-            maxDiff = 0;
-            for (int i = 0; i < vhi.size(); i++) { //calculate the maximum difference on the vhi (stopping parameter)
-                double d = abs(vhi[i] - vhiOld[i]);
-                if (d > maxDiff) {
-                    maxDiff = d;
-                }
-            }
-
-        } while (maxDiff > epsilon);
-        ofstream file(fileName);
-        for (int i = 0; i < vecStateEnum.size(); i++) {
-            for (string action : actions) {
-                PairStateAction qInput{i, action};
-                file << qValue[qInput] << " ";
-            }
-            file << "\n";
         }
-        file.close();
-    }
+
+    } while (maxDiff > epsilon);
+
+
 }
 
 string Mmdp::chooseAction(int s) {
     double max = use_cost_ ? 10000 : -1;
     string max_action;
-    for (string a : actions) {
+    for (string a : actions_) {
         double qv = getQValue(s, a);
         if (qv > max && !use_cost_) {
             max = qv;
@@ -1484,9 +1461,8 @@ string Mmdp::chooseAction(int s) {
         } else if (qv < max && use_cost_) {
             max = qv;
             max_action = a;
-        }
-        else if (qv==max && a.find("wait")!=a.npos){
-            max_action=a;
+        } else if (qv == max && a.find("wait") != a.npos) {
+            max_action = a;
         }
     }
     return max_action;

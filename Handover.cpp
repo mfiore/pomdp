@@ -17,9 +17,9 @@ Handover::Handover() {
     agent1_loc_var_ = "agent1_isAt";
     agent2_loc_var_ = "agent2_isAt";
     object_loc_var_ = "object_isAt";
-    variables.push_back(agent1_loc_var_);
-    variables.push_back(agent2_loc_var_);
-    variables.push_back(object_loc_var_);
+    variables_.push_back(agent1_loc_var_);
+    variables_.push_back(agent2_loc_var_);
+    variables_.push_back(object_loc_var_);
 
     std::vector<string> locations{"table", "surface1", "surface2", "surface3"};
     agent1_name_ = "agent1";
@@ -32,7 +32,7 @@ Handover::Handover() {
     var_values[object_loc_var_].push_back(agent1_name_);
     var_values[object_loc_var_].push_back(agent2_name_);
 
-    this->varValues = var_values;
+    this->var_values_ = var_values;
 
     std::vector<string> actions;
     for (string l1 : locations) {
@@ -44,29 +44,29 @@ Handover::Handover() {
     }
     actions.push_back(agent1_name_ + "_give_" + object_name_ + "_" + agent2_name_ + "-" + agent2_name_ + "_receive_" + object_name_ + "_" + agent1_name_);
 
-    this->actions = actions;
-    parameters.push_back(object_name_);
+    this->actions_ = actions;
+    parameters_.push_back(object_name_);
     vector<string> par_var;
     par_var.push_back(object_loc_var_);
-    parameter_variables[object_name_] = par_var;
-    variable_parameter[par_var[0]] = object_name_;
+    parameter_variables_[object_name_] = par_var;
+    variable_parameter_[par_var[0]] = object_name_;
 
-    parameters.push_back(agent1_name_);
+    parameters_.push_back(agent1_name_);
     par_var.clear();
     par_var.push_back(agent1_loc_var_);
-    parameter_variables[agent1_name_] = par_var;
-    variable_parameter[par_var[0]] = agent1_name_;
+    parameter_variables_[agent1_name_] = par_var;
+    variable_parameter_[par_var[0]] = agent1_name_;
 
-    parameters.push_back(agent2_name_);
+    parameters_.push_back(agent2_name_);
     par_var.clear();
     par_var.push_back(agent2_loc_var_);
-    parameter_variables[agent2_name_] = par_var;
-    variable_parameter[par_var[0]] = agent2_name_;
+    parameter_variables_[agent2_name_] = par_var;
+    variable_parameter_[par_var[0]] = agent2_name_;
 
-    parameter_action_place[0] = agent1_name_;
-    parameter_action_place[2] = object_name_;
-    parameter_action_place[3] = agent2_name_;
-    name = "agent_handover_object_agent";
+    parameter_action_place_[0] = agent1_name_;
+    parameter_action_place_[2] = object_name_;
+    parameter_action_place_[3] = agent2_name_;
+    name_ = "agent_handover_object_agent";
 
 }
 
@@ -95,16 +95,16 @@ string Handover::getDeparametrizedAction(string action_name) {
         vector<string> action_parts = StringOperations::stringSplit(action, '_');
         for (int i = 0; i < action_parts.size() - 1; i++) {
             string s = action_parts[i];
-            if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
-                depar_action_name << parametrized_to_original[s] << "_";
+            if (parametrized_to_original_.find(s) != parametrized_to_original_.end()) {
+                depar_action_name << parametrized_to_original_[s] << "_";
             } else {
                 depar_action_name << s << "_";
             }
         }
         if (action_parts.size() > 0) {
             string s = action_parts[action_parts.size() - 1];
-            if (parametrized_to_original.find(s) != parametrized_to_original.end()) {
-                depar_action_name << parametrized_to_original[s];
+            if (parametrized_to_original_.find(s) != parametrized_to_original_.end()) {
+                depar_action_name << parametrized_to_original_[s];
             } else {
 
                 depar_action_name << s;

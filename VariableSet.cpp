@@ -7,17 +7,17 @@
 
 #include "VariableSet.h"
 
-VariableSet::VariableSet(std::map<string,string> set) {
-    set=set;
+VariableSet::VariableSet(std::map<string, string> set) {
+    set = set;
+
 }
 
 VariableSet::VariableSet() {
-    
+
 }
 
-
 VariableSet::VariableSet(const VariableSet& orig) {
-    set=orig.set;
+    set = orig.set;
 }
 
 VariableSet::~VariableSet() {

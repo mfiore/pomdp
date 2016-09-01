@@ -9,11 +9,11 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux
-CND_ARTIFACT_NAME_Debug=libpomdp.a
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/libpomdp.a
+CND_ARTIFACT_NAME_Debug=libpomdp.so
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/libpomdp.so
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux/package
-CND_PACKAGE_NAME_Debug=pomdp.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/pomdp.tar
+CND_PACKAGE_NAME_Debug=libpomdp.so.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/libpomdp.so.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux

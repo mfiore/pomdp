@@ -8,12 +8,14 @@
  */
 
 #ifndef VARIABLESET_H
-#define	VARIABLESET_H
+#define VARIABLESET_H
 
 #include <vector>
 #include <map>
 #include <iostream>
 #include <sstream>
+
+#include <fstream>
 using namespace std;
 
 class VariableSet {
@@ -49,7 +51,7 @@ public:
     }
 
     inline bool operator==(const VariableSet& b) const {
-        std::map<string, string> other_set= b.set;
+        std::map<string, string> other_set = b.set;
         if (set.size() != other_set.size()) return false;
         std::map<string, string>::const_iterator i;
         i = set.begin();
@@ -78,8 +80,7 @@ public:
     std::map<string, string> set;
 
 private:
-
 };
 
-#endif	
+#endif 
 

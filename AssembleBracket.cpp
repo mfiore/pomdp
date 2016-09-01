@@ -27,10 +27,10 @@ AssembleBracket::AssembleBracket() {
     glue_loc_var_ = glue_name_ + "_isAt";
     surface_status_var_ = surface_name_ + "_status";
 
-    variables.push_back(agent_loc_var_);
-    variables.push_back(bracket_loc_var_);
-    variables.push_back(surface_status_var_);
-    variables.push_back(glue_loc_var_);
+    variables_.push_back(agent_loc_var_);
+    variables_.push_back(bracket_loc_var_);
+    variables_.push_back(surface_status_var_);
+    variables_.push_back(glue_loc_var_);
 
     std::map<string, std::vector < string>> var_values;
     var_values[agent_loc_var_] = locations;
@@ -47,7 +47,7 @@ AssembleBracket::AssembleBracket() {
     var_values[bracket_loc_var_].push_back("other_agent");
     var_values[surface_status_var_] = statuses;
 
-    this->varValues = var_values;
+    this->var_values_ = var_values;
 
     abstract_states_[glue_loc_var_]["surface1"] = "other_location";
     abstract_states_[glue_loc_var_]["surface2"] = "other_location";
@@ -68,44 +68,44 @@ AssembleBracket::AssembleBracket() {
     abstract_states_[agent_loc_var_]["surface3"] = "other_location";
     abstract_states_[agent_loc_var_]["table"] = "other_location";
 
-    actions.push_back(agent_name_ + "_clean_" + surface_name_);
-    actions.push_back(agent_name_ + "_glue_" + surface_name_);
-    actions.push_back(agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_);
-    actions.push_back(agent_name_ + "_get_" + bracket_name_);
-    actions.push_back(agent_name_ + "_get_" + glue_name_);
-    actions.push_back(agent_name_ + "_move_" + surface_name_);
+    actions_.push_back(agent_name_ + "_clean_" + surface_name_);
+    actions_.push_back(agent_name_ + "_glue_" + surface_name_);
+    actions_.push_back(agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_);
+    actions_.push_back(agent_name_ + "_get_" + bracket_name_);
+    actions_.push_back(agent_name_ + "_get_" + glue_name_);
+    actions_.push_back(agent_name_ + "_move_" + surface_name_);
     //    hierarchy_map_[agent_name_ + "_clean_" + surface_name_] = new CleanSurface();
     //    hierarchy_map_[agent_name_ + "_glue_" + surface_name_] = new GlueSurface();
     //    hierarchy_map_[agent_name_ + "_apply_" + bracket_name_ + "_" + surface_name_] = new AttachBracket();
     hierarchy_map_[agent_name_ + "_get_" + bracket_name_] = new GetObject();
     hierarchy_map_[agent_name_ + "_get_" + glue_name_] = new GetObject();
 
-    this->actions = actions;
+    this->actions_ = actions_;
 
-    parameters.push_back(agent_name_);
-    parameters.push_back(bracket_name_);
-    parameters.push_back(surface_name_);
+    parameters_.push_back(agent_name_);
+    parameters_.push_back(bracket_name_);
+    parameters_.push_back(surface_name_);
 
-    parameter_action_place[0] = agent_name_;
-    parameter_action_place[2] = bracket_name_;
-    parameter_action_place[3] = surface_name_;
+    parameter_action_place_[0] = agent_name_;
+    parameter_action_place_[2] = bracket_name_;
+    parameter_action_place_[3] = surface_name_;
 
     vector<string> par_var;
         par_var.push_back(agent_loc_var_);
-        parameter_variables[agent_name_] = par_var;
-        variable_parameter[par_var[0]] = agent_name_;
+        parameter_variables_[agent_name_] = par_var;
+        variable_parameter_[par_var[0]] = agent_name_;
 
     par_var.clear();
     par_var.push_back(bracket_loc_var_);
-    parameter_variables[bracket_name_] = par_var;
-    variable_parameter[par_var[0]] = bracket_name_;
+    parameter_variables_[bracket_name_] = par_var;
+    variable_parameter_[par_var[0]] = bracket_name_;
 
     par_var.clear();
     par_var.push_back(surface_status_var_);
-    parameter_variables[surface_name_] = par_var;
-    variable_parameter[par_var[0]] = surface_name_;
+    parameter_variables_[surface_name_] = par_var;
+    variable_parameter_[par_var[0]] = surface_name_;
 
-    name = "agent_assemble_bracket_surface";
+    name_ = "agent_assemble_bracket_surface";
 }
 
 AssembleBracket::AssembleBracket(const AssembleBracket& orig) {

@@ -21,12 +21,12 @@ DrinkWater::DrinkWater() {
     bottle_capacity_var_ = "bottle_capacity";
     has_drunk_var_ = "has_drunk";
 
-    variables.push_back(agent_loc_var_);
-    variables.push_back(bottle_loc_var_);
-    variables.push_back(glass_loc_var_);
-    variables.push_back(glass_capacity_var_);
-    variables.push_back(bottle_capacity_var_);
-    variables.push_back(has_drunk_var_);
+    variables_.push_back(agent_loc_var_);
+    variables_.push_back(bottle_loc_var_);
+    variables_.push_back(glass_loc_var_);
+    variables_.push_back(glass_capacity_var_);
+    variables_.push_back(bottle_capacity_var_);
+    variables_.push_back(has_drunk_var_);
 
     agent_name_ = "agent";
     glass_name_ = "glass";
@@ -44,7 +44,7 @@ DrinkWater::DrinkWater() {
     var_values[glass_capacity_var_] = {"0", "1"};
     var_values[has_drunk_var_] = {"0", "1"};
 
-    this->varValues = var_values;
+    this->var_values_ = var_values;
 
     std::vector<string> actions;
     for (string l : locations) {
@@ -55,9 +55,9 @@ DrinkWater::DrinkWater() {
     actions.push_back(agent_name_ + "_fill_" + glass_name_ + "_" + bottle_name_);
     actions.push_back(agent_name_ + "_drink_" + glass_name_);
 
-    this->actions = actions;
+    this->actions_ = actions;
 
-    name = "agent_drink_water";
+    name_ = "agent_drink_water";
 
 }
 

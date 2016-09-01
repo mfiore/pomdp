@@ -40,7 +40,7 @@ Saphari::Saphari() {
     //    var_values[glue_loc_var_].push_back(agent_name_);
     //    var_values[glue_loc_var_].push_back("other");
     for (int i = 0; i < 3; i++) {
-        variables.push_back(bracket_loc_var_[i]);
+        variables_.push_back(bracket_loc_var_[i]);
         var_values[bracket_loc_var_[i]] = locations;
         var_values[bracket_loc_var_[i]].push_back(agent_name_);
         var_values[bracket_loc_var_[i]].push_back("other_agent");
@@ -49,7 +49,7 @@ Saphari::Saphari() {
         abstract_states_[bracket_loc_var_[i]]["agent2"] = "other_agent";
 
 
-        variables.push_back(surface_status_var_[i]);
+        variables_.push_back(surface_status_var_[i]);
         var_values[surface_status_var_[i]] = statuses;
 
         abstract_states_[surface_status_var_[i]]["none"] = "other_status";
@@ -57,7 +57,7 @@ Saphari::Saphari() {
         abstract_states_[surface_status_var_[i]]["glued"] = "other_status";
 
     }
-    this->varValues = var_values;
+    this->var_values_ = var_values;
 
     std::vector<string> actions;
     for (int i = 1; i < 4; i++) {
@@ -68,17 +68,17 @@ Saphari::Saphari() {
         }
 
     }
-    this->actions = actions;
+    this->actions_ = actions;
 
-    parameters.push_back(agent_name_);
+    parameters_.push_back(agent_name_);
     vector<string> par_var;
     //    par_var.push_back(agent_loc_var_);
     //    parameter_variables[agent_name_] = par_var;
     //    variable_parameter[par_var[0]] = agent_name_;
 
-    parameter_action_place[0] = agent_name_;
+    parameter_action_place_[0] = agent_name_;
 
-    name = "agent_saphari";
+    name_ = "agent_saphari";
 
 }
 

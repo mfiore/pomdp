@@ -73,7 +73,7 @@
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="Debug" type="3">
+    <conf name="Debug" type="2">
       <toolsSet>
         <compilerSet>default</compilerSet>
         <dependencyChecking>true</dependencyChecking>
@@ -87,8 +87,6 @@
           </incDir>
           <commandLine>-std=c++11</commandLine>
         </ccTool>
-        <archiverTool>
-        </archiverTool>
       </compileType>
       <item path="AssembleBracket.cpp" ex="false" tool="1" flavor2="0">
       </item>

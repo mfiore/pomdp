@@ -10,8 +10,8 @@
 GetObject::GetObject() {
     agent_loc_var_="agent_isAt";
     object_loc_var_="object_isAt";
-    variables.push_back(agent_loc_var_);
-    variables.push_back(object_loc_var_);
+    variables_.push_back(agent_loc_var_);
+    variables_.push_back(object_loc_var_);
     
     std::vector<string> locations{"table", "surface1", "surface2", "surface3"};
     agent_name_ = "agent";
@@ -26,7 +26,7 @@ GetObject::GetObject() {
     abstract_states_[object_loc_var_]["agent1"]="other_agent";
     abstract_states_[object_loc_var_]["agent2"]="other_agent";
 
-    this->varValues = var_values;
+    this->var_values_ = var_values;
     
     std::vector<string> actions;
     for (string l:locations) {
@@ -35,22 +35,22 @@ GetObject::GetObject() {
     actions.push_back(agent_name_+"_take_"+object_name_);
 //    actions.push_back(agent_name_+"_wait");
     
-    this->actions = actions;
-    parameters.push_back(object_name_);
+    this->actions_ = actions;
+    parameters_.push_back(object_name_);
     vector<string> par_var;
     par_var.push_back(object_loc_var_);
-    parameter_variables[object_name_] = par_var;
-    variable_parameter[par_var[0]] = object_name_;
+    parameter_variables_[object_name_] = par_var;
+    variable_parameter_[par_var[0]] = object_name_;
     
-    parameters.push_back(agent_name_);
+    parameters_.push_back(agent_name_);
     par_var.clear();
     par_var.push_back(agent_loc_var_);
-    parameter_variables[agent_name_]=par_var;
-    variable_parameter[par_var[0]]=agent_name_;
+    parameter_variables_[agent_name_]=par_var;
+    variable_parameter_[par_var[0]]=agent_name_;
 
-    parameter_action_place[0] = agent_name_;
-    parameter_action_place[2] = object_name_;
-    name = "agent_get_object";
+    parameter_action_place_[0] = agent_name_;
+    parameter_action_place_[2] = object_name_;
+    name_ = "agent_get_object";
 
 }
 

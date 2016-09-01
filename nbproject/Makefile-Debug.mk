@@ -74,108 +74,106 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.${CND_DLIB_EXT}
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.${CND_DLIB_EXT}: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a
-	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a ${OBJECTFILES} 
-	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.${CND_DLIB_EXT} ${OBJECTFILES} ${LDLIBSOPTIONS} -shared -fPIC
 
 ${OBJECTDIR}/AssembleBracket.o: AssembleBracket.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AssembleBracket.o AssembleBracket.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AssembleBracket.o AssembleBracket.cpp
 
 ${OBJECTDIR}/AttachBracket.o: AttachBracket.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AttachBracket.o AttachBracket.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/AttachBracket.o AttachBracket.cpp
 
 ${OBJECTDIR}/CleanSurface.o: CleanSurface.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CleanSurface.o CleanSurface.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CleanSurface.o CleanSurface.cpp
 
 ${OBJECTDIR}/DrinkWater.o: DrinkWater.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/DrinkWater.o DrinkWater.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/DrinkWater.o DrinkWater.cpp
 
 ${OBJECTDIR}/GetObject.o: GetObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetObject.o GetObject.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetObject.o GetObject.cpp
 
 ${OBJECTDIR}/GlueSurface.o: GlueSurface.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GlueSurface.o GlueSurface.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GlueSurface.o GlueSurface.cpp
 
 ${OBJECTDIR}/Handover.o: Handover.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Handover.o Handover.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Handover.o Handover.cpp
 
 ${OBJECTDIR}/Hmdp.o: Hmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmdp.o Hmdp.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmdp.o Hmdp.cpp
 
 ${OBJECTDIR}/Mdp.o: Mdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
 
 ${OBJECTDIR}/Mmdp.o: Mmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
 
 ${OBJECTDIR}/MmdpManager.o: MmdpManager.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MmdpManager.o MmdpManager.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MmdpManager.o MmdpManager.cpp
 
 ${OBJECTDIR}/NestedLoop.o: NestedLoop.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
 
 ${OBJECTDIR}/PlaceObject.o: PlaceObject.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PlaceObject.o PlaceObject.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PlaceObject.o PlaceObject.cpp
 
 ${OBJECTDIR}/Pomdp.o: Pomdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Pomdp.o Pomdp.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Pomdp.o Pomdp.cpp
 
 ${OBJECTDIR}/PriorityQueue.o: PriorityQueue.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
 
 ${OBJECTDIR}/ReorderTable.o: ReorderTable.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReorderTable.o ReorderTable.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReorderTable.o ReorderTable.cpp
 
 ${OBJECTDIR}/Saphari.o: Saphari.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Saphari.o Saphari.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Saphari.o Saphari.cpp
 
 ${OBJECTDIR}/VariableSet.o: VariableSet.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
 
 ${OBJECTDIR}/Wait.o: Wait.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
 
 # Subprojects
 .build-subprojects:
@@ -183,7 +181,7 @@ ${OBJECTDIR}/Wait.o: Wait.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.${CND_DLIB_EXT}
 
 # Subprojects
 .clean-subprojects:

@@ -10,8 +10,8 @@
 PlaceObject::PlaceObject() {
     agent_loc_var_ = "agent_isAt";
     object_loc_var_ = "object_isAt";
-    variables.push_back(agent_loc_var_);
-    variables.push_back(object_loc_var_);
+    variables_.push_back(agent_loc_var_);
+    variables_.push_back(object_loc_var_);
 
     std::vector<string> locations{"table", "bed", "counter", "shelf"};
     agent_name_ = "agent";
@@ -24,7 +24,7 @@ PlaceObject::PlaceObject() {
     var_values[object_loc_var_].push_back(agent_name_);
     var_values[object_loc_var_].push_back(goal_location_);
 
-    this->varValues = var_values;
+    this->var_values_ = var_values;
 
     std::vector<string> actions;
     for (string l : locations) {
@@ -34,20 +34,20 @@ PlaceObject::PlaceObject() {
     actions.push_back(agent_name_ + "_place_" + object_name_ + "_" + goal_location_);
 //    actions.push_back(agent_name_ + "_wait");
 
-    this->actions = actions;
-    parameters.push_back(object_name_);
+    this->actions_ = actions;
+    parameters_.push_back(object_name_);
     vector<string> par_var;
     par_var.push_back(object_loc_var_);
-    parameter_variables[object_name_] = par_var;
-    variable_parameter[par_var[0]]=object_name_;
+    parameter_variables_[object_name_] = par_var;
+    variable_parameter_[par_var[0]]=object_name_;
     
-    parameters.push_back(agent_name_);
+    parameters_.push_back(agent_name_);
     par_var.clear();
     par_var.push_back(agent_loc_var_);
-    parameter_variables[agent_name_] = par_var;
-    variable_parameter[par_var[0]]=agent_name_;
+    parameter_variables_[agent_name_] = par_var;
+    variable_parameter_[par_var[0]]=agent_name_;
     
-    parameters.push_back(goal_location_);
+    parameters_.push_back(goal_location_);
 }
 
 void PlaceObject::assignParametersFromActionName(string action_name) {
@@ -61,12 +61,12 @@ void PlaceObject::assignParametersFromActionName(string action_name) {
 
 string PlaceObject::getDeparametrizedAction(string action_name) {
     vector<string> action_parameters = StringOperations::stringSplit(action_name, '_');
-    string parametrized_action = parameter_instances[agent_name_] + "_" + action_parameters[1];
+    string parametrized_action = parameter_instances_[agent_name_] + "_" + action_parameters[1];
     if (action_parameters[1] == "place") {
-        parametrized_action=parametrized_action+"_" + parameter_instances[object_name_] + "_" + parameter_instances[goal_location_];
+        parametrized_action=parametrized_action+"_" + parameter_instances_[object_name_] + "_" + parameter_instances_[goal_location_];
     }
-    else if (parameter_instances.find(action_parameters[2])!=parameter_instances.end()){
-        parametrized_action=parametrized_action+"_"+parameter_instances[action_parameters[2]];
+    else if (parameter_instances_.find(action_parameters[2])!=parameter_instances_.end()){
+        parametrized_action=parametrized_action+"_"+parameter_instances_[action_parameters[2]];
     }
     return parametrized_action;
 }

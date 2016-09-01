@@ -32,6 +32,9 @@ public:
     Hmdp();
     Hmdp(const Hmdp& orig);
     virtual ~Hmdp();
+    
+    //simulate n steps on the initial state using the policy
+    void simulate(int n, VariableSet initial_state);
 
     //gets the hierarchic reward from a certain state. The "i" version is not actually needed
     double getHierarchicReward(int i);
@@ -62,8 +65,7 @@ public:
     virtual string chooseHierarchicAction(VariableSet state);
     string chooseHierarchicAction(int s);
 
-    //simulate n steps on the initial state using the policy
-    void simulate(int n, VariableSet initial_state);
+
 
     //links action names to mdps. Must be set for all parameter instances
     //etcs. human_take_tape -> "TakeObject", human_take_glass -> "TakeObject"
@@ -103,8 +105,7 @@ public:
     vector<int> goal_states_;
 
 
-    virtual void enumerateFunctions(string fileName) override;
-    virtual void enumerateGoalAndStartStates();
+    virtual void enumerateFunctions();
 
     bool isAlreadyCreated();
     bool is_created_;
@@ -123,17 +124,17 @@ public:
 
     string hierarchic_file_;
     bool is_hierarchy_cached_;
-    
+
     std::map<VariableSet, double> getHierarchicTransitionFromFile(int i, VariableSet original_set);
     double getHierarchicRewardFromFile(int i);
 
-    
+
     void loadHierarchicInCache();
     void emptyHierarchicCache();
-    
+
     virtual void testEnumerate(int i, string action);
 
-    
+
 
 };
 
