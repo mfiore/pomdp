@@ -8,7 +8,7 @@
 #ifndef HMDP_H
 #define HMDP_H
 
-#include "Mdp.h"
+#include "ConcreteMdp.h"
 #include <map>
 #include <cmath>
 #include <vector>
@@ -25,7 +25,7 @@
 
 using namespace std;
 
-class Hmdp : public Mdp {
+class Hmdp : public ConcreteMdp {
 public:
     typedef std::map<string, Hmdp*> HmdpMap;
 

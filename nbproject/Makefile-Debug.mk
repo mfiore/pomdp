@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/AssembleBracket.o \
 	${OBJECTDIR}/AttachBracket.o \
 	${OBJECTDIR}/CleanSurface.o \
+	${OBJECTDIR}/ConcreteMdp.o \
 	${OBJECTDIR}/DrinkWater.o \
 	${OBJECTDIR}/GetObject.o \
 	${OBJECTDIR}/GlueSurface.o \
@@ -94,6 +95,11 @@ ${OBJECTDIR}/CleanSurface.o: CleanSurface.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CleanSurface.o CleanSurface.cpp
+
+${OBJECTDIR}/ConcreteMdp.o: ConcreteMdp.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ConcreteMdp.o ConcreteMdp.cpp
 
 ${OBJECTDIR}/DrinkWater.o: DrinkWater.cpp 
 	${MKDIR} -p ${OBJECTDIR}

@@ -11,7 +11,7 @@
  * The class uses a flat representation for the state, with integers. Users can define state with partioned variable sets.
  * 
  * Future developments might be:
- * -switching from flat to symbolic
+ * -switching from flat to bolic
  * -better solving algorithms
  */
 
@@ -42,7 +42,6 @@ public:
     Mdp(const Mdp& orig);
     virtual ~Mdp();
 
-    void create(string name, bool rewrite);
 
     double getQValue(VariableSet s, string action);
     string chooseAction(VariableSet s);
@@ -62,7 +61,7 @@ public:
     virtual string getDeparametrizedAction(string action_name);
     virtual string getParametrizedAction(string action_name);
 
-
+    void readMdp(string path);
 
 
     string name_;
@@ -109,15 +108,6 @@ public:
 
 
 
-    //two functions to override in the derived classes
-    virtual VarStateProb transitionFunction(VariableSet state, string action);
-    virtual int rewardFunction(VariableSet state, string action);
-
-    //learning functions
-    virtual int bellmanBackup(int i, std::vector<double> vhi);
-    virtual void valueIteration();
-
-
 
     double getTransitionProb(int s, string a, int s_new);
 
@@ -133,12 +123,9 @@ public:
 
     //functions used in the creation of the MDP
     virtual void enumerateStates();
-    virtual void enumerateFunctions();
-    virtual void enumerateGoalAndStartStates();
 
-    //to override. Returns true if the state is starting
-    virtual bool isStartingState(VariableSet state);
-    virtual bool isGoalState(VariableSet state);
+
+
 
 
     //utility functions
@@ -147,8 +134,7 @@ public:
     std::vector<string> getAbstractLinkedValues(string var, string abstract_value);
     int getReward(VariableSet state, string action);
     
-    void writeModel(string file_name);
-    void writePolicy(string file_name);
+
     void readModel(string file_name);
     void readPolicy(string file_name);
 

@@ -398,7 +398,7 @@ void Hmdp::create(string name, bool rewrite, bool first) {
 
         cout << "Creating " << name << "\n";
 
-        Mdp::create(name, rewrite);
+        ConcreteMdp::create(name, rewrite);
 
         hierarchic_file_ = name + ".hmdp";
         if (!first) {
