@@ -94,8 +94,8 @@ public:
     std::map<PairStateAction, StateProb> transition_;
     std::map<PairStateAction, std::vector<int>> predecessors_; //enumeration of the transition function
     std::map<PairStateAction, int> reward_; //reward function
-    vector<int> starting_states_;
-    vector<int> goal_states_;
+    std::vector<int> starting_states_;
+    std::vector<int> goal_states_;
 
     //abstract state. Each variable can have a map that links a real world state to a parameter world state
     //e.g. agent_isAt ->  { Greg -> other_agent } 
