@@ -53,7 +53,8 @@ public:
     void printQValues(VariableSet s);
     void printActions();
     void printParameters();
-
+    void printGoalStates();
+    
     virtual void simulate(int n, VariableSet s);
 
     void assignParameters(std::map<string, string> instance);
@@ -61,7 +62,7 @@ public:
     virtual string getDeparametrizedAction(string action_name);
     virtual string getParametrizedAction(string action_name);
 
-    void readMdp(string path);
+    bool readMdp(string path);
 
 
     string name_;
@@ -135,8 +136,9 @@ public:
     int getReward(VariableSet state, string action);
     
 
-    void readModel(string file_name);
-    void readPolicy(string file_name);
+    bool readModel(string file_name);
+    bool readPolicy(string file_name);
+    std::vector<string> getVariables() const;
 
 };
 

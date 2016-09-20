@@ -133,7 +133,6 @@ void Mdp::enumerateStates() {
 
 }
 
-
 string Mdp::chooseAction(int s) {
     double max = use_cost_ ? 10000 : -1;
     string max_action;
@@ -197,18 +196,23 @@ void Mdp::simulate(int n, VariableSet initial_state) {
         cout << "Step " << i << "\n";
         StateProb temp_b;
         for (auto s : b) {
-            cout << "State: \n";
-            cout << vec_state_enum_[s.first].toString();
-            string action = chooseAction(s.first);
-            cout << "Executing " << action << "\n";
-            PairStateAction p{s.first, action};
-            StateProb output = transition_[p];
-            for (auto o : output) {
-                if (temp_b.find(o.first) != temp_b.end()) {
-                    temp_b[o.first] = temp_b.at(o.first) + o.second;
-                } else {
-                    temp_b[o.first] = o.second;
+            if (std::find(goal_states_.begin(), goal_states_.end(), s.first) == goal_states_.end()) {
+                cout << "State: \n";
+                cout << vec_state_enum_[s.first].toString();
+                string action = chooseAction(s.first);
+                cout << "Executing " << action << "\n";
+                PairStateAction p{s.first, action};
+                StateProb output = transition_[p];
+                for (auto o : output) {
+                    if (temp_b.find(o.first) != temp_b.end()) {
+                        temp_b[o.first] = temp_b.at(o.first) + o.second;
+                    } else {
+                        temp_b[o.first] = o.second;
+                    }
                 }
+            }
+            else {
+//                cout<<"Reached a goal state\n";
             }
         }
         b = temp_b;
@@ -517,8 +521,10 @@ int Mdp::getReward(VariableSet state, string action) {
     return reward_.at(p);
 }
 
-void Mdp::readModel(string file_name) {
+bool Mdp::readModel(string file_name) {
     ifstream f(file_name);
+    if (!f.good()) return false;
+
 
     //clear the definition of the model. This could case problems if we read from a wrong file, but it will make the read procedure
     //work even for ConcreteMdps
@@ -562,9 +568,11 @@ void Mdp::readModel(string file_name) {
     }
     getline(f, line); //skip parameter action place line
     vector<string> v_par_action_place = StringOperations::stringSplit(line, ' ');
-    for (int i = 0; i < v_par_action_place.size() - 1; i = i + 2) {
-        int pos = stoi(v_par_action_place[i]);
-        parameter_action_place_[pos] = v_par_action_place[i + 1];
+    if (v_par_action_place.size() > 0) {
+        for (int i = 0; i < (v_par_action_place.size() - 1); i = i + 2) {
+            int pos = stoi(v_par_action_place[i]);
+            parameter_action_place_[pos] = v_par_action_place[i + 1];
+        }
     }
     getline(f, line); //starting states
     getline(f, line);
@@ -576,7 +584,7 @@ void Mdp::readModel(string file_name) {
     getline(f, line);
     vector<string> v_goal_s = StringOperations::stringSplit(line, ' ');
     for (string gs : v_goal_s) {
-        starting_states_.push_back(stoi(gs));
+        goal_states_.push_back(stoi(gs));
     }
     getline(f, line); //abstract states
     getline(f, line);
@@ -606,10 +614,13 @@ void Mdp::readModel(string file_name) {
         StateProb state_prob;
 
         vector<string> state_prob_v = StringOperations::stringSplit(line, ' ');
-        for (int i = 0; i < state_prob_v.size() - 1; i = i + 2) {
-            state_prob[stoi(state_prob_v[i])] = stod(state_prob_v[i + 1]);
+        if (state_prob_v.size() > 0) {
+            for (int i = 0; i < state_prob_v.size() - 1; i = i + 2) {
+                state_prob[stoi(state_prob_v[i])] = stod(state_prob_v[i + 1]);
+            }
+            transition_[p] = state_prob;
         }
-        transition_[p] = state_prob;
+
         getline(f, line);
     }
     getline(f, line); //skip reward line
@@ -622,10 +633,12 @@ void Mdp::readModel(string file_name) {
         reward_[p] = stoi(v_r[2]);
     }
     f.close();
+    return true;
 }
 
-void Mdp::readPolicy(string file_name) {
+bool Mdp::readPolicy(string file_name) {
     ifstream f(file_name);
+    if (!f.good()) return false;
     string line;
     while (getline(f, line)) {
         vector<string> v_q = StringOperations::stringSplit(line, ' ');
@@ -635,12 +648,18 @@ void Mdp::readPolicy(string file_name) {
         qvalue_[p] = stod(v_q[2]);
     }
     f.close();
+    return true;
 }
 
-void Mdp::readMdp(string path) {
+std::vector<string> Mdp::getVariables() const {
+    return variables_;
+}
+
+bool Mdp::readMdp(string path) {
     string model_name = path + ".mdp";
     string policy_name = path + ".policy";
-    readModel(model_name);
-    readPolicy(policy_name);
+    bool ok1 = readModel(model_name);
+    bool ok2 = readPolicy(policy_name);
     enumerateStates();
+    return ok1&ok2;
 }
