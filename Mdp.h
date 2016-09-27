@@ -64,6 +64,7 @@ public:
 
     bool readMdp(string path);
 
+    std::vector<std::string> getOriginalVars();
 
     string name_;
     string parametrized_name_;
