@@ -164,21 +164,21 @@ void Mdp::printQValues(VariableSet s) {
 }
 
 double Mdp::getQValue(VariableSet s, string action) {
-    cout<<"In q value\n";
-    cout<<"State\n";
-    cout << s.toString() << "\n";
+//    cout<<"In q value\n";
+//    cout<<"State\n";
+//    cout << s.toString() << "\n";
     VariableSet param_s = convertToParametrizedState(s);
-    cout<<"Parametrized state\n";
-    cout << param_s.toString() << "\n";
+//    cout<<"Parametrized state\n";
+//    cout << param_s.toString() << "\n";
     int i = map_state_enum_.at(param_s);
 //    cout << i << "\n";
 //    cout << vec_state_enum_.size() << "\n";
 //    for (string a : actions_) {
 //        cout << a << "\n";
 //    }
-    cout << action << "\n";
+//    cout << action << "\n";
     PairStateAction p{i, action};
-    cout<<"out q value\n\n";
+//    cout<<"out q value\n\n";
     return qvalue_.at(p);
 }
 

@@ -57,7 +57,7 @@ template <class T> vector<vector<T> > NestedLoop<T>::buildMatrix() {
     //we represent the recursion as a queue which contains the current variable assignment (ex. 0 0) and the current depth level
     std::queue<pair<assignment, int> > q;
 
-    std::cout << values.size() << "\n";
+//    std::cout << values.size() << "\n";
     //we start assigning the external loop values
     for (int i = 0; i < values[0].size(); i++) {
         assignment a;
