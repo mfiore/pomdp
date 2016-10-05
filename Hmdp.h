@@ -101,8 +101,8 @@ public:
     string active_module;
 
     //protected:
-    vector<int> starting_states_;
-    vector<int> goal_states_;
+//    vector<int> starting_states_;
+//    vector<int> goal_states_;
 
 
     virtual void enumerateFunctions();

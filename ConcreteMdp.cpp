@@ -42,8 +42,10 @@ void ConcreteMdp::writeModel(string file_name) {
     of << "parameter\n";
     for (std::string p : parameters_) {
         of << p << " ";
-        for (std::string v : parameter_variables_.at(p)) {
-            of << v << " ";
+        if (parameter_variables_.find(p) != parameter_variables_.end()) {
+            for (std::string v : parameter_variables_.at(p)) {
+                of << v << " ";
+            }
         }
         of << "\n";
     }

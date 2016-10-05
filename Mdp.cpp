@@ -32,7 +32,9 @@ void Mdp::printTransitionFunction() {
     cout << "Transition Function\n";
     for (int i = 0; i < vec_state_enum_.size(); i++) {
         VariableSet vs = vec_state_enum_[i];
+        cout<<"-------------------\n";
         cout << "In state:\n";
+        cout << "-------------------\n";
         cout << vs.toString() << "\n";
         cout << "\n";
         log << "In state:\n";
@@ -183,6 +185,7 @@ double Mdp::getQValue(VariableSet s, string action) {
 }
 
 double Mdp::getQValue(int s, string action) {
+    if (std::find(goal_states_.begin(),goal_states_.end(),s)!=goal_states_.end()) return 0;
     PairStateAction p{s, action};
     return qvalue_.at(p);
 }
@@ -690,9 +693,17 @@ bool Mdp::readMdp(string path) {
     string model_name = path + ".mdp";
     string policy_name = path + ".policy";
     bool ok1 = readModel(model_name);
+    if (!ok1) {
+        cout<<"failure reading mdp model\n";
+        return false;
+    }
     bool ok2 = readPolicy(policy_name);
+    if (!ok2) {
+        cout<<"failure reading mdp policy\n";
+        return false;
+    }
     enumerateStates();
-    return ok1&ok2;
+    return true;
 }
 
 std::vector<std::string> Mdp::getOriginalVars() {

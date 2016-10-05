@@ -169,26 +169,28 @@ void Hmdp::calculateHierarchicReward() {
         double beta = 0.3;
         int i = -1;
         for (int s = 0; s < vec_state_enum_.size(); s++) {
-            a.insert(s, s) = 1;
-            string action = chooseAction(s);
-            PairStateAction transition_input{s, action};
-            StateProb future_states = transition_[transition_input];
-            for (auto future_state : future_states) {
-                int sp = future_state.first;
-                if (!isGoalState(vec_state_enum_[sp]) && sp != s) {
-                    if (!use_cost_) {
-                        a.insert(s, sp) = -beta * future_state.second;
-                    } else {
-                        a.insert(s, sp) = -future_state.second;
+//            if (std::find(goal_states_.begin(), goal_states_.end(), s) == goal_states_.end()) {
+                a.insert(s, s) = 1;
+                string action = chooseAction(s);
+                PairStateAction transition_input{s, action};
+                StateProb future_states = transition_[transition_input];
+                for (auto future_state : future_states) {
+                    int sp = future_state.first;
+                    if (!isGoalState(vec_state_enum_[sp]) && sp != s) {
+                        if (!use_cost_) {
+                            a.insert(s, sp) = -beta * future_state.second;
+                        } else {
+                            a.insert(s, sp) = -future_state.second;
+                        }
                     }
                 }
-            }
-            PairStateAction reward_input{s, action};
-            if (!use_cost_) {
-                b(s) = reward_[reward_input];
-            } else {
-                b(s) = reward_[reward_input];
-            }
+                PairStateAction reward_input{s, action};
+                if (!use_cost_) {
+                    b(s) = reward_[reward_input];
+                } else {
+                    b(s) = reward_[reward_input];
+                }
+//            }
         }
         //        cout<<a<<"\n";
         //        cout<<b<<"\n";
@@ -254,23 +256,26 @@ void Hmdp::calculateHierarchicTransition() {
 
 
             for (int s = 0; s < vec_state_enum_.size(); s++) {
-                string action = chooseAction(s);
-                PairStateAction t_input{s, action};
-                StateProb future_states = transition_[t_input];
-                a.insert(s, s) = 1;
-                for (auto future_state : future_states) {
-                    int sp = future_state.first;
-                    if (sp != s && !isGoalState(vec_state_enum_[sp])) {
-                        if (use_cost_) {
-                            a.insert(s, sp) = -future_state.second;
-                        } else {
-                            a.insert(s, sp) = -beta * future_state.second;
-                        }
-                    }
+//                if (std::find(goal_states_.begin(), goal_states_.end(), s) == goal_states_.end()) {
 
-                }
-                double b_transition_prob = getTransitionProb(s, action, g);
-                b[s] = b_transition_prob;
+                    string action = chooseAction(s);
+                    PairStateAction t_input{s, action};
+                    StateProb future_states = transition_[t_input];
+                    a.insert(s, s) = 1;
+                    for (auto future_state : future_states) {
+                        int sp = future_state.first;
+                        if (sp != s && !isGoalState(vec_state_enum_[sp])) {
+                            if (use_cost_) {
+                                a.insert(s, sp) = -future_state.second;
+                            } else {
+                                a.insert(s, sp) = -beta * future_state.second;
+                            }
+                        }
+
+                    }
+                    double b_transition_prob = getTransitionProb(s, action, g);
+                    b[s] = b_transition_prob;
+//                }
             }
 
             //            cout << a << "\n\n";
