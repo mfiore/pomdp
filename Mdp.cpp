@@ -32,7 +32,7 @@ void Mdp::printTransitionFunction() {
     cout << "Transition Function\n";
     for (int i = 0; i < vec_state_enum_.size(); i++) {
         VariableSet vs = vec_state_enum_[i];
-        cout<<"-------------------\n";
+        cout << "-------------------\n";
         cout << "In state:\n";
         cout << "-------------------\n";
         cout << vs.toString() << "\n";
@@ -166,26 +166,26 @@ void Mdp::printQValues(VariableSet s) {
 }
 
 double Mdp::getQValue(VariableSet s, string action) {
-//    cout<<"In q value\n";
-//    cout<<"State\n";
-//    cout << s.toString() << "\n";
+    //    cout<<"In q value\n";
+    //    cout<<"State\n";
+    //    cout << s.toString() << "\n";
     VariableSet param_s = convertToParametrizedState(s);
-//    cout<<"Parametrized state\n";
-//    cout << param_s.toString() << "\n";
+    //    cout<<"Parametrized state\n";
+    //    cout << param_s.toString() << "\n";
     int i = map_state_enum_.at(param_s);
-//    cout << i << "\n";
-//    cout << vec_state_enum_.size() << "\n";
-//    for (string a : actions_) {
-//        cout << a << "\n";
-//    }
-//    cout << action << "\n";
+    //    cout << i << "\n";
+    //    cout << vec_state_enum_.size() << "\n";
+    //    for (string a : actions_) {
+    //        cout << a << "\n";
+    //    }
+    //    cout << action << "\n";
     PairStateAction p{i, action};
-//    cout<<"out q value\n\n";
+    //    cout<<"out q value\n\n";
     return qvalue_.at(p);
 }
 
 double Mdp::getQValue(int s, string action) {
-    if (std::find(goal_states_.begin(),goal_states_.end(),s)!=goal_states_.end()) return 0;
+    if (std::find(goal_states_.begin(), goal_states_.end(), s) != goal_states_.end()) return 0;
     PairStateAction p{s, action};
     return qvalue_.at(p);
 }
@@ -292,12 +292,18 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
         if (par_key.size() > 0) {
             for (string key : par_key) {
                 //                if (vs_new.set.find(key) == vs_new.set.end()) {
-//                for (string v : possible_values) {
-//                    cout << v << "\n";
-//                }
+                //                for (string v : possible_values) {
+                //                    cout << v << "\n";
+                //                }
                 string value = findValue(key, possible_values);
                 if (value == "") {
-                    cout << "WARNING! NO VALUE FOUND\n";
+                    cout << "WARNING! NO VALUE FOUND for " << key << "\n";
+                    cout << "possible values are\n";
+                    for (int i = 0; i < possible_values.size(); i++) {
+                        cout << possible_values[i] << "\n";
+                    }
+                    cout << "original value is " << el.second << "\n";
+                    cout << "\n";
                     return VariableSet();
                 }
                 vs_new.set[key] = value;
@@ -309,14 +315,21 @@ VariableSet Mdp::convertToParametrizedState(VariableSet s) {
             if (vs_new.set.find(el.first) == vs_new.set.end()) {
                 string value = findValue(el.first, possible_values);
                 if (value == "") {
-                    cout << "WARNING! NO VALUE FOUND\n";
+                    cout << "WARNING! NO VALUE FOUND for " << el.first << "\n";
+                    cout << "possible values are\n";
+                    for (int i = 0; i < possible_values.size(); i++) {
+                        cout << possible_values[i] << "\n";
+                    }
+                    cout << "original value is " << el.second << "\n";
+
+                    cout << "\n";
                     return VariableSet();
                 }
                 vs_new.set[el.first] = value;
             }
         }
     }
-//    cout << "done\n";
+    //    cout << "done\n";
     return vs_new;
 }
 
@@ -437,29 +450,29 @@ string Mdp::getParametrizedAction(string action_name) {
     stringstream param_action_name;
 
     for (int i = 0; i < action_parts.size() - 1; i++) {
-        std::string a=action_parts[i];
+        std::string a = action_parts[i];
         if (original_to_parametrized_.find(a) != original_to_parametrized_.end()) {
-            param_action_name << original_to_parametrized_.at(a)[0]<<"_";
+            param_action_name << original_to_parametrized_.at(a)[0] << "_";
         } else {
-            param_action_name << a<<"_";
+            param_action_name << a << "_";
         }
     }
-    std::string a=action_parts[action_parts.size()-1];
+    std::string a = action_parts[action_parts.size() - 1];
     if (original_to_parametrized_.find(a) != original_to_parametrized_.end()) {
         param_action_name << original_to_parametrized_.at(a)[0];
     } else {
         param_action_name << a;
     }
 
-//    param_action_name << "agent_" << action_parts[1];
-//    if (action_parts.size() > 2) {
-//        param_action_name << "_object";
-//    }
-//    if (action_parts.size() > 3) {
-//        param_action_name << "_support";
-//    }
+    //    param_action_name << "agent_" << action_parts[1];
+    //    if (action_parts.size() > 2) {
+    //        param_action_name << "_object";
+    //    }
+    //    if (action_parts.size() > 3) {
+    //        param_action_name << "_support";
+    //    }
     return param_action_name.str();
-    
+
 
 }
 
@@ -694,12 +707,12 @@ bool Mdp::readMdp(string path) {
     string policy_name = path + ".policy";
     bool ok1 = readModel(model_name);
     if (!ok1) {
-        cout<<"failure reading mdp model\n";
+        cout << "failure reading mdp model\n";
         return false;
     }
     bool ok2 = readPolicy(policy_name);
     if (!ok2) {
-        cout<<"failure reading mdp policy\n";
+        cout << "failure reading mdp policy\n";
         return false;
     }
     enumerateStates();

@@ -67,6 +67,22 @@ public:
         result[s] = 1.0;
         return result;
     }
+
+    static VarStateProb applySimplePick(string agent_name, string object_loc_var, VariableSet s) {
+        VarStateProb result;
+        s.set[object_loc_var] = agent_name;
+        result[s] = 1.0;
+        return result;
+    }
+
+    static VarStateProb applySimplePlace(string agent_name, string object_loc_var, string place_location, VariableSet s) {
+        VarStateProb result;
+        if (s.set.at(object_loc_var) == agent_name) {
+            s.set[object_loc_var] = place_location;
+        }
+        result[s] = 1.0;
+        return result;
+    }
 };
 #endif /* MDPBASICACTIONS_H */
 
