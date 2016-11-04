@@ -18,6 +18,22 @@
 Mdp::Mdp(bool use_cost) : use_cost_(use_cost) {
 }
 
+std::map<string, string> Mdp::getParameterInstance() const {
+    return parameter_instances_;
+}
+
+std::vector<string> Mdp::getActions() const {
+    return actions_;
+}
+
+string Mdp::getParametrizedName() const {
+    return parametrized_name_;
+}
+
+string Mdp::getName() const {
+    return name_;
+}
+
 Mdp::Mdp(const Mdp& orig) {
 }
 
@@ -422,6 +438,22 @@ VariableSet Mdp::convertToDeparametrizedState(VariableSet parameter_set, Variabl
     return set;
 }
 
+std::vector<int> Mdp::getGoalStates() const {
+    return goal_states_;
+}
+
+std::map<string, string> Mdp::getParametrizedToOriginal() const {
+    return parametrized_to_original_;
+}
+
+std::map<string, std::vector<string> > Mdp::getOriginalToParametrized_() const {
+    return original_to_parametrized_;
+}
+
+std::map<int, string> Mdp::getParameterActionPlace() const {
+    return parameter_action_place_;
+}
+
 string Mdp::getDeparametrizedAction(string action_name) {
 
     std::vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
@@ -698,10 +730,6 @@ bool Mdp::readPolicy(string file_name) {
     return true;
 }
 
-std::vector<string> Mdp::getVariables() const {
-    return variables_;
-}
-
 bool Mdp::readMdp(string path) {
     string model_name = path + ".mdp";
     string policy_name = path + ".policy";
@@ -717,6 +745,90 @@ bool Mdp::readMdp(string path) {
     }
     enumerateStates();
     return true;
+}
+//
+//std::vector<std::string> Mdp::getOriginalVars() {
+//    std::vector<std::string> result;
+//    for (std::string v : variables_) {
+//        if (parametrized_to_original_.find(v) != parametrized_to_original_.end()) {
+//            result.push_back(parametrized_to_original_.at(v));
+//        } else {
+//            result.push_back(v);
+//        }
+//    }
+//    return result;
+//}
+
+std::vector<string> Mdp::getVariables() const {
+    return variables_;
+}
+
+std::vector<string> Mdp::getValues(string var) {
+    if (var_values_.find(var) != var_values_.end()) {
+        return var_values_.at(var);
+    } else {
+        return std::vector<string>();
+    }
+}
+
+std::vector<string> Mdp::getParameters() const {
+    return parameters_;
+}
+
+bool Mdp::isVariableParameter(string var) {
+    return variable_parameter_.find(var) != variable_parameter_.end();
+}
+
+string Mdp::getParameterOfVariable(string var) {
+    if (variable_parameter_.find(var) != variable_parameter_.end()) {
+        return variable_parameter_.at(var);
+    } else {
+        return "";
+    }
+}
+
+bool Mdp::isUseCost() const {
+    return use_cost_;
+}
+
+void Mdp::setName(string name_) {
+    this->name_ = name_;
+}
+
+std::map<string, string> Mdp::getAbstractStates(string var) const {
+    if (abstract_states_.find(var) != abstract_states_.end()) {
+        return abstract_states_.at(var);
+    } else {
+        return map<string, string>();
+    }
+}
+
+std::vector<string> Mdp::getParameterVariables(string par) {
+    if (parameter_variables_.find(par) != parameter_variables_.end()) {
+        return parameter_variables_.at(par);
+    } else {
+        return std::vector<string>();
+    }
+}
+
+string Mdp::getParameterForActionPlace(int i) {
+    if (parameter_action_place_.find(i) != parameter_action_place_.end()) {
+        return parameter_action_place_.at(i);
+    } else {
+        return "";
+    }
+
+}
+
+void Mdp::setParametrizedName(string parametrized_name_) {
+    this->parametrized_name_ = parametrized_name_;
+}
+
+bool Mdp::isGoalState(VariableSet state) {
+    if (map_state_enum_.find(state) != map_state_enum_.end()) {
+        return std::find(goal_states_.begin(), goal_states_.end(), map_state_enum_.at(state)) != goal_states_.end();
+    }
+    return false;
 }
 
 std::vector<std::string> Mdp::getOriginalVars() {

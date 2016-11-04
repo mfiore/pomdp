@@ -5,60 +5,31 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>ConcreteMdp.h</itemPath>
+      <itemPath>Hmdp.h</itemPath>
+      <itemPath>Mdp.h</itemPath>
+      <itemPath>MdpBasicActions.h</itemPath>
+      <itemPath>Mmdp.h</itemPath>
       <itemPath>MmdpManager.h</itemPath>
+      <itemPath>NestedLoop.h</itemPath>
+      <itemPath>PriorityQueue.h</itemPath>
+      <itemPath>StringOperations.h</itemPath>
+      <itemPath>VariableSet.h</itemPath>
+      <itemPath>Wait.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
     </logicalFolder>
     <logicalFolder name="f1" displayName="Source Files" projectFiles="true">
-      <logicalFolder name="f2" displayName="DrinkReorderTest" projectFiles="true">
-        <itemPath>DrinkWater.cpp</itemPath>
-        <itemPath>DrinkWater.h</itemPath>
-        <itemPath>ReorderTable.cpp</itemPath>
-        <itemPath>ReorderTable.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f1" displayName="models" projectFiles="true">
-        <logicalFolder name="f1" displayName="Saphari" projectFiles="true">
-          <itemPath>AssembleBracket.cpp</itemPath>
-          <itemPath>AssembleBracket.h</itemPath>
-          <itemPath>AttachBracket.cpp</itemPath>
-          <itemPath>AttachBracket.h</itemPath>
-          <itemPath>CleanSurface.cpp</itemPath>
-          <itemPath>CleanSurface.h</itemPath>
-          <itemPath>GetObject.cpp</itemPath>
-          <itemPath>GetObject.h</itemPath>
-          <itemPath>GlueSurface.cpp</itemPath>
-          <itemPath>GlueSurface.h</itemPath>
-          <itemPath>Handover.cpp</itemPath>
-          <itemPath>Handover.h</itemPath>
-          <itemPath>Saphari.cpp</itemPath>
-          <itemPath>Saphari.h</itemPath>
-        </logicalFolder>
-        <itemPath>MdpBasicActions.h</itemPath>
-        <itemPath>PlaceObject.cpp</itemPath>
-        <itemPath>PlaceObject.h</itemPath>
-        <itemPath>Wait.cpp</itemPath>
-        <itemPath>Wait.h</itemPath>
-      </logicalFolder>
       <itemPath>ConcreteMdp.cpp</itemPath>
       <itemPath>Hmdp.cpp</itemPath>
-      <itemPath>Hmdp.h</itemPath>
-      <itemPath>Makefile</itemPath>
       <itemPath>Mdp.cpp</itemPath>
-      <itemPath>Mdp.h</itemPath>
       <itemPath>Mmdp.cpp</itemPath>
-      <itemPath>Mmdp.h</itemPath>
       <itemPath>MmdpManager.cpp</itemPath>
       <itemPath>NestedLoop.cpp</itemPath>
-      <itemPath>NestedLoop.h</itemPath>
-      <itemPath>Pomdp.cpp</itemPath>
-      <itemPath>Pomdp.h</itemPath>
       <itemPath>PriorityQueue.cpp</itemPath>
-      <itemPath>PriorityQueue.h</itemPath>
-      <itemPath>StringOperations.h</itemPath>
       <itemPath>VariableSet.cpp</itemPath>
-      <itemPath>VariableSet.h</itemPath>
+      <itemPath>Wait.cpp</itemPath>
       <itemPath>tinyxml2.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -72,6 +43,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>Makefile</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -90,37 +62,9 @@
           <commandLine>-std=c++11</commandLine>
         </ccTool>
       </compileType>
-      <item path="AssembleBracket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="AssembleBracket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="AttachBracket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="AttachBracket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="CleanSurface.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="CleanSurface.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="ConcreteMdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ConcreteMdp.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="DrinkWater.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="DrinkWater.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GetObject.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GetObject.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GlueSurface.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GlueSurface.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Handover.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Handover.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -146,25 +90,9 @@
       </item>
       <item path="NestedLoop.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="PlaceObject.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="PlaceObject.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Pomdp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Pomdp.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="PriorityQueue.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="PriorityQueue.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="ReorderTable.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="ReorderTable.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Saphari.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Saphari.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -205,37 +133,9 @@
         <archiverTool>
         </archiverTool>
       </compileType>
-      <item path="AssembleBracket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="AssembleBracket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="AttachBracket.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="AttachBracket.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="CleanSurface.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="CleanSurface.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="ConcreteMdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ConcreteMdp.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="DrinkWater.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="DrinkWater.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GetObject.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GetObject.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="GlueSurface.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="GlueSurface.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Handover.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Handover.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Hmdp.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -261,25 +161,9 @@
       </item>
       <item path="NestedLoop.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="PlaceObject.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="PlaceObject.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Pomdp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Pomdp.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="PriorityQueue.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="PriorityQueue.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="ReorderTable.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="ReorderTable.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Saphari.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Saphari.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="StringOperations.h" ex="false" tool="3" flavor2="0">
       </item>

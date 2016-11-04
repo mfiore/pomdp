@@ -3,6 +3,8 @@
  * Author: mfiore
  *
  * Created on March 8, 2016, 3:10 PM
+ * 
+ * This class represent an MMDP, which creates from 2 single angent mdps a model to plan for both together
  */
 
 #ifndef MMDP_H
@@ -29,7 +31,6 @@ public:
     virtual void create(string name, bool rewrite, bool first);
 
     std::map<string, Hmdp*> agent_hmpd_;
-    //    VariableSet convertToParametrizedState(VariableSet s);
 
     void createJointMdpVariables();
     virtual void enumerateGoalAndStartStates();

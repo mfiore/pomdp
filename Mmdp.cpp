@@ -32,21 +32,23 @@ void Mmdp::createJointMdpVariables() {
     //get variables from single agents mdps
     int i = 0;
     for (auto mdp : agent_hmpd_) {
+        std::vector<string> mdp_par = mdp.second->getParameters();
+
         cout << mdp.first << "\n";
         string i_s = "p" + boost::lexical_cast<string>(i);
-        for (auto var : mdp.second->variables_) {
+        for (auto var : mdp.second->getVariables()) {
             //convert values to multiparameter if needed
             vector<string> actual_var_values;
-            for (auto value : mdp.second->var_values_.at(var)) {
+            for (auto value : mdp.second->getValues(var)) {
                 string actual_value = value;
-                if (std::find(mdp.second->parameters_.begin(), mdp.second->parameters_.end(), value) != mdp.second->parameters_.end()) {
+                if (std::find(mdp_par.begin(), mdp_par.end(), value) != mdp_par.end()) {
                     actual_value = actual_value + i_s;
                 }
                 actual_var_values.push_back(actual_value);
             }
 
             string actual_var = var;
-            if (mdp.second->variable_parameter_.find(var) != mdp.second->variable_parameter_.end()) {
+            if (mdp.second->isVariableParameter(var)) {
                 actual_var = convertToMultiParameter(mdp.second, var, i);
                 variables_.push_back(actual_var);
                 var_values_[actual_var] = actual_var_values;
@@ -62,46 +64,47 @@ void Mmdp::createJointMdpVariables() {
                 //push back only values that aren't there
                 //TODO
             }
-            if (mdp.second->abstract_states_.find(var) != mdp.second->abstract_states_.end()) {
-                map<string, string> states_values = mdp.second->abstract_states_[var];
-                map<string, string> new_states_values = mdp.second->abstract_states_[var];
+            std::map<string, string> abstract_states = mdp.second->getAbstractStates(var);
+            if (abstract_states.size() > 0) {
+                map<string, string> states_values = abstract_states;
+                map<string, string> new_states_values = abstract_states;
                 for (auto v : states_values) {
                     string actual_value = v.second;
-                    if (std::find(mdp.second->parameters_.begin(), mdp.second->parameters_.end(), v.second) != mdp.second->parameters_.end()) {
+                    if (std::find(mdp_par.begin(), mdp_par.end(), v.second) != mdp_par.end()) {
                         actual_value = actual_value + i_s;
                     }
                     new_states_values[v.first] = actual_value;
                 }
                 string actual_name = var;
-                if (mdp.second->variable_parameter_.find(var) != mdp.second->variable_parameter_.end()) {
+                if (mdp.second-> isVariableParameter(var)) {
                     actual_name = convertToMultiParameter(mdp.second, var, i);
                 }
                 abstract_states_[actual_name] = new_states_values;
             }
         }
-        for (auto par : mdp.second->parameters_) {
+        for (auto par : mdp_par) {
             string new_par_name = par + i_s;
             parameters_.push_back(new_par_name);
-            for (auto par_var : mdp.second->parameter_variables_[par]) {
+            for (auto par_var : mdp.second->getParameterVariables(par)) {
                 string new_var_name = convertToMultiParameter(mdp.second, par_var, i);
                 parameter_variables_[new_par_name].push_back(new_var_name);
                 //              }
             }
         }
         vector<string> mdp_param_actions;
-        for (string action : mdp.second->actions_) {
+        for (string action : mdp.second->getActions()) {
             vector<string> action_parts = StringOperations::stringSplit(action, '_');
             string new_action = "";
             for (int i = 0; i < action_parts.size() - 1; i++) {
                 string part = action_parts[i];
-                if (std::find(mdp.second->parameters_.begin(), mdp.second->parameters_.end(), part) != mdp.second->parameters_.end()) {
+                if (std::find(mdp_par.begin(), mdp_par.end(), part) != mdp_par.end()) {
                     new_action = new_action + part + i_s + "_";
                 } else {
                     new_action = new_action + part + "_";
                 }
             }
             string part = action_parts[action_parts.size() - 1];
-            if (std::find(mdp.second->parameters_.begin(), mdp.second->parameters_.end(), part) != mdp.second->parameters_.end()) {
+            if (std::find(mdp_par.begin(), mdp_par.end(), part) != mdp_par.end()) {
                 new_action = new_action + part + i_s;
             } else {
                 new_action = new_action + part;
@@ -178,7 +181,7 @@ void Mmdp::createSubMdpNames(string name) {
     vector<string> single_names = StringOperations::stringSplit(name, '-');
     int i = 0;
     for (auto mdp : agent_hmpd_) {
-        mdp.second->name_ = single_names[i];
+        mdp.second->setName(single_names[i]);
         i++;
     }
 }
@@ -191,7 +194,7 @@ void Mmdp::create(string action_name, bool rewrite, bool first) {
 
 
         for (auto a : agent_hmpd_) {
-            name_ = StringOperations::addToString(name_, a.second->name_, '-');
+            name_ = StringOperations::addToString(name_, a.second->getName(), '-');
         }
 
 
@@ -284,8 +287,8 @@ void Mmdp::assignParametersFromActionName(string action_name, set<string> change
             string i_s = "p" + boost::lexical_cast<string>(i);
             vector<string> action_parts = StringOperations::stringSplit(single_actions[i], '_');
             for (int j = 0; j < action_parts.size(); j++) {
-                if (agent.second->parameter_action_place_.find(j) != agent.second->parameter_action_place_.end()) {
-                    instance[agent.second->parameter_action_place_[j] + i_s] = action_parts[j];
+                if (agent.second->getParameterForActionPlace(j) != "") {
+                    instance[agent.second->getParameterForActionPlace(j) + i_s] = action_parts[j];
                 }
             }
         }
@@ -300,7 +303,7 @@ void Mmdp::assignParametersFromActionName(string action_name, set<string> change
             i++;
             continue;
         }
-        mdp.second->parametrized_name_ = single_actions[i];
+        mdp.second->setParametrizedName(single_actions[i]);
         assignParametersToMdp(mdp.second, i);
         i++;
     }
@@ -323,11 +326,12 @@ string Mmdp::convertToSingleParameter(string var_name, int index) {
 string Mmdp::convertToMultiParameter(Mdp* mdp, string var_name, int i) {
     string i_s = "p" + boost::lexical_cast<string>(i);
     string actual_var_name = var_name;
-    if (mdp->variable_parameter_.find(var_name) != mdp->variable_parameter_.end()) {
-        string par = mdp->variable_parameter_[var_name];
+    std::vector<string> mdp_par = mdp->getParameters();
+    if (mdp->isVariableParameter(var_name)) {
+        string par = mdp->getParameterOfVariable(var_name);
         actual_var_name.replace(actual_var_name.find(par, 0), par.length(), par + i_s);
         return actual_var_name;
-    } else if (std::find(mdp->parameters_.begin(), mdp->parameters_.end(), var_name) != mdp->parameters_.end()) {
+    } else if (std::find(mdp_par.begin(), mdp_par.end(), var_name) != mdp_par.end()) {
         return actual_var_name + i_s;
     } else return actual_var_name;
 }
@@ -783,9 +787,9 @@ std::tuple<VariableSet, set < string >, set<string> > Mmdp::convertToMdpState(Hm
     set<string> abstract_variables;
     VariableSet mdp_state;
     //    cout<<mmdp_state.toString()<<"\n";
-    for (auto mdp_var : mdp->variables_) {
+    for (auto mdp_var : mdp->getVariables()) {
         string actual_var_name = mdp_var;
-        if (mdp->variable_parameter_.find(mdp_var) != mdp->variable_parameter_.end()) {
+        if (mdp->isVariableParameter(mdp_var)) {
             actual_var_name = convertToMultiParameter(mdp, mdp_var, index);
         }
         string original_var_name = actual_var_name;
@@ -803,13 +807,14 @@ std::tuple<VariableSet, set < string >, set<string> > Mmdp::convertToMdpState(Hm
                 actual_var_value = parametrized_to_original_.at(actual_var_value);
             }
         }
-        if (mdp->abstract_states_.find(mdp_var) != mdp->abstract_states_.end() && !my_parameter) {
+        map<string, string> mdp_abstract_states = mdp->getAbstractStates(mdp_var);
+        if (mdp_abstract_states.size() > 0 && !my_parameter) {
             //            if (std::find(mdp->varValues.at(mdp_var).begin(), mdp->varValues.at(mdp_var).end(), actual_var_value) == mdp->varValues.at(mdp_var).end()) {
-            if (mdp->abstract_states_.at(mdp_var).find(actual_var_value) != mdp->abstract_states_.at(mdp_var).end()) {
-                actual_var_value = mdp->abstract_states_.at(mdp_var)[actual_var_value];
+            if (mdp_abstract_states.find(actual_var_value) != mdp_abstract_states.end()) {
+                actual_var_value = mdp_abstract_states.at(actual_var_value);
                 abstract_variables.insert(original_var_name);
             } else {
-                for (auto s : mdp->abstract_states_.at(mdp_var)) {
+                for (auto s : mdp_abstract_states) {
                     if (s.second == actual_var_value) {
                         abstract_variables.insert(original_var_name);
                         break;
@@ -819,7 +824,8 @@ std::tuple<VariableSet, set < string >, set<string> > Mmdp::convertToMdpState(Hm
         }
         //            }
 
-        if (std::find(mdp->var_values_.at(mdp_var).begin(), mdp->var_values_.at(mdp_var).end(), actual_var_value) == mdp->var_values_.at(mdp_var).end()) {
+        std::vector<string> mdp_values = mdp->getValues(mdp_var);
+        if (std::find(mdp_values.begin(), mdp_values.end(), actual_var_value) == mdp_values.end()) {
             cout << "WARNING! ABSTRACT VALUE NOT FOUND IN CONVERTTOMDPSTATE\n";
 
         }
@@ -852,13 +858,14 @@ std::tuple<VariableSet, set < string >, set<string> > Mmdp::convertToMdpState(Hm
 
 VariableSet Mmdp::convertToMmdpState(VariableSet mdp_state, Hmdp* mdp, int index) {
     VariableSet mmdp_state;
+    std::vector<string> mdp_par = mdp->getParameters();
     for (auto var : mdp_state.set) {
         string actual_var_name = var.first;
         string actual_var_value = var.second;
-        if (mdp->variable_parameter_.find(actual_var_name) != mdp->variable_parameter_.end()) {
+        if (mdp->isVariableParameter(actual_var_name)) {
             actual_var_name = convertToMultiParameter(mdp, actual_var_name, index);
         }
-        if (std::find(mdp->parameters_.begin(), mdp->parameters_.end(), actual_var_value) != mdp->parameters_.end()) {
+        if (std::find(mdp_par.begin(), mdp_par.end(), actual_var_value) != mdp_par.end()) {
             actual_var_value = convertToMultiParameter(mdp, actual_var_value, index);
         }
         mmdp_state.set[actual_var_name] = actual_var_value;
@@ -868,7 +875,7 @@ VariableSet Mmdp::convertToMmdpState(VariableSet mdp_state, Hmdp* mdp, int index
 
 void Mmdp::assignParametersToMdp(Hmdp* mdp, int index) {
     std::map<string, string> instance;
-    for (auto parameter : mdp->parameters_) {
+    for (auto parameter : mdp->getParameters()) {
         string actual_par = convertToMultiParameter(mdp, parameter, index);
         instance[parameter] = parameter_instances_[actual_par];
     }
@@ -1052,15 +1059,15 @@ void Mmdp::createSubMmdps() {
                     sub_mmdp->agent_hmpd_[mdp_agent.first] = this_agent_hmdp->hierarchy_map_[sub_action];
 
                     is_hierarchical = true;
-                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name_, '-');
-                    generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name_, '-');
+                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->getParametrizedName(), '-');
+                    generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->getName(), '-');
 
                 } else {
                     //                    this_agent_hmdp->assignParametersFromActionName(single_actions_depar[action_index]);
 
                     sub_mmdp->agent_hmpd_[mdp_agent.first] = this_agent_hmdp;
-                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name_, '-');
-                    generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name_, '-');
+                    specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->getParametrizedName(), '-');
+                    generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->getName(), '-');
                 }
                 //                sub_mmdp->assignParametersFromActionName()
 
@@ -1105,8 +1112,8 @@ vector<string> Mmdp::hasParametersInCommon(map<string, Hmdp*> agents) {
     for (auto agent1 : agents) {
         for (auto agent2 : agents) {
             if (agent1.first != agent2.first) {
-                map<string, string> this_instance = agent1.second->parameter_instances_;
-                map<string, string> other_instance = agent2.second->parameter_instances_;
+                map<string, string> this_instance = agent1.second->getParameterInstance();
+                map<string, string> other_instance = agent2.second->getParameterInstance();
                 //if they have a parameter in common //EDIT when two parameters had the same value but different names
                 // (ex. brakcet= bracket1 and object=bracket1)
                 //it didn't work
@@ -1125,10 +1132,11 @@ vector<string> Mmdp::hasParametersInCommon(map<string, Hmdp*> agents) {
                     //                    }
                 }
                 //but also if a parameter is assigned to a variable of the other submmdps
-                for (auto original : agent1.second->parametrized_to_original_) {
-                    if (std::find(agent2.second->variables_.begin(), agent2.second->variables_.end(), original.second) != agent2.second->variables_.end()) {
-                        if (agent1.second->variable_parameter_.find(original.first) != agent1.second->variable_parameter_.end()) {
-                            parameters_in_common.push_back(agent1.second->variable_parameter_.at(original.first));
+                std::vector<string> agent2_var = agent1.second->getVariables();
+                for (auto original : agent1.second->getParametrizedToOriginal()) {
+                    if (std::find(agent2_var.begin(), agent2_var.end(), original.second) != agent2_var.end()) {
+                        if (agent1.second->isVariableParameter(original.first)) {
+                            parameters_in_common.push_back(agent1.second->getParameterOfVariable(original.first));
                         } else {
 
                             parameters_in_common.push_back(original.first);
@@ -1241,14 +1249,14 @@ pair<vector<string>, set<string> > Mmdp::getSubMdpName(string action) {
             if (this_agent_hmdp->hierarchy_map_.find(sub_action) != this_agent_hmdp->hierarchy_map_.end()) {
                 this_agent_hmdp->hierarchy_map_[sub_action]->assignParametersFromActionName(depar_single_actions[action_index]);
                 is_hierarchical = true;
-                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->parametrized_name_, '-');
-                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->name_, '-');
+                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->hierarchy_map_[sub_action]->getParametrizedName(), '-');
+                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->hierarchy_map_[sub_action]->getName(), '-');
                 agent_hmdps[mdp_agent.first] = this_agent_hmdp->hierarchy_map_[sub_action];
                 changed_mdps.insert(mdp_agent.first);
             } else {
                 this_agent_hmdp->assignParametersFromActionName(parametrized_this_name[action_index]);
-                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->parametrized_name_, '-');
-                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->name_, '-');
+                specific_name = StringOperations::addToString(specific_name, this_agent_hmdp->getParametrizedName(), '-');
+                generic_name = StringOperations::addToString(generic_name, this_agent_hmdp->getName(), '-');
                 agent_hmdps[mdp_agent.first] = this_agent_hmdp;
             }
         }
@@ -1271,7 +1279,7 @@ pair<vector<string>, set<string> > Mmdp::getSubMdpName(string action) {
             module_name = "";
             for (string p : parameters_in_common) {
                 for (auto a : agent_hmpd_) {
-                    for (auto place : agent_hmdps[a.first]->parameter_action_place_) {
+                    for (auto place : agent_hmdps[a.first]->getParameterActionPlace()) {
                         if (place.second == p) {
                             //                            agent_single_actions[a.first][place.first] = agent_hmdps[a.first]->parameter_instances.at(p);
                             agent_single_actions[a.first][place.first] = agent_single_actions[a.first][place.first] + "c";

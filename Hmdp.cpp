@@ -640,34 +640,34 @@ Hmdp * Hmdp::getLowestActiveModule() {
     else return this;
 }
 
-VariableSet Hmdp::fixAbstractStates(VariableSet sub_set, Hmdp * super_mmdp) {
-    VariableSet result;
-    for (auto v : sub_set.set) {
-        if (v.second == "other") {
-            vector<string> sub_values = var_values_.at(v.first);
-
-            string actual_key = v.first;
-            vector<string> super_keys;
-            super_keys.push_back(v.first);
-            if (parametrized_to_original_.find(actual_key) != parametrized_to_original_.end()) {
-                actual_key = parametrized_to_original_[actual_key];
-                super_keys = super_mmdp->original_to_parametrized_[actual_key];
-            }
-
-            vector<string> super_values = super_mmdp->var_values_.at(super_keys[0]);
-
-            for (string value : sub_values) {
-                if (std::find(super_values.begin(), super_values.end(), value) == super_values.end()) {
-                    result.set[v.first] = value;
-                    break;
-                }
-            }
-        } else {
-            result.set[v.first] = v.second;
-        }
-    }
-    return result;
-}
+//VariableSet Hmdp::fixAbstractStates(VariableSet sub_set, Hmdp * super_mmdp) {
+//    VariableSet result;
+//    for (auto v : sub_set.set) {
+//        if (v.second == "other") {
+//            vector<string> sub_values = var_values_.at(v.first);
+//
+//            string actual_key = v.first;
+//            vector<string> super_keys;
+//            super_keys.push_back(v.first);
+//            if (parametrized_to_original_.find(actual_key) != parametrized_to_original_.end()) {
+//                actual_key = parametrized_to_original_[actual_key];
+//                super_keys = super_mmdp->original_to_parametrized_[actual_key];
+//            }
+//
+//            vector<string> super_values = super_mmdp->var_values_.at(super_keys[0]);
+//
+//            for (string value : sub_values) {
+//                if (std::find(super_values.begin(), super_values.end(), value) == super_values.end()) {
+//                    result.set[v.first] = value;
+//                    break;
+//                }
+//            }
+//        } else {
+//            result.set[v.first] = v.second;
+//        }
+//    }
+//    return result;
+//}
 
 VariableSet Hmdp::convertToParametrizedState(VariableSet s, Hmdp * super_mdp) {
     VariableSet vs_new;

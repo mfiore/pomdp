@@ -67,6 +67,3 @@ Hmdp * MmdpManager::getMdp(string name, string action_name, bool rewrite, bool f
 
     }
 }
-
-
-

@@ -3,7 +3,11 @@
  * Author: mfiore
  *
  * Created on December 14, 2015, 4:49 PM
- */
+
+ * This class represents an HMDP, that is a hierarchic MDP. To compute the policy the class will solve a set of linear equations
+ * to calculate a hierarchic policy, that can be used by the higher layers of the hierarchy.
+ * 
+ *  */
 
 #ifndef HMDP_H
 #define HMDP_H
@@ -32,7 +36,7 @@ public:
     Hmdp();
     Hmdp(const Hmdp& orig);
     virtual ~Hmdp();
-    
+
     //simulate n steps on the initial state using the policy
     void simulate(int n, VariableSet initial_state);
 
@@ -67,9 +71,6 @@ public:
 
 
 
-    //links action names to mdps. Must be set for all parameter instances
-    //etcs. human_take_tape -> "TakeObject", human_take_glass -> "TakeObject"
-    HmdpMap hierarchy_map_;
 
     //creates the mdp. name is the assigned name on the mdp. If rewrite is true the mdp will generate a new policy and hmdp file
     //if first=true it won't calculate hierarchical reward and transition, saving some time (it's usable only on the first node
@@ -93,6 +94,38 @@ public:
     void readHierarchical(string fileName);
     void writeHierarchical(string fileName);
 
+
+
+    //protected:
+    //    vector<int> starting_states_;
+    //    vector<int> goal_states_;
+
+
+
+    bool isAlreadyCreated();
+
+    void printGoalStates();
+
+    void printHierarchy();
+
+
+    //conver states from real world to parametrized
+    virtual VariableSet convertToParametrizedState(VariableSet parameter_set); //converts a state space to it's parametrized version
+    virtual VariableSet convertToParametrizedState(VariableSet parameter_set, Hmdp* super_mdp); //converts a state space to it's parametrized version
+
+    //test functions to see if the function enumeration is working
+    virtual void testEnumerate(int i, string action);
+
+    
+protected:
+    //links action names to mdps. Must be set for all parameter instances
+    //etcs. human_take_tape -> "TakeObject", human_take_glass -> "TakeObject"
+    HmdpMap hierarchy_map_;
+
+
+    string hierarchic_file_; //hierarchic file name
+    bool is_hierarchy_cached_; //true if the hierarchy models are in memory
+    bool is_created_; //true if the model has already been created
     //contains the hierarchic transition and reward
     std::map<pair<int, int>, double> hierarchic_transition_;
     std::map<int, double> hierarchic_reward_;
@@ -100,42 +133,20 @@ public:
     //active module tracks the current operating MDP in the hierachy ("this" if the actual object is active)
     string active_module;
 
-    //protected:
-//    vector<int> starting_states_;
-//    vector<int> goal_states_;
 
 
-    virtual void enumerateFunctions();
-
-    bool isAlreadyCreated();
-    bool is_created_;
-
-
-    void printGoalStates();
-
-    void printHierarchy();
-
-    virtual string getDeparametrizedAction(string action_name) override;
-
-    VariableSet fixAbstractStates(VariableSet sub_set, Hmdp* sub_mmdp);
-
-    virtual VariableSet convertToParametrizedState(VariableSet parameter_set) override; //converts a state space to it's parametrized version
-    virtual VariableSet convertToParametrizedState(VariableSet parameter_set, Hmdp* super_mdp); //converts a state space to it's parametrized version
-
-    string hierarchic_file_;
-    bool is_hierarchy_cached_;
 
     std::map<VariableSet, double> getHierarchicTransitionFromFile(int i, VariableSet original_set);
     double getHierarchicRewardFromFile(int i);
 
+    virtual void enumerateFunctions();
 
     void loadHierarchicInCache();
     void emptyHierarchicCache();
 
-    virtual void testEnumerate(int i, string action);
+    virtual string getDeparametrizedAction(string action_name);
 
-
-
+    //    VariableSet fixAbstractStates(VariableSet sub_set, Hmdp* sub_mmdp);
 };
 
 

@@ -9,6 +9,8 @@
  * Author: mfiore
  *
  * Created on June 16, 2016, 2:54 PM
+ * 
+ * This class is used by the MMDP to create needed models in the hierarchy,
  */
 
 //#include "Hmdp.h"
@@ -29,11 +31,12 @@ public:
     MmdpManager(const MmdpManager& orig);
     virtual ~MmdpManager();
 
-
+    //returns an MMDP requested (creating it if needed from the mdp_map)
     Hmdp* getMmdp(string name, string action_name, bool rewrite, bool first);
+    //returns a single agent MDP
     Hmdp* getMdp(string name, string action_name, bool rewrite, bool first);
 
-    vector<map<string, Hmdp*> > hmdp_map_;
+    vector<map<string, Hmdp*> > hmdp_map_; //list of the known hmdps
 
 private:
     map<string, Hmdp*> mmdp_map_;
@@ -42,4 +45,3 @@ private:
 };
 
 #endif /* MDPMANAGER_H */
-
