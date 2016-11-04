@@ -115,7 +115,8 @@ public:
 
     //test functions to see if the function enumeration is working
     virtual void testEnumerate(int i, string action);
-
+    void loadHierarchicInCache();
+    void emptyHierarchicCache();
     
 protected:
     //links action names to mdps. Must be set for all parameter instances
@@ -141,8 +142,7 @@ protected:
 
     virtual void enumerateFunctions();
 
-    void loadHierarchicInCache();
-    void emptyHierarchicCache();
+
 
     virtual string getDeparametrizedAction(string action_name);
 
