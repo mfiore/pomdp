@@ -12,8 +12,11 @@
 #include <stack>
 #include <utility>
 #include <algorithm>
+<<<<<<< HEAD
+=======
 #include <set>
 #include <bits/stl_map.h>
+>>>>>>> generic_mdp
 
 Mdp::Mdp(bool use_cost) : use_cost_(use_cost) {
 }

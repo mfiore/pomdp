@@ -6,7 +6,7 @@
  */
 
 #ifndef MDPBASICACTIONS_H
-#define	MDPBASICACTIONS_H
+#define MDPBASICACTIONS_H
 
 #include "Mdp.h"
 #include <vector>
@@ -39,6 +39,16 @@ public:
         return result;
     }
 
+    static VarStateProb applyMove(string agent_loc_var, string location, VariableSet s, map<string, vector<string> > connections, string agent_loc) {
+        VarStateProb result;
+        vector<string> conn_loc = connections.at(agent_loc);
+        if (std::find(conn_loc.begin(), conn_loc.end(), location) != conn_loc.end()) {
+            s.set[agent_loc_var] = location;
+            result[s] = 1.0;
+        }
+        return result;
+    }
+
     static VarStateProb applyPlace(string object_loc_var, string object_loc, string agent_loc, string support, string agent, VariableSet s) {
         VarStateProb result;
         if (object_loc == agent && agent_loc == support) {
@@ -57,6 +67,22 @@ public:
         result[s] = 1.0;
         return result;
     }
+
+    static VarStateProb applySimplePick(string agent_name, string object_loc_var, VariableSet s) {
+        VarStateProb result;
+        s.set[object_loc_var] = agent_name;
+        result[s] = 1.0;
+        return result;
+    }
+
+    static VarStateProb applySimplePlace(string agent_name, string object_loc_var, string place_location, VariableSet s) {
+        VarStateProb result;
+        if (s.set.at(object_loc_var) == agent_name) {
+            s.set[object_loc_var] = place_location;
+        }
+        result[s] = 1.0;
+        return result;
+    }
 };
-#endif	/* MDPBASICACTIONS_H */
+#endif /* MDPBASICACTIONS_H */
 

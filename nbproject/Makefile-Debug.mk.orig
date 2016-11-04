@@ -73,47 +73,114 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.${CND_DLIB_EXT}: ${OBJECTFIL
 ${OBJECTDIR}/ConcreteMdp.o: ConcreteMdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
+<<<<<<< HEAD
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetLaundry.o GetLaundry.cpp
+=======
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ConcreteMdp.o ConcreteMdp.cpp
+>>>>>>> generic_mdp
 
 ${OBJECTDIR}/Hmdp.o: Hmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
+<<<<<<< HEAD
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmdp.o Hmdp.cpp
+=======
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmdp.o Hmdp.cpp
+>>>>>>> generic_mdp
 
 ${OBJECTDIR}/Mdp.o: Mdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
+<<<<<<< HEAD
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
+=======
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
+>>>>>>> generic_mdp
 
 ${OBJECTDIR}/Mmdp.o: Mmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
+<<<<<<< HEAD
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
+=======
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
+>>>>>>> generic_mdp
 
 ${OBJECTDIR}/MmdpManager.o: MmdpManager.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
+<<<<<<< HEAD
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
+
+${OBJECTDIR}/PlaceObject.o: PlaceObject.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PlaceObject.o PlaceObject.cpp
+
+${OBJECTDIR}/Pomdp.o: Pomdp.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Pomdp.o Pomdp.cpp
+=======
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MmdpManager.o MmdpManager.cpp
 
 ${OBJECTDIR}/NestedLoop.o: NestedLoop.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
+>>>>>>> generic_mdp
 
 ${OBJECTDIR}/PriorityQueue.o: PriorityQueue.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
+<<<<<<< HEAD
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
+
+${OBJECTDIR}/ReorderTable.o: ReorderTable.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReorderTable.o ReorderTable.cpp
+
+${OBJECTDIR}/StartWashingMachine.o: StartWashingMachine.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/StartWashingMachine.o StartWashingMachine.cpp
+
+${OBJECTDIR}/TakeObject.o: TakeObject.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TakeObject.o TakeObject.cpp
+=======
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
+>>>>>>> generic_mdp
 
 ${OBJECTDIR}/VariableSet.o: VariableSet.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
+<<<<<<< HEAD
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
+=======
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
+>>>>>>> generic_mdp
 
 ${OBJECTDIR}/Wait.o: Wait.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
+<<<<<<< HEAD
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
+
+${OBJECTDIR}/WashLaundry.o: WashLaundry.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundry.o WashLaundry.cpp
+
+${OBJECTDIR}/WashLaundryFull.o: WashLaundryFull.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I~/devel/src/eigen/Eigen -I~/devel/src/eigen -I../../devel/src/eigen -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundryFull.o WashLaundryFull.cpp
+=======
 	$(COMPILE.cc) -g -I../../devel/src/eigen/Eigen -I../../devel/src/eigen -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
+>>>>>>> generic_mdp
 
 # Subprojects
 .build-subprojects:

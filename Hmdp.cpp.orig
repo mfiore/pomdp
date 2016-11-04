@@ -1,0 +1,582 @@
+/* 
+ * File:   Hmdp.cpp
+ * Author: mfiore
+ * 
+ * Created on December 14, 2015, 4:49 PM
+ */
+
+#include <map>
+#include <vector>
+
+#include "Hmdp.h"
+#include "Mdp.h"
+
+Hmdp::Hmdp() {
+    active_module = "this";
+}
+
+Hmdp::Hmdp(const Hmdp& orig) {
+}
+
+Hmdp::~Hmdp() {
+}
+
+double Hmdp::getHierarchicReward(int i) {
+    return hierarchic_reward_[i];
+}
+
+double Hmdp::getHierarchicReward(VariableSet set) {
+
+    VariableSet parametrized_set = convertToParametrizedState(set);
+    int i = convertHierarchicState(parametrized_set);
+    double r = hierarchic_reward_[i];
+    return hierarchic_reward_[i];
+}
+
+map<int, double> Hmdp::getHierarchicTransition(int i) {
+    map<int, double> result;
+
+    for (int g : goal_states_) {
+        pair<int, int> hierachic_input{i, g};
+        double prob = hierarchic_transition_[hierachic_input];
+        if (prob > 0) {
+            result[g] = prob;
+        }
+    }
+    return result;
+
+}
+
+int Hmdp::convertHierarchicState(VariableSet set) {
+    VariableSet this_set;
+//    cout<<set.toString()<<"\n";
+    for (string v : variables) {
+        this_set.set[v] = set.set[v];
+    }
+    //    for (auto s:mapStateEnum) {
+    //        VariableSet v=s.first;
+    //        cout<<v.toString()<<"\n";
+    //        cout<<s.second<<"\n";
+    //    }
+//        cout<<this_set.toString()<<"\n";
+    return mapStateEnum.at(this_set);
+
+}
+
+map<VariableSet, double> Hmdp::convertToHigherState(VariableSet original_set, map<VariableSet, double> temp_result) {
+    map<VariableSet, double> result;
+
+    vector<string> higher_variables;
+    for (auto v : original_set.set) {
+        higher_variables.push_back(v.first);
+    }
+
+    //we should:
+    //- put parameters in their original form
+    //- add missing variables back
+
+
+
+    for (auto b : temp_result) {
+        VariableSet param_vs = b.first;
+        //        cout<<param_vs.toString();
+        VariableSet deparametrized_vs = convertToDeparametrizedState(param_vs);
+        //      cout<<deparametrized_vs.toString();
+        VariableSet result_vs;
+        for (string s : higher_variables) {
+            if (deparametrized_vs.set.find(s) != deparametrized_vs.set.end()) {
+                result_vs.set[s] = deparametrized_vs.set[s];
+            } else {
+                result_vs.set[s] = original_set.set[s];
+            }
+        }
+        result[result_vs] = b.second;
+
+    }
+    return result;
+
+}
+
+map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set) {
+    map<VariableSet, double> temp_result;
+
+        cout<<set.toString()<<"\n";
+
+    VariableSet v_param = convertToParametrizedState(set);
+        cout<<v_param.toString()<<"\n";
+    int i = convertHierarchicState(v_param);
+
+    //    int i = convertHierarchicState(set);
+    //    for (auto v:v_param.set) {
+    //      cout<<v.first<<" "<<v.second<<"\n";
+    // }
+    //    int i = mapStateEnum[v_param];
+//
+//    for (auto h : hierarchic_transition_) {
+//        if (h.second > 0) {
+//            cout << h.first.first << " " << h.first.second << " " << h.second << "\n";
+//        }
+//    }
+//    cout << "\n";
+    for (int g : goal_states_) {
+        pair<int, int> hierachic_input{i, g};
+        double prob = hierarchic_transition_[hierachic_input];
+        if (prob > 0) {
+            temp_result[vecStateEnum[g]] = prob;
+        }
+    }
+
+
+    return convertToHigherState(set, temp_result);
+
+}
+
+map<VariableSet, double> Hmdp::getHierarchicTransition(VariableSet set, string action) {
+    map<VariableSet, double> temp_result;
+
+    if (active_module != "this") {
+        temp_result = hierarchy_map_[active_module]->getHierarchicTransition(set, action);
+    } else {
+        VariableSet v_param = convertToParametrizedState(set);
+
+        int i = convertHierarchicState(v_param);
+        PairStateAction p{i, action};
+        StateProb result_var = transition[p];
+        for (auto r : result_var) {
+            temp_result[vecStateEnum[r.first]] = r.second;
+        }
+    }
+    return convertToHigherState(set, temp_result);
+
+}
+
+void Hmdp::calculateHierarchicReward() {
+    cout << "Calculating hierarchic reward\n";
+    if (hierarchic_reward_.size() == 0) {
+        std::map<int, double> temp_hierarchic_reward;
+        using Eigen::VectorXd;
+        Eigen::SparseMatrix<double> a(vecStateEnum.size(), vecStateEnum.size());
+        VectorXd b(vecStateEnum.size());
+        double beta = 0.3;
+        int i = -1;
+        for (int s = 0; s < vecStateEnum.size(); s++) {
+            a.insert(s, s) = 1;
+            string action = chooseAction(s);
+            PairStateAction transition_input{s, action};
+            StateProb future_states = transition[transition_input];
+            for (auto future_state : future_states) {
+                int sp = future_state.first;
+                if (!isGoalState(vecStateEnum[sp]) && sp != s) {
+                    a.insert(s, sp) = -beta * future_state.second;
+                }
+            }
+            PairStateAction reward_input{s, action};
+            b(s) = reward[reward_input];
+        }
+        Eigen::BiCGSTAB<Eigen::SparseMatrix<double> > solver;
+        a.makeCompressed();
+        solver.compute(a);
+        if (solver.info() != Eigen::Success) {
+            // decomposition failed
+            return;
+        }
+        VectorXd x = solver.solve(b);
+        if (solver.info() != Eigen::Success) {
+            // solving failed
+            return;
+        }
+        //        VectorXd x = a.householderQr().solve(b);
+        i = 0;
+        for (int s : starting_states_) {
+            temp_hierarchic_reward[s] = x(s);
+            i++;
+        }
+        hierarchic_reward_ = temp_hierarchic_reward;
+
+    }
+}
+
+void Hmdp::calculateHierarchicTransition() {
+    cout << "Calculating hierarchic transition\n";
+    //    
+    //    printTransitionFunction();
+    //
+    //    for (auto t:transition) {
+    //        cout<<t.first.first<<" "<<t.first.second<<"\n";
+    //        for (auto s:t.second) {
+    //            cout<<s.first<<" "<<s.second<<"\n";
+    //        }
+    //    \
+//    
+//    for (auto g:goal_states_) {
+//        VariableSet v=vecStateEnum[g];
+//        cout<<v.toString()<<"\n";
+//    }
+//    
+//    for (auto t:transition) {
+//        for (auto s:t.second) {
+//            VariableSet v=vecStateEnum[s.first];
+//            cout<<v.toString()<<"\n";
+//        }
+//    }
+    if (hierarchic_transition_.size() == 0) {
+        std::map<pair<int, int>, double> temp_hierarcic_transition;
+
+        double beta = 0.3;
+
+        for (int g : goal_states_) {
+            using Eigen::VectorXd;
+            Eigen::SparseMatrix<double> a(vecStateEnum.size(), vecStateEnum.size());
+            VectorXd b(vecStateEnum.size());
+
+
+            for (int s = 0; s < vecStateEnum.size(); s++) {
+                string action = chooseAction(s);
+                PairStateAction t_input{s, action};
+                StateProb future_states = transition[t_input];
+                a.insert(s, s) = 1;
+                for (auto future_state : future_states) {
+                    int sp = future_state.first;
+                    if (sp != s && !isGoalState(vecStateEnum[sp])) {
+                        a.insert(s, sp) = -beta * future_state.second;
+                    }
+
+                }
+                double b_transition_prob = getTransitionProb(s, action, g);
+                b[s] = b_transition_prob;
+            }
+            Eigen::SparseLU<Eigen::SparseMatrix<double> > solver;
+            a.makeCompressed();
+            solver.compute(a);
+            if (solver.info() != Eigen::Success) {
+                // decomposition failed
+                return;
+            }
+            VectorXd x = solver.solve(b);
+            if (solver.info() != Eigen::Success) {
+                // solving failed
+                return;
+            }
+            int i = 0;
+            for (int s : starting_states_) {
+                pair<int, int> hierarchic_input{s, g};
+                temp_hierarcic_transition[hierarchic_input] = x(s);
+                i++;
+            }
+        }
+
+     
+
+        hierarchic_transition_ = temp_hierarcic_transition;
+    }
+}
+
+<<<<<<< HEAD
+void Hmdp::create(string name, bool rewrite, bool first) {
+    this->name = name;
+
+    unordered_set<Hmdp*> already_created;
+    for (HmdpMap::iterator i = hierarchy_map_.begin(); i != hierarchy_map_.end(); i++) {
+        if (already_created.find(i->second) == already_created.end()) {
+            i->second->create(i->first, rewrite, false);
+            already_created.insert(i->second);
+        }
+    }
+
+    cout << "Creating " << name << "\n";
+
+    string fileName = name + ".pomdp";
+
+    std::vector<std::vector<int>> enumInput;
+    for (string variable : variables) {
+        std::vector<int> valValues;
+        for (int i = 0; i < varValues[variable].size(); i++) {
+            valValues.push_back(i);
+        }
+        enumInput.push_back(valValues);
+    }
+
+    NestedLoop loop(enumInput);
+    std::vector<std::vector<int>> enumOutput = loop.buildMatrix();
+    for (int i = 0; i < enumOutput.size(); i++) {
+        VariableSet v;
+        for (int j = 0; j < enumOutput[i].size(); j++) {
+            string name = variables[j];
+            std::vector<string> values = varValues[name];
+            v.set[name] = values[enumOutput[i][j]];
+        }
+
+        mapStateEnum[v] = i;
+
+        vecStateEnum.push_back(v);
+    }
+
+    cout<<vecStateEnum.size()<<"\n";
+    ifstream inputFile(fileName);
+    if (inputFile.good() && !rewrite) {
+        for (int i = 0; i < vecStateEnum.size(); i++) {
+            for (string action : actions) {
+                PairStateAction transitionInput{i, action};
+                StateProb transitionOutput;
+
+                string line;
+                getline(inputFile, line);
+                vector<string> transition_v = StringOperations::stringSplit(line, ' ');
+                int i = 0;
+
+                PairStateAction bTransitionInput{i, action};
+
+                while (i < transition_v.size()) {
+                    transitionOutput[stoi(transition_v[i])] = stod(transition_v[i + 1]);
+                    std::vector<int> previousBeliefs = predecessors[bTransitionInput];
+                    previousBeliefs.push_back(stoi(transition_v[i]));
+                    predecessors[bTransitionInput] = previousBeliefs;
+
+                    i = i + 2;
+=======
+void Hmdp::enumerateFunctions(string fileName) {
+    ofstream file(fileName);
+    cout << "Starting Enumeration\n";
+    for (int i = 0; i < vecStateEnum.size(); i++) {
+        for (string action : actions) {
+            double r;
+            StateProb future_beliefs;
+            if (hierarchy_map_.find(action) == hierarchy_map_.end()) {
+                VarStateProb future_beliefs_var = transitionFunction(vecStateEnum[i], action);
+                for (auto b : future_beliefs_var) {
+                    future_beliefs[mapStateEnum.at(b.first)] = b.second;
+>>>>>>> create_auto_sub
+                }
+                r = rewardFunction(vecStateEnum[i], action);
+            } else {
+                Hmdp* h = hierarchy_map_[action];
+                //            h->setParameters(action);
+                //              cout<<vecStateEnum[i].toString()<<"\n";
+                h->assignParametersFromActionName(action);
+                VarStateProb temp_future_beliefs = h->getHierarchicTransition(vecStateEnum[i]);
+                for (auto temp_b : temp_future_beliefs) {
+                    //                    for (auto asd : temp_b.first.set) {
+                    //                  cout << asd.first << " " << asd.second << "\n";
+                    //                    }
+                    future_beliefs[mapStateEnum.at(temp_b.first)] = temp_b.second;
+                }
+                VariableSet vstry = vecStateEnum[i];
+
+                r = h->getHierarchicReward(vstry) * rewardFunction(vecStateEnum[i], action);
+            }
+
+            PairStateAction transitionInput{i, action};
+            for (auto belief : future_beliefs) {
+                int s = belief.first;
+
+                file << s << " " << belief.second << " ";
+                PairStateAction bTransitionInput{s, action};
+                std::vector<int> previousBeliefs = predecessors[bTransitionInput];
+                previousBeliefs.push_back(i);
+                predecessors[bTransitionInput] = previousBeliefs;
+            }
+            file << "\n";
+            transition[transitionInput] = future_beliefs;
+
+            PairStateAction rewardInput{i, action};
+            reward[rewardInput] = r;
+            file << r << "\n";
+        }
+    }
+    file.close();
+}
+
+void Hmdp::enumerateGoalAndStartStates() {
+    for (auto state : mapStateEnum) {
+        if (isGoalState(state.first)) {
+            goal_states_.push_back(state.second);
+        }
+        if (isStartingState(state.first)) {
+            starting_states_.push_back(state.second);
+        }
+    }
+}
+
+void Hmdp::create(string name, bool rewrite, bool first) {
+    if (!is_created_) {
+        is_created_ = true;
+        name = getParametrizedAction(name); //transform something like human_take_dish in agent_take_object 
+        //in order to be generic;
+        this->name = name;
+
+
+        for (HmdpMap::iterator i = hierarchy_map_.begin(); i != hierarchy_map_.end(); i++) {
+            i->second->create(i->first, rewrite, false);
+        }
+
+        cout << "Creating " << name << "\n";
+        string fileName = name + ".pomdp";
+
+        enumerateStates();
+        bool has_read = readMdp(fileName, rewrite);
+        if (!has_read) {
+            enumerateFunctions(fileName);
+        }
+
+        enumerateGoalAndStartStates();
+
+        valueIteration(rewrite);
+
+        if (!first) {
+            ifstream i_file(name + ".hmdp");
+            if (!rewrite && i_file.good()) {
+                i_file.close();
+                readHierarchical();
+            } else {
+                calculateHierarchicReward();
+                calculateHierarchicTransition();
+                writeHierarchical();
+            }
+        }
+    }
+}
+
+void Hmdp::readHierarchical() {
+    ifstream i_file(name + ".hmdp");
+    if (i_file.good()) {
+        string reward_line;
+        getline(i_file, reward_line);
+        vector<double> rewards = StringOperations::split(reward_line, ' ');
+        int i = 0;
+        for (int s : starting_states_) {
+            hierarchic_reward_[s] = rewards[i];
+            i++;
+        }
+        for (int g : goal_states_) {
+            string goal_line;
+            getline(i_file, goal_line);
+            vector<double> goal_transitions = StringOperations::split(goal_line, ' ');
+            int i = 0;
+            for (int s : starting_states_) {
+                pair<int, int> t_input{s, g};
+                hierarchic_transition_[t_input] = goal_transitions[i];
+                i++;
+            }
+        }
+    }
+    i_file.close();
+}
+
+void Hmdp::writeHierarchical() {
+    ofstream o_file(name + ".hmdp");
+    for (int s : starting_states_) {
+        o_file << hierarchic_reward_[s] << " ";
+    }
+    o_file << "\n";
+    for (int g : goal_states_) {
+        for (int s : starting_states_) {
+            pair<int, int> t_input{s, g};
+            o_file << hierarchic_transition_[t_input] << " ";
+        }
+        o_file << "\n";
+    }
+    o_file.close();
+}
+
+string Hmdp::chooseHierarchicAction(VariableSet state) {
+    VariableSet this_state = convertToParametrizedState(state);
+    if (isGoalState(this_state)) return "";
+    if (active_module == "this") {
+//        cout<<state.toString()<<"\n";
+        string action = chooseAction(mapStateEnum.at(this_state));
+        if (hierarchy_map_.find(action) != hierarchy_map_.end()) {
+            Hmdp * h = hierarchy_map_[action];
+            active_module = action;
+            h->assignParametersFromActionName(action);
+            return hierarchy_map_[action]->chooseHierarchicAction(state);
+        } else {
+            return action;
+        }
+    } else {
+        string action = hierarchy_map_[active_module]->chooseHierarchicAction(state);
+        if (action != "") {
+            return action;
+        } else {
+            active_module = "this";
+            return chooseHierarchicAction(this_state);
+        }
+    }
+}
+
+string Hmdp::chooseHierarchicAction(int b) {
+    return chooseHierarchicAction(vecStateEnum[b]);
+}
+//
+
+void Hmdp::simulate(int n, VariableSet initial_state) {
+    VariableSet parametrized_vs = convertToParametrizedState(initial_state);
+//    cout << parametrized_vs.toString();
+//
+//    for (auto v : mapStateEnum) {
+//        VariableSet set = v.first;
+//        cout << set.toString();
+//        cout << v.second << "\n\n";
+//    }
+    int int_initial_state = mapStateEnum.at(parametrized_vs);
+    StateProb b;
+    b[int_initial_state] = 1.0;
+    for (int i = 0; i < n; i++) {
+        cout << "Step " << i << "\n";
+        StateProb temp_b;
+        for (auto s : b) {
+            cout << "State: \n";
+            cout << vecStateEnum[s.first].toString();
+            string action = chooseHierarchicAction(s.first);
+
+            StateProb output;
+            if (active_module != "this") {
+                Hmdp* sub_mdp = hierarchy_map_[active_module];
+                cout << "Executing " << sub_mdp->getDeparametrizedAction(action) << "\n";
+
+                VarStateProb var_output = sub_mdp->getHierarchicTransition(vecStateEnum[s.first], action);
+                for (auto o : var_output) {
+                    output[mapStateEnum.at(o.first)] = o.second;
+                }
+            } else {
+                cout << "Executing " << getDeparametrizedAction(action) << "\n";\
+
+                PairStateAction p{s.first, action};
+                output = transition[p];
+            }
+            for (auto o : output) {
+                if (temp_b.find(o.first) != temp_b.end()) {
+                    temp_b[o.first] = temp_b.at(o.first) + o.second;
+                } else {
+                    temp_b[o.first] = o.second;
+                }
+            }
+        }
+        b = temp_b;
+    }
+    cout << "Final States\n";
+    for (auto s : b) {
+        cout << vecStateEnum[s.first].toString() << "\n";
+    }
+}
+
+void Hmdp::assignParametersFromActionName(string action_name) {
+    vector<string> action_parts = StringOperations::stringSplit(action_name, '_');
+    map<string, string> instance;
+    if (action_parts.size() > 0) {
+        instance["agent"] = action_parts[0];
+    }
+    if (action_parts.size() > 2) {
+        instance["object"] = action_parts[2];
+    }
+    if (action_parts.size() > 3) {
+        instance["support"] = action_parts[3];
+    }
+    assignParameters(instance);
+}
+
+void Hmdp::printGoalStates() {
+    cout << "Goal states:\n";
+    for (int i = 0; i < goal_states_.size(); i++) {
+        cout << vecStateEnum[goal_states_[i]].toString() << "\n";
+    }
+}

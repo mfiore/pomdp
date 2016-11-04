@@ -5,14 +5,14 @@
  */
 
 /* 
- * File:   ReorderTable.h
+ * File:   DrinkWater.h
  * Author: mfiore
  *
- * Created on August 12, 2016, 2:25 PM
+ * Created on August 12, 2016, 11:22 AM
  */
 
-#ifndef REORDERTABLE_H
-#define REORDERTABLE_H
+#ifndef DRINKWATER_H
+#define DRINKWATER_H
 
 #include "Mdp.h"
 
@@ -21,11 +21,11 @@
 #include "MdpBasicActions.h"
 
 using namespace std;
-class ReorderTable: public Mdp {
+class DrinkWater: public Mdp {
 public:
-    ReorderTable();
-    ReorderTable(const ReorderTable& orig);
-    virtual ~ReorderTable();
+    DrinkWater();
+    DrinkWater(const DrinkWater& orig);
+    virtual ~DrinkWater();
     
 private:
 
@@ -37,13 +37,16 @@ private:
     string agent_loc_var_;
     string bottle_loc_var_;
     string glass_loc_var_;
+    string glass_capacity_var_;
+    string bottle_capacity_var_;
+    string has_drunk_var_;
     
     string agent_name_;
     string glass_name_;
     string bottle_name_;
-
-    string place_location_;
+    
+    
     
 };
-#endif /* REORDERTABLE_H */
+#endif /* DRINKWATER_H */
 

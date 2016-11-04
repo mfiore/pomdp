@@ -56,7 +56,12 @@
       <compileType>
         <ccTool>
           <incDir>
+<<<<<<< HEAD
+            <pElem>~/devel/src/eigen/Eigen</pElem>
+            <pElem>~/devel/src/eigen</pElem>
+=======
             <pElem>../../devel/src/eigen/Eigen</pElem>
+>>>>>>> generic_mdp
             <pElem>../../devel/src/eigen</pElem>
           </incDir>
           <commandLine>-std=c++11</commandLine>

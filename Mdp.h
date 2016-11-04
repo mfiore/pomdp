@@ -4,20 +4,15 @@
  *
  * Created on January 6 2016, 11:53 AM
  * 
- * This abstract class represents an MDP, including just the standard bellman backup and a prioritized sweeping
- * implementation (that seems to be usually slower). Actual MDP models need to extend this class and implement functions
- * for the rewardFunction and transitionFunction.
+ * This class is the superclass of all MDPs. It includes just enough methods to be able to read an MDP from a file
+ * and use it correctly.
  * 
- * The class uses a flat representation for the state, with integers. Users can define state with partioned variable sets.
  * 
- * Future developments might be:
- * -switching from flat to symbolic
- * -better solving algorithms
  */
 
 #ifndef MDP_H
 
-#define	MDP_H
+#define MDP_H
 
 #include <vector>
 #include<map>
@@ -28,22 +23,25 @@
 
 #include "NestedLoop.h"
 #include "StringOperations.h"
+#include <set>
 
-using namespace std;
-
+//some useful typedefs
 typedef pair<int, string> PairStateAction;
-typedef map<int, double> StateProb;
-typedef map<VariableSet, double> VarStateProb;
+typedef std::map<int, double> StateProb;
+typedef std::map<VariableSet, double> VarStateProb;
 
 class Mdp {
 public:
-    Mdp();
+    /*creates an MDP: if use_cost=true than it will use goal states and a cost function (where the cost of each action is 1,
+    outside of goal states). Else it will use a reward function */
+    Mdp(bool use_cost = true);
     Mdp(const Mdp& orig);
     virtual ~Mdp();
 
-    virtual void create(string name, bool rewrite = false);
 
+    //return the value of executing an action in a state and then following the policy
     double getQValue(VariableSet s, string action);
+    //return the best action in a state
     string chooseAction(VariableSet s);
 
     //utility functions
@@ -51,75 +49,123 @@ public:
     void printRewardFunction();
     void printStates();
     void printQValues(VariableSet s);
+    void printActions();
+    void printParameters();
+    void printGoalStates();
 
+    //simulates n steps of the model starting from a certain state
     virtual void simulate(int n, VariableSet s);
 
-    void assignParameters(map<string, string> instance);
+    //assign parameters to the model
+    void assignParameters(std::map<string, string> instance);
 
-    virtual string getDeparametrizedAction(string action_name);
-    virtual string getParametrizedAction(string action_name);
-    
-    //private:
 
-    //protected:
+    bool readMdp(string path);
+
+    //setters and getters
+    std::vector<string> getVariables() const;
+    std::vector<string> getValues(string var);
+    std::vector<string> getParameters() const;
+    bool isVariableParameter(string var);
+    std::map<string, string> getAbstractStates(string var) const;
+    std::map<string, string> getParameterInstance() const;
+    std::vector<string> getActions() const;
+    string getParametrizedName() const;
+    string getName() const;
+    std::vector<string> getParameterVariables(string par);
+    string getParameterOfVariable(string var);
+    bool isUseCost() const;
+    void setName(string name_);
+    string getParameterForActionPlace(int i);
+    void setParametrizedName(string parametrized_name_);
+    std::map<string, string> getParametrizedToOriginal() const;
+    std::map<string, std::vector<string> > getOriginalToParametrized_() const;
+    std::map<int, string> getParameterActionPlace() const;
+    std::vector<int> getGoalStates() const;
+    bool isGoalState(VariableSet state);
+
+    //converts states from real world to parametrized representation and viceversa
+    VariableSet convertToParametrizedState(VariableSet s);
+    VariableSet convertToDeparametrizedState(VariableSet parameter_set, VariableSet full_state);
+
+    string getDeparametrizedAction(string action_name);
+    string getParametrizedAction(string action_name);
+
+    std::vector<std::string> getOriginalVars();
+
+protected:
     //mdp specification
-    std::vector<string> variables; //lists all variables;
-    std::vector<string> actions;
-    std::map<string, std::vector<string> > varValues;
 
-    std::vector<string> parameters; //list of parameters of the mdp (ex. object_name agent_name)
-    std::map<string, string> parameter_instances; //current set up of parameters (ex. object_name=grey_tape)
-    std::map<string, std::vector<string> > parameter_variables; //each parameter can be link to variables (ex. object_name is linked to object_isAt)
-    std::map<string, string> variable_parameter; //inverse link
-    std::map<string, vector<string> > original_to_parametrized; //map that converts a var to it's parametrized version (e.g. greyTape_isAt -> object_isAt)
-    //it's a vector because theoretically more parameters could be set to the same value (e.g. greyTape_isAt -> object1_isAt, object2_isAt)
-    std::map<string, string > parametrized_to_original; //opposite of the one upper
+    string name_; //name of the model
+    string parametrized_name_; //name of the model after applying the parameters
 
+    std::vector<string> variables_; //lists all variables;
+    std::vector<string> actions_; //list of actions
+    std::map<string, std::vector<string> > var_values_; //values of the variables
+
+    std::vector<string> parameters_; //list of parameters of the mdp (ex. object_name agent_name)
+    std::map<string, string> parameter_instances_; //current set up of parameters (ex. object_name=grey_tape)
+    std::map<string, std::vector<string> > parameter_variables_; //each parameter can be link to variables (ex. object_name is linked to object_isAt)
+    std::map<string, string> variable_parameter_; //inverse link
+    std::map<string, std::vector<string> > original_to_parametrized_; //std::map that converts a var to it's parametrized version (e.g. greyTape_isAt -> object_isAt)
+    //it's a std::vector because theoretically more parameters could be set to the same value (e.g. greyTape_isAt -> object1_isAt, object2_isAt)
+    std::map<string, string > parametrized_to_original_; //opposite of the one upper
+
+    /*position of the parameters in an action. Ex. human_take_bottle: agent -> 1, object ->3
+     */
+    std::map<int, string> parameter_action_place_;
 
     //Variables
-
     //the system state enumeration is kept both way (from enumeration number to system state and other way)
-    std::map<VariableSet, int> mapStateEnum;
-    std::vector<VariableSet> vecStateEnum;
-    std::map<PairStateAction, StateProb> transition;
-    std::map<PairStateAction, std::vector<int>> predecessors; //enumeration of the transition function
-    std::map<PairStateAction, int> reward; //reward function
+    std::map<VariableSet, int> map_state_enum_;
+    std::vector<VariableSet> vec_state_enum_;
+    std::map<PairStateAction, StateProb> transition_;
+    std::map<PairStateAction, std::vector<int>> predecessors_; //enumeration of the transition function
+    std::map<PairStateAction, int> reward_; //reward function
+    std::vector<int> starting_states_;
+    std::vector<int> goal_states_;
 
-    std::map<PairStateAction, double> qValue; //human action values
+    //abstract state. Each variable can have a map that links a real world state to a parameter world state
+    //e.g. agent_isAt ->  { Greg -> other_agent } 
+    std::map<string, std::map<string, string> > abstract_states_;
 
-    string name;
+    bool use_cost_; //when true the mdp uses cost, otherwise it uses rewards.
+    std::map<PairStateAction, double> qvalue_; //human action values
 
-
+    //returns the probability of a transition
     double getTransitionProb(int s, string a, int s_new);
 
 
-    //two functions to override in the derived classes
-    virtual VarStateProb transitionFunction(VariableSet state, string action) = 0;
-    virtual int rewardFunction(VariableSet state, string action) = 0;
-
-    //learning functions
-    virtual int bellmanBackup(int i, std::vector<double> vhi);
-    void valueIteration(bool rewrite = false);
-    void prioritizedSweeping(); //for now it's slower on the tested examples. Maybe it's the queue overhead
-
-
+    //Q Value Functions
     double getQValue(int s, string action);
-
-    string chooseAction(int s);
-
-
-    virtual VariableSet convertToParametrizedState(VariableSet parameter_set); //converts a state space to it's parametrized version
-    VariableSet convertToDeparametrizedState(VariableSet parameter_set); //opposite
+    int getBestQ(VariableSet state);
+    virtual string chooseAction(int s); //virtualized for hierarchical mdps, which use a different mechanism
 
 
+    //functions used in the creation of the MDP
     virtual void enumerateStates();
-    virtual void enumerateFunctions(string fileName);
-    virtual bool readMdp(string fileName, bool rewrite);
+
+    //utility functions
+    //finds a suitable value of a variable among a list of possible values
+    string findValue(string variable, std::vector<string> possible_values);
+    //gets the future states after executing an action
+    VarStateProb getFutureStates(VariableSet state, string action);
+    //returns linked values to an abstract value
+    std::vector<string> getAbstractLinkedValues(string var, string abstract_value);
+    //returns the reward of executing an action in a state (or its cost if use_cost=true)
+    int getReward(VariableSet state, string action);
+
+    //read the model and the policy
+    bool readModel(string file_name);
+    bool readPolicy(string file_name);
+
+
+
 
 
 
 
 };
 
-#endif	/* MDP_H */
+#endif /* MDP_H */
 

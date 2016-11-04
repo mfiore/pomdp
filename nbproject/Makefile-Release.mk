@@ -35,21 +35,15 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/GetLaundry.o \
+	${OBJECTDIR}/ConcreteMdp.o \
 	${OBJECTDIR}/Hmdp.o \
 	${OBJECTDIR}/Mdp.o \
 	${OBJECTDIR}/Mmdp.o \
+	${OBJECTDIR}/MmdpManager.o \
 	${OBJECTDIR}/NestedLoop.o \
-	${OBJECTDIR}/PlaceObject.o \
-	${OBJECTDIR}/Pomdp.o \
 	${OBJECTDIR}/PriorityQueue.o \
-	${OBJECTDIR}/ReorderTable.o \
-	${OBJECTDIR}/StartWashingMachine.o \
-	${OBJECTDIR}/TakeObject.o \
 	${OBJECTDIR}/VariableSet.o \
-	${OBJECTDIR}/Wait.o \
-	${OBJECTDIR}/WashLaundry.o \
-	${OBJECTDIR}/WashLaundryFull.o
+	${OBJECTDIR}/Wait.o
 
 
 # C Compiler Flags
@@ -78,80 +72,50 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a: ${OBJECTFILES}
 	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a ${OBJECTFILES} 
 	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libpomdp.a
 
-${OBJECTDIR}/GetLaundry.o: GetLaundry.cpp 
+${OBJECTDIR}/ConcreteMdp.o: ConcreteMdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetLaundry.o GetLaundry.cpp
+	$(COMPILE.cc) -O2 -I../../devel/src/eigen -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ConcreteMdp.o ConcreteMdp.cpp
 
 ${OBJECTDIR}/Hmdp.o: Hmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmdp.o Hmdp.cpp
+	$(COMPILE.cc) -O2 -I../../devel/src/eigen -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Hmdp.o Hmdp.cpp
 
 ${OBJECTDIR}/Mdp.o: Mdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
+	$(COMPILE.cc) -O2 -I../../devel/src/eigen -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mdp.o Mdp.cpp
 
 ${OBJECTDIR}/Mmdp.o: Mmdp.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
+	$(COMPILE.cc) -O2 -I../../devel/src/eigen -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Mmdp.o Mmdp.cpp
+
+${OBJECTDIR}/MmdpManager.o: MmdpManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I../../devel/src/eigen -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MmdpManager.o MmdpManager.cpp
 
 ${OBJECTDIR}/NestedLoop.o: NestedLoop.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
-
-${OBJECTDIR}/PlaceObject.o: PlaceObject.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PlaceObject.o PlaceObject.cpp
-
-${OBJECTDIR}/Pomdp.o: Pomdp.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Pomdp.o Pomdp.cpp
+	$(COMPILE.cc) -O2 -I../../devel/src/eigen -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NestedLoop.o NestedLoop.cpp
 
 ${OBJECTDIR}/PriorityQueue.o: PriorityQueue.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
-
-${OBJECTDIR}/ReorderTable.o: ReorderTable.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ReorderTable.o ReorderTable.cpp
-
-${OBJECTDIR}/StartWashingMachine.o: StartWashingMachine.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/StartWashingMachine.o StartWashingMachine.cpp
-
-${OBJECTDIR}/TakeObject.o: TakeObject.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TakeObject.o TakeObject.cpp
+	$(COMPILE.cc) -O2 -I../../devel/src/eigen -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/PriorityQueue.o PriorityQueue.cpp
 
 ${OBJECTDIR}/VariableSet.o: VariableSet.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
+	$(COMPILE.cc) -O2 -I../../devel/src/eigen -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/VariableSet.o VariableSet.cpp
 
 ${OBJECTDIR}/Wait.o: Wait.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
-
-${OBJECTDIR}/WashLaundry.o: WashLaundry.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundry.o WashLaundry.cpp
-
-${OBJECTDIR}/WashLaundryFull.o: WashLaundryFull.cpp 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WashLaundryFull.o WashLaundryFull.cpp
+	$(COMPILE.cc) -O2 -I../../devel/src/eigen -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Wait.o Wait.cpp
 
 # Subprojects
 .build-subprojects:

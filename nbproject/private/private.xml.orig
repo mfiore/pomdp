@@ -8,14 +8,18 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
 <<<<<<< HEAD
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/GetLaundry.cpp</file>
+            <file>file:/home/mfiore/workspace/pomdp/AssembleBracket.cpp</file>
+            <file>file:/home/mfiore/workspace/pomdp/Mmdp.cpp</file>
+            <file>file:/home/mfiore/workspace/pomdp/Saphari.cpp</file>
+            <file>file:/home/mfiore/workspace/pomdp/Hmdp.cpp</file>
+            <file>file:/home/mfiore/workspace/pomdp/Hmdp.h</file>
+            <file>file:/home/mfiore/workspace/pomdp/Mdp.cpp</file>
+            <file>file:/home/mfiore/workspace/pomdp/AttachBracket.cpp</file>
 =======
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/Hmdp.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/PlaceObject.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/Hmdp.h</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/ReorderTable.cpp</file>
-            <file>file:/home/mfiore/NetBeansProjects/pomdp/TakeObject.cpp</file>
->>>>>>> devel
+            <file>file:/home/theworld/NetBeansProjects/pomdp/Hmdp.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/AssembleBracket.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/Mmdp.cpp</file>
+>>>>>>> fa306b43a30a2786a3ad9e862cba1503045cc47f
         </group>
     </open-files>
 </project-private>

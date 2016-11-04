@@ -9,27 +9,31 @@
 
 Wait::Wait() {
     agent_loc_var_ = "agent_isAt";
-    variables.push_back(agent_loc_var_);
+    variables_.push_back(agent_loc_var_);
 
-    std::vector<string> locations{"table", "bed", "counter", "shelf"};
+    std::vector<string> locations{"table", "surface1", "surface2", "surface3"};
     agent_name_ = "agent";
 
     std::map<string, std::vector<string> > var_values;
     var_values[agent_loc_var_] = locations;
 
-    this->varValues = var_values;
+    this->var_values_ = var_values;
 
     std::vector<string> actions;
     actions.push_back(agent_name_ + "_wait");
 
-    this->actions = actions;
+    this->actions_ = actions;
 
     vector<string> par_var;
-    parameters.push_back(agent_name_);
+    parameters_.push_back(agent_name_);
     par_var.clear();
     par_var.push_back(agent_loc_var_);
-    parameter_variables[agent_name_] = par_var;
-    variable_parameter[par_var[0]] = agent_name_;
+    parameter_variables_[agent_name_] = par_var;
+    variable_parameter_[par_var[0]] = agent_name_;
+
+    parameter_action_place_[0]=agent_name_;
+
+    name_="agent_wait";
 }
 
 Wait::Wait(const Wait& orig) {

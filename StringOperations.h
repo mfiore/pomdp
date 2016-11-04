@@ -44,6 +44,16 @@ public:
         stringSplitElems(s, delim, elems);
         return elems;
     }
+    
+    static string addToString(string s, string to_add, char delim) {
+        if (s=="") {
+            s=s+to_add;
+        }
+        else {
+            s=s+delim+to_add;
+        }
+        return s;
+    }
 
 };
 
