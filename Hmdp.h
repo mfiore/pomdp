@@ -118,10 +118,12 @@ public:
     void loadHierarchicInCache();
     void emptyHierarchicCache();
     
-protected:
-    //links action names to mdps. Must be set for all parameter instances
+        //links action names to mdps. Must be set for all parameter instances
     //etcs. human_take_tape -> "TakeObject", human_take_glass -> "TakeObject"
     HmdpMap hierarchy_map_;
+
+    
+protected:
 
 
     string hierarchic_file_; //hierarchic file name
