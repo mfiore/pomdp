@@ -10,7 +10,8 @@
             <file>file:/home/theworld/NetBeansProjects/pomdp/Mdp.cpp</file>
             <file>file:/home/theworld/NetBeansProjects/pomdp/Hmdp.h</file>
             <file>file:/home/theworld/NetBeansProjects/pomdp/Hmdp.cpp</file>
-            <file>file:/home/theworld/NetBeansProjects/pomdp/Mdp.h</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/ConcreteMdp.cpp</file>
+            <file>file:/home/theworld/NetBeansProjects/pomdp/Mmdp.cpp</file>
         </group>
     </open-files>
 </project-private>
