@@ -842,3 +842,16 @@ std::vector<std::string> Mdp::getOriginalVars() {
     }
     return result;
 }
+
+void Mdp::addVariable(string name, std::vector<string> values) {
+    variables_.push_back(name);
+    var_values_[name]=values;
+}
+void Mdp::addParameter(string name, std::vector<string> linked_variables, int place) {
+    parameters_.push_back(name);
+    parameter_variables_[name]=linked_variables;
+    for (string var:linked_variables) {
+        variable_parameter_[var]=name;
+    }
+    parameter_action_place_[place]=name;
+}

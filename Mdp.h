@@ -61,6 +61,18 @@ public:
 
 
     bool readMdp(string path);
+    
+    //adds a new variable, with its values
+    void addVariable(string name, std::vector<string> values);
+    //adds a parameter. Linked variables is the list of variables that are influenced by this parameter
+    //(ex: name=agent linked_variables={agent_isAt}). Place is used only in hierarchical mdps and can be ignored in normal MDPs.
+    //in a Hierarchic MDP parameters can be set from the name of the macro action, and place represent the position of the parameter
+    //in the macro action string 
+    //ex: there is a macro action called marco_take_bottle that is linked to the agent_take_object mdp.
+    //if the agent_take_object mdp has two parameters, agent and object, we can set as place of the agent 0 and has place of the object
+    //2. When assigning parameters from the macro action name (marco_take_bottle) the system will set agent has the first part of the
+    //macro (marco) and object has the 2nd (bottle)
+    void addParameter(string name, std::vector<string> linked_variables, int place);
 
     //setters and getters
     std::vector<string> getVariables() const;
